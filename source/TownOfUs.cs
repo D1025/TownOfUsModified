@@ -30,9 +30,12 @@ namespace TownOfUs
     public class TownOfUs : BasePlugin
     {
         public const string Id = "com.slushiegoose.townofus";
-        public const string VersionString = "5.2.2";
+        public const string VersionString = "5.3.0";
         public static System.Version Version = System.Version.Parse(VersionString);
         public const string VersionTag = "<color=#ff33fc></color>";
+
+        public const int MaxPlayers = 28;
+        public const int MaxImpostors = MaxPlayers / 2;
 
         public static AssetLoader bundledAssets;
 

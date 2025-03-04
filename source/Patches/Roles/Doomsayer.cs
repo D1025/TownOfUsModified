@@ -22,6 +22,7 @@ namespace TownOfUs.Roles
         public DateTime LastObserved;
         public PlayerControl ClosestPlayer;
         public PlayerControl LastObservedPlayer;
+        public int KillCountToVictory;
 
         public Doomsayer(PlayerControl player) : base(player)
         {
@@ -32,7 +33,7 @@ namespace TownOfUs.Roles
             RoleType = RoleEnum.Doomsayer;
             LastObserved = DateTime.UtcNow;
             AddToRoleHistory(RoleType);
-            Faction = Faction.NeutralEvil;
+            Faction = Faction.NeutralKilling;
 
             ColorMapping.Add("Crewmate", Colors.Crewmate);
             if (CustomGameOptions.PoliticianOn > 0) ColorMapping.Add("Politician", Colors.Politician);
@@ -94,6 +95,7 @@ namespace TownOfUs.Roles
                 if (CustomGameOptions.ExecutionerOn > 0) ColorMapping.Add("Executioner", Colors.Executioner);
                 if (CustomGameOptions.JesterOn > 0 || (CustomGameOptions.ExecutionerOn > 0 && CustomGameOptions.OnTargetDead == OnTargetDead.Jester) || (CustomGameOptions.GuardianAngelOn > 0 && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Jester)) ColorMapping.Add("Jester", Colors.Jester);
                 if (CustomGameOptions.SoulCollectorOn > 0) ColorMapping.Add("Soul Collector", Colors.SoulCollector);
+                if (CustomGameOptions.VultureOn > 0) ColorMapping.Add("Vulture", Colors.Vulture);
             }
             if (CustomGameOptions.DoomsayerGuessNeutralKilling)
             {

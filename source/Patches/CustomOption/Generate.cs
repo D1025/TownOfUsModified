@@ -1,4 +1,6 @@
 using System;
+using TownOfUs.CrewmateRoles.SheriffMod;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace TownOfUs.CustomOption
 {
@@ -46,13 +48,14 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption SurvivorOn;
 
         public static CustomHeaderOption NeutralEvilRoles;
-        public static CustomNumberOption DoomsayerOn;
         public static CustomNumberOption ExecutionerOn;
         public static CustomNumberOption JesterOn;
         public static CustomNumberOption PhantomOn;
         public static CustomNumberOption SoulCollectorOn;
+        public static CustomNumberOption VultureOn;
 
         public static CustomHeaderOption NeutralKillingRoles;
+        public static CustomNumberOption DoomsayerOn;
         public static CustomNumberOption ArsonistOn;
         public static CustomNumberOption JuggernautOn;
         public static CustomNumberOption PlaguebearerOn;
@@ -375,6 +378,7 @@ namespace TownOfUs.CustomOption
 
         public static CustomHeaderOption Mystic;
         public static CustomNumberOption MysticArrowDuration;
+        public static CustomToggleOption MysticSleuthAbility;
 
         public static CustomHeaderOption Blackmailer;
         public static CustomNumberOption BlackmailCooldown;
@@ -391,6 +395,12 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption RampageDuration;
         public static CustomNumberOption RampageKillCooldown;
         public static CustomToggleOption WerewolfVent;
+
+        public static CustomHeaderOption Vulture;
+        public static CustomNumberOption VultureKillCooldown;
+        public static CustomToggleOption VultureRememberArrows;
+        public static CustomNumberOption VultureRememberArrowDelay;
+        public static CustomNumberOption VultureEatCount;
 
         public static CustomHeaderOption Detective;
         public static CustomNumberOption ExamineCooldown;
@@ -419,6 +429,7 @@ namespace TownOfUs.CustomOption
         public static CustomToggleOption DoomsayerGuessNeutralKilling;
         public static CustomToggleOption DoomsayerGuessImpostors;
         public static CustomToggleOption DoomsayerCantObserve;
+        public static CustomNumberOption DoomsayerKillNeedToVictory;
 
         public static CustomHeaderOption Vampire;
         public static CustomNumberOption BiteCooldown;
@@ -603,6 +614,8 @@ namespace TownOfUs.CustomOption
             PhantomOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#662962FF>Phantom</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
             SoulCollectorOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#99FFCCFF>Soul Collector</color>", 0f, 0f, 100f, 10f,
+                PercentFormat);
+            VultureOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#FFFF6629>Vulture</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
 
             NeutralKillingRoles = new CustomHeaderOption(num++, MultiMenu.neutral, "Neutral Killing Roles");
@@ -926,6 +939,7 @@ namespace TownOfUs.CustomOption
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#4D99E6FF>Mystic</color>");
             MysticArrowDuration =
                 new CustomNumberOption(num++, MultiMenu.crewmate, "Dead Body Arrow Duration", 0.1f, 0f, 1f, 0.05f, CooldownFormat);
+            MysticSleuthAbility = new CustomToggleOption(num++, MultiMenu.crewmate, "Mystic Sleuth Ability", false);
 
             Oracle =
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#BF00BFFF>Oracle</color>");
@@ -1159,7 +1173,8 @@ namespace TownOfUs.CustomOption
             DoomsayerGuessNeutralKilling = new CustomToggleOption(num++, MultiMenu.neutral, "Doomsayer Can Guess Neutral Killing Roles", false);
             DoomsayerGuessImpostors = new CustomToggleOption(num++, MultiMenu.neutral, "Doomsayer Can Guess Impostor Roles", false);
             DoomsayerCantObserve = new CustomToggleOption(num++, MultiMenu.neutral, "Doomsayer Can't Observe", false);
-
+            DoomsayerKillNeedToVictory = new CustomNumberOption(num++, MultiMenu.neutral, "Kill Count Need To Vicotory", 5, 1, 15, 1);
+            
             Executioner =
                 new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#8C4005FF>Executioner</color>");
             OnTargetDead = new CustomStringOption(num++, MultiMenu.neutral, "Executioner Becomes On Target Dead",
@@ -1259,6 +1274,14 @@ namespace TownOfUs.CustomOption
                 new CustomNumberOption(num++, MultiMenu.neutral, "Rampage Kill Cooldown", 10f, 0.5f, 15f, 0.5f, CooldownFormat);
             WerewolfVent =
                 new CustomToggleOption(num++, MultiMenu.neutral, "Werewolf Can Vent When Rampaged", false);
+
+            Vulture = new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Vulture</color>");
+            VultureKillCooldown = new CustomNumberOption(num++, MultiMenu.neutral, "Vulture Eat Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
+            VultureRememberArrows =
+                new CustomToggleOption(num++, MultiMenu.neutral, "Vulture Gets Arrows Pointing To Dead Bodies", false);
+            VultureRememberArrowDelay =
+                new CustomNumberOption(num++, MultiMenu.neutral, "Time After Death Arrow Appears", 5f, 0f, 15f, 1f, CooldownFormat);
+            VultureEatCount = new CustomNumberOption(num++, MultiMenu.neutral, "Eat Count Need To Vicotory", 5, 1, 15, 1);
 
             Escapist =
                 new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Escapist</color>");

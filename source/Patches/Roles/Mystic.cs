@@ -7,6 +7,9 @@ namespace TownOfUs.Roles
     public class Mystic : Role
     {
         public Dictionary<byte, ArrowBehaviour> BodyArrows = new Dictionary<byte, ArrowBehaviour>();
+
+        public List<byte> Reported = new List<byte>();
+
         public Mystic(PlayerControl player) : base(player)
         {
             Name = "Mystic";

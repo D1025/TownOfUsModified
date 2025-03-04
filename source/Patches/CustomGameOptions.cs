@@ -95,6 +95,7 @@ namespace TownOfUs
         public static int HypnotistOn => (int)Generate.HypnotistOn.Get();
         public static int JailorOn => (int)Generate.JailorOn.Get();
         public static int SoulCollectorOn => (int)Generate.SoulCollectorOn.Get();
+        public static int VultureOn => (int) (Generate.VultureOn.Get());
         public static int LookoutOn => (int)Generate.LookoutOn.Get();
         public static int ScavengerOn => (int)Generate.ScavengerOn.Get();
         public static int DeputyOn => (int)Generate.DeputyOn.Get();
@@ -266,6 +267,7 @@ namespace TownOfUs
         public static bool GAKnowsTargetRole => Generate.GAKnowsTargetRole.Get();
         public static int EvilTargetPercent => (int)Generate.EvilTargetPercent.Get();
         public static float MysticArrowDuration => Generate.MysticArrowDuration.Get();
+        public static bool MysticSleuthAbility => Generate.MysticSleuthAbility.Get();
         public static float BlackmailCd => Generate.BlackmailCooldown.Get();
         public static bool BlackmailInvisible => Generate.BlackmailInvisible.Get();
         public static int LatestNonVote => (int)Generate.LatestNonVote.Get();
@@ -281,6 +283,10 @@ namespace TownOfUs
         public static float RampageDuration => Generate.RampageDuration.Get();
         public static float RampageKillCd => Generate.RampageKillCooldown.Get();
         public static bool WerewolfVent => Generate.WerewolfVent.Get();
+        public static int VultureKillCooldown => (int) Generate.VultureKillCooldown.Get();
+        public static bool VultureRememberArrows => Generate.VultureRememberArrows.Get();
+        public static int VultureRememberArrowDelay => (int) Generate.VultureRememberArrowDelay.Get();
+        public static int VultureEatCount => (int) Generate.VultureEatCount.Get();
         public static float TrapCooldown => Generate.TrapCooldown.Get();
         public static bool TrapsRemoveOnNewRound => Generate.TrapsRemoveOnNewRound.Get();
         public static int MaxTraps => (int)Generate.MaxTraps.Get();
@@ -304,6 +310,7 @@ namespace TownOfUs
         public static bool DoomsayerGuessNeutralEvil => Generate.DoomsayerGuessNeutralEvil.Get();
         public static bool DoomsayerGuessNeutralKilling => Generate.DoomsayerGuessNeutralKilling.Get();
         public static bool DoomsayerGuessImpostors => Generate.DoomsayerGuessImpostors.Get();
+        public static int DoomsayerKillNeedToVictory => (int) Generate.DoomsayerKillNeedToVictory.Get();
         public static float BiteCd => Generate.BiteCooldown.Get();
         public static bool VampImpVision => Generate.VampImpVision.Get();
         public static bool VampVent => Generate.VampVent.Get();

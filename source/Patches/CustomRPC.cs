@@ -31,6 +31,8 @@ namespace TownOfUs
         VampireWin,
 
         JanitorClean,
+        VultureClean,
+        VultureWin,
         FixLights,
         EngineerFix,
         SetSwaps,

@@ -52,6 +52,7 @@ namespace TownOfUs.Patches
         public readonly static Color Doomsayer = new Color(0f, 1f, 0.5f, 1f);
         public readonly static Color Vampire = new Color(0.15f, 0.15f, 0.15f, 1f);
         public readonly static Color SoulCollector = new Color(0.6f, 1f, 0.8f, 1f);
+        public readonly static Color Vulture = new Color(1f, 0.4f, 0.16f, 1f);
 
         //Imposter Colors
         public readonly static Color Impostor = Palette.ImpostorRed;

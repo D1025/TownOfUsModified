@@ -166,7 +166,7 @@ namespace TownOfUs.Roles
 
         internal virtual bool RoleCriteria()
         {
-            return PlayerControl.LocalPlayer.Is(ModifierEnum.Sleuth) && Modifier.GetModifier<Sleuth>(PlayerControl.LocalPlayer).Reported.Contains(Player.PlayerId);
+            return (PlayerControl.LocalPlayer.Is(ModifierEnum.Sleuth) && Modifier.GetModifier<Sleuth>(PlayerControl.LocalPlayer).Reported.Contains(Player.PlayerId)) || (PlayerControl.LocalPlayer.Is(RoleEnum.Mystic) && Role.GetRole<Mystic>(PlayerControl.LocalPlayer).Reported.Contains(Player.PlayerId));
         }
         internal virtual bool GuardianAngelCriteria()
         {
@@ -206,6 +206,11 @@ namespace TownOfUs.Roles
             {
                 var scRole = (SoulCollector)sc;
                 if (scRole.CollectedSouls && CustomGameOptions.NeutralEvilWinEndsGame) return;
+            }
+            foreach (var v in GetRoles(RoleEnum.Vulture))
+            {
+                var vRole = (Vulture)v;
+                if (vRole.vultureWin && CustomGameOptions.NeutralEvilWinEndsGame) return;
             }
 
             VampireWins = true;

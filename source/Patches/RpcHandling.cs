@@ -26,6 +26,7 @@ using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 using Coroutine = TownOfUs.ImpostorRoles.JanitorMod.Coroutine;
+using VultureCoroutine = TownOfUs.NeutralRoles.VultureMod.VultureCoroutine;
 using Object = UnityEngine.Object;
 using PerformKillButton = TownOfUs.NeutralRoles.AmnesiacMod.PerformKillButton;
 using Random = UnityEngine.Random;
@@ -577,7 +578,7 @@ namespace TownOfUs
             // Hand out assassin ability to killers according to the settings.
             var canHaveAbility = PlayerControl.AllPlayerControls.ToArray().Where(player => player.Is(Faction.Impostors)).ToList();
             canHaveAbility.Shuffle();
-            var canHaveAbility2 = PlayerControl.AllPlayerControls.ToArray().Where(player => player.Is(Faction.NeutralKilling)).ToList();
+            var canHaveAbility2 = PlayerControl.AllPlayerControls.ToArray().Where(player => player.Is(Faction.NeutralKilling) && !player.Is(RoleEnum.Doomsayer)).ToList();
             canHaveAbility2.Shuffle();
 
             var assassinConfig = new (List<PlayerControl>, int)[]
@@ -635,6 +636,13 @@ namespace TownOfUs
                 {
                     if (canHaveModifier.Count == 1) continue;
                     Lover.Gen(canHaveModifier);
+                }
+                else if (type.FullName.Contains("Sleuth") && CustomGameOptions.MysticSleuthAbility)
+                {
+                    var candidate = canHaveModifier.FirstOrDefault(player => !player.Is(RoleEnum.Mystic));
+                    if (candidate == null) continue;
+                    Role.GenModifier<Modifier>(type, new List<PlayerControl> { candidate });
+                    canHaveModifier.Remove(candidate);
                 }
                 else
                 {
@@ -834,6 +842,17 @@ namespace TownOfUs
                         foreach (var body in deadBodies)
                             if (body.ParentId == readByte)
                                 Coroutines.Start(Coroutine.CleanCoroutine(body, janitorRole));
+
+                        break;
+                    case CustomRPC.VultureClean:
+                        readByte1 = reader.ReadByte();
+                        var vulturePlayer = Utils.PlayerById(readByte1);
+                        var vultureRole = Role.GetRole<Vulture>(vulturePlayer);
+                        readByte = reader.ReadByte();
+                        var vultureDeadBodies = Object.FindObjectsOfType<DeadBody>();
+                        foreach (var body1 in vultureDeadBodies)
+                            if (body1.ParentId == readByte)
+                                Coroutines.Start(VultureCoroutine.CleanCoroutine(body1, vultureRole));
 
                         break;
                     case CustomRPC.EngineerFix:
@@ -1195,6 +1214,10 @@ namespace TownOfUs
                         }
                         grenadierRole.flashedPlayers = playerControlList;
                         grenadierRole.Flash();
+                        break;
+                    case CustomRPC.VultureWin:
+                        var theVultureTheRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Vulture);
+                        ((Vulture)theVultureTheRole)?.Wins();
                         break;
                     case CustomRPC.ArsonistWin:
                         var theArsonistTheRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Arsonist);
@@ -1652,10 +1675,13 @@ namespace TownOfUs
                     NeutralEvilRoles.Add((typeof(Executioner), CustomGameOptions.ExecutionerOn, false || CustomGameOptions.UniqueRoles));
 
                 if (CustomGameOptions.DoomsayerOn > 0)
-                    NeutralEvilRoles.Add((typeof(Doomsayer), CustomGameOptions.DoomsayerOn, false || CustomGameOptions.UniqueRoles));
+                    NeutralKillingRoles.Add((typeof(Doomsayer), CustomGameOptions.DoomsayerOn, false || CustomGameOptions.UniqueRoles));
 
                 if (CustomGameOptions.SoulCollectorOn > 0)
                     NeutralEvilRoles.Add((typeof(SoulCollector), CustomGameOptions.SoulCollectorOn, true));
+
+                if (CustomGameOptions.VultureOn > 0)
+                    NeutralEvilRoles.Add((typeof(Vulture), CustomGameOptions.VultureOn, true));
 
                 if (CustomGameOptions.SurvivorOn > 0)
                     NeutralBenignRoles.Add((typeof(Survivor), CustomGameOptions.SurvivorOn, false || CustomGameOptions.UniqueRoles));

@@ -64,4 +64,20 @@ namespace TownOfUs.CrewmateRoles.MysticMod
             }
         }
     }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+    public class MysticBodyReportPatch
+    {
+        public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo info)
+        {
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Mystic) && CustomGameOptions.MysticSleuthAbility)
+            {
+                Mystic mystic = Role.GetRole<Mystic>(PlayerControl.LocalPlayer);
+                if (mystic != null && !mystic.Reported.Contains(info.PlayerId))
+                {
+                    mystic.Reported.Add(info.PlayerId);
+                }
+            }
+        }
+    }
 }

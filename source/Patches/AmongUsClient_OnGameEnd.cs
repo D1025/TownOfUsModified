@@ -88,6 +88,11 @@ namespace TownOfUs
                 var ww = (Werewolf)role;
                 losers.Add(ww.Player.GetDefaultOutfit().ColorId);
             }
+            foreach (var role in Role.GetRoles(RoleEnum.Vulture))
+            {
+                var v = (Vulture)role;
+                losers.Add(v.Player.GetDefaultOutfit().ColorId);
+            }
 
             var toRemoveWinners = EndGameResult.CachedWinners.ToArray().Where(o => losers.Contains(o.ColorId)).ToArray();
             for (int i = 0; i < toRemoveWinners.Count(); i++) EndGameResult.CachedWinners.Remove(toRemoveWinners[i]);
@@ -145,18 +150,6 @@ namespace TownOfUs
                             return;
                         }
                     }
-                    else if (type == RoleEnum.Doomsayer)
-                    {
-                        var doom = (Doomsayer)role;
-                        if (doom.WonByGuessing)
-                        {
-                            EndGameResult.CachedWinners = new List<CachedPlayerData>();
-                            var doomData = new CachedPlayerData(doom.Player.Data);
-                            if (PlayerControl.LocalPlayer != doom.Player) doomData.IsYou = false;
-                            EndGameResult.CachedWinners.Add(doomData);
-                            return;
-                        }
-                    }
                     else if (type == RoleEnum.SoulCollector)
                     {
                         var sc = (SoulCollector)role;
@@ -178,6 +171,18 @@ namespace TownOfUs
                             var phantomData = new CachedPlayerData(phantom.Player.Data);
                             if (PlayerControl.LocalPlayer != phantom.Player) phantomData.IsYou = false;
                             EndGameResult.CachedWinners.Add(phantomData);
+                            return;
+                        }
+                    }
+                    else if (type == RoleEnum.Vulture)
+                    {
+                        var vulture = (Vulture)role;
+                        if (vulture.vultureWin)
+                        {
+                            EndGameResult.CachedWinners = new List<CachedPlayerData>();
+                            var vultureData = new CachedPlayerData(vulture.Player.Data);
+                            if (PlayerControl.LocalPlayer != vulture.Player) vultureData.IsYou = false;
+                            EndGameResult.CachedWinners.Add(vultureData);
                             return;
                         }
                     }
@@ -231,6 +236,18 @@ namespace TownOfUs
                         var glitchData = new CachedPlayerData(glitch.Player.Data);
                         if (PlayerControl.LocalPlayer != glitch.Player) glitchData.IsYou = false;
                         EndGameResult.CachedWinners.Add(glitchData);
+                    }
+                }
+                else if (type == RoleEnum.Doomsayer)
+                {
+                    var doom = (Doomsayer)role;
+                    if (doom.WonByGuessing)
+                    {
+                        EndGameResult.CachedWinners = new List<CachedPlayerData>();
+                        var doomData = new CachedPlayerData(doom.Player.Data);
+                        if (PlayerControl.LocalPlayer != doom.Player) doomData.IsYou = false;
+                        EndGameResult.CachedWinners.Add(doomData);
+                        return;
                     }
                 }
                 else if (type == RoleEnum.Juggernaut)

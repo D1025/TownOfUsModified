@@ -568,7 +568,7 @@ namespace TownOfUs.Patches
                 if (role == RoleEnum.Bomber) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Bomber is an impostor who can place bombs, these kill anyone in the area a short duration later.");
                 if (role == RoleEnum.Doomsayer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "The Doomsayer is a neutral evil role with the goal to guess 3 other player's roles simultaneously.");
+                    PlayerControl.LocalPlayer, "The Doomsayer is a neutral killing role with the goal to guess player's roles to win.");
                 if (role == RoleEnum.Vampire) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Vampire is a neutral killer with the goal to kill everyone. The first crewmate the original Vampire bites will turn into a Vampire, the rest will die.");
                 if (role == RoleEnum.Prosecutor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
@@ -597,6 +597,8 @@ namespace TownOfUs.Patches
                     "The Scavenger is an impostor who must hunt down prey. Once their kill cooldown is up they are given a target to kill and being their scavenge. If they kill that target they get a reduced kill cooldown and regenerate their scavenge duration. If they don't kill their target they are given an increased kill cooldown.");
                 if (role == RoleEnum.Deputy) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Deputy is a crewmate who can camp other players. If the player is killed they will receive an alert notifying them of their death. During the following meeting they may then shoot anyone. If they shoot the killer, they die unless fortified or invincible, if they are wrong nothing happens.");
+                if (role == RoleEnum.Vulture) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "Eat them all...");
             }
 
             public static void AddModifierMessage(ModifierEnum modifier)
