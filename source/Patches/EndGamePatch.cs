@@ -155,9 +155,9 @@ namespace TownOfUs.Patches {
                 {
                     playerRole += " |<color=#" + Color.green.ToHtmlStringRGBA() + $"> Correct Guesses: {player.CorrectAssassinKills}</color>";
                 }
-                if (player.IncorrectAssassinKills > 0)
+                if (player.HiddenBodies > 0)
                 {
-                    playerRole += " |<color=#" + Patches.Colors.Impostor.ToHtmlStringRGBA() + $"> Incorrect Guesses: {player.IncorrectAssassinKills}</color>";
+                    playerRole += " |<color=#" + Patches.Colors.Vulture.ToHtmlStringRGBA() + $"> Hidden Bodies: {player.HiddenBodies}</color>";
                 }
 
                 var playerName = "";

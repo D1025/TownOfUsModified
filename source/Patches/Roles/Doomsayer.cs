@@ -32,8 +32,8 @@ namespace TownOfUs.Roles
             Color = Patches.Colors.Doomsayer;
             RoleType = RoleEnum.Doomsayer;
             LastObserved = DateTime.UtcNow;
-            AddToRoleHistory(RoleType);
             Faction = Faction.NeutralKilling;
+            AddToRoleHistory(RoleType);
 
             ColorMapping.Add("Crewmate", Colors.Crewmate);
             if (CustomGameOptions.PoliticianOn > 0) ColorMapping.Add("Politician", Colors.Politician);
@@ -136,7 +136,6 @@ namespace TownOfUs.Roles
         internal override bool GameEnd(LogicGameFlowNormal __instance)
         {
             if (Player.Data.IsDead) return true;
-            if (!CustomGameOptions.NeutralEvilWinEndsGame) return true;
             if (!WonByGuessing) return true;
             Utils.EndGame();
             return false;

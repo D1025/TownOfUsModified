@@ -37,7 +37,7 @@ namespace TownOfUs.NeutralRoles.VultureMod
                 }
 
                 Utils.Rpc(CustomRPC.VultureClean, PlayerControl.LocalPlayer.PlayerId, playerId);
-
+                role.HiddenBodies += 1;
                 Coroutines.Start(VultureCoroutine.CleanCoroutine(role.CurrentTarget, role));
                 return false;
             }

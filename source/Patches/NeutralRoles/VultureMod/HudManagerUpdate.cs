@@ -30,20 +30,40 @@ namespace TownOfUs.NeutralRoles.VultureMod
             }
 
             role.CleanButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
-                    && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
-                    && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
-            role.CleanButton.graphic.sprite = TownOfUs.JanitorClean;
+                && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
+                && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
+
+            role.CleanButton.graphic.sprite = TownOfUs.VultureEat;
+
+            if (role.EatCountText == null)
+            {
+                role.EatCountText = Object.Instantiate(__instance.KillButton.cooldownTimerText, role.CleanButton.transform);
+                role.EatCountText.gameObject.SetActive(false);
+                role.EatCountText.transform.localPosition = new Vector3(
+                    role.EatCountText.transform.localPosition.x + 0.26f,
+                    role.EatCountText.transform.localPosition.y + 0.29f,
+                    role.EatCountText.transform.localPosition.z
+                );
+                role.EatCountText.transform.localScale = role.EatCountText.transform.localScale * 0.65f;
+                role.EatCountText.alignment = TMPro.TextAlignmentOptions.Right;
+                role.EatCountText.fontStyle = TMPro.FontStyles.Bold;
+            }
+
+            role.EatCountText.text = $"{role.eatenBodies}/{CustomGameOptions.VultureEatCount}";
+
+            role.EatCountText.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
+                && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
+                && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
 
             var data = PlayerControl.LocalPlayer.Data;
             var isDead = data.IsDead;
             var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
             var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
-            var flag = (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !data.IsDead) &&
-                       (!AmongUsClient.Instance || !AmongUsClient.Instance.IsGameOver) &&
-                       PlayerControl.LocalPlayer.CanMove;
-            var allocs = Physics2D.OverlapCircleAll(truePosition, maxDistance,
-                LayerMask.GetMask(new[] { "Players", "Ghost" }));
+            var flag = (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !data.IsDead)
+                && (!AmongUsClient.Instance || !AmongUsClient.Instance.IsGameOver)
+                && PlayerControl.LocalPlayer.CanMove;
 
+            var allocs = Physics2D.OverlapCircleAll(truePosition, maxDistance, LayerMask.GetMask(new[] { "Players", "Ghost" }));
             var killButton = role.CleanButton;
             DeadBody closestBody = null;
             var closestDistance = float.MaxValue;
@@ -52,9 +72,7 @@ namespace TownOfUs.NeutralRoles.VultureMod
             {
                 if (!flag || isDead || collider2D.tag != "DeadBody") continue;
                 var component = collider2D.GetComponent<DeadBody>();
-                if (!(Vector2.Distance(truePosition, component.TruePosition) <=
-                      maxDistance)) continue;
-
+                if (!(Vector2.Distance(truePosition, component.TruePosition) <= maxDistance)) continue;
                 var distance = Vector2.Distance(truePosition, component.TruePosition);
                 if (!(distance < closestDistance)) continue;
                 closestBody = component;
@@ -62,7 +80,6 @@ namespace TownOfUs.NeutralRoles.VultureMod
             }
 
             role.CleanButton.SetCoolDown(role.VultureTimer(), CustomGameOptions.VultureKillCooldown);
-
 
             if (CustomGameOptions.VultureRememberArrows && !PlayerControl.LocalPlayer.Data.IsDead)
             {

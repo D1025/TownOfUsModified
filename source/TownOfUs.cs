@@ -30,7 +30,7 @@ namespace TownOfUs
     public class TownOfUs : BasePlugin
     {
         public const string Id = "com.slushiegoose.townofus";
-        public const string VersionString = "5.3.0";
+        public const string VersionString = "5.3.1";
         public static System.Version Version = System.Version.Parse(VersionString);
         public const string VersionTag = "<color=#ff33fc></color>";
 
@@ -111,6 +111,7 @@ namespace TownOfUs
         public static Sprite WatchSprite;
         public static Sprite CampSprite;
         public static Sprite ShootSprite;
+        public static Sprite VultureEat;
 
         public static Sprite ToUBanner;
         public static Sprite UpdateTOUButton;
@@ -215,8 +216,9 @@ namespace TownOfUs
             WatchSprite = CreateSprite("TownOfUs.Resources.Watch.png");
             CampSprite = CreateSprite("TownOfUs.Resources.Camp.png");
             ShootSprite = CreateSprite("TownOfUs.Resources.Shoot.png");
+            VultureEat = CreateSprite("TownOfUs.Resources.VultureEat.png");
 
-            ToUBanner = CreateSprite("TownOfUs.Resources.TownOfUsBanner.png");
+            ToUBanner = CreateSprite("TownOfUs.Resources.TownOfUsBannerByDonald.png");
             UpdateTOUButton = CreateSprite("TownOfUs.Resources.UpdateToUButton.png");
             UpdateSubmergedButton = CreateSprite("TownOfUs.Resources.UpdateSubmergedButton.png");
 

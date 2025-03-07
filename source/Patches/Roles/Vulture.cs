@@ -8,14 +8,11 @@ namespace TownOfUs.Roles
     public class Vulture : Role
     {
         public KillButton _cleanButton;
-
         public int eatenBodies = 0;
-
         public bool vultureWin = false;
-
         public Dictionary<byte, ArrowBehaviour> BodyArrows = new Dictionary<byte, ArrowBehaviour>();
-
         public DateTime LastEaten { get; set; }
+        public TMPro.TextMeshPro EatCountText;
 
         public Vulture(PlayerControl player) : base(player)
         {
@@ -27,7 +24,6 @@ namespace TownOfUs.Roles
             AddToRoleHistory(RoleType);
             Faction = Faction.NeutralEvil;
         }
-
 
         public DeadBody CurrentTarget { get; set; }
 
@@ -41,6 +37,7 @@ namespace TownOfUs.Roles
                 ExtraButtons.Add(value);
             }
         }
+
         protected override void IntroPrefix(IntroCutscene._ShowTeam_d__38 __instance)
         {
             var scTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -52,7 +49,7 @@ namespace TownOfUs.Roles
         {
             if (Player.Data.IsDead) return true;
             if (!CustomGameOptions.NeutralEvilWinEndsGame) return true;
-            if (eatenBodies < CustomGameOptions.VultureEatCount)  return true;
+            if (eatenBodies < CustomGameOptions.VultureEatCount) return true;
             Utils.Rpc(CustomRPC.VultureWin, Player.PlayerId);
             Wins();
             Utils.EndGame();
@@ -67,10 +64,8 @@ namespace TownOfUs.Roles
         public void DestroyArrow(byte targetPlayerId)
         {
             var arrow = BodyArrows.FirstOrDefault(x => x.Key == targetPlayerId);
-            if (arrow.Value != null)
-                Object.Destroy(arrow.Value);
-            if (arrow.Value.gameObject != null)
-                Object.Destroy(arrow.Value.gameObject);
+            if (arrow.Value != null) Object.Destroy(arrow.Value);
+            if (arrow.Value.gameObject != null) Object.Destroy(arrow.Value.gameObject);
             BodyArrows.Remove(arrow.Key);
         }
 

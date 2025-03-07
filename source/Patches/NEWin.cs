@@ -12,8 +12,6 @@ namespace TownOfUs.Patches
         {
             if (CustomGameOptions.NeutralEvilWinEndsGame) return;
             var neWin = false;
-            var doomRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Doomsayer && ((Doomsayer)x).WonByGuessing && ((Doomsayer)x).Player == PlayerControl.LocalPlayer);
-            if (doomRole != null) neWin = true;
             var exeRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Executioner && ((Executioner)x).TargetVotedOut && ((Executioner)x).Player == PlayerControl.LocalPlayer);
             if (exeRole != null) neWin = true;
             var jestRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Jester && ((Jester)x).VotedOut && ((Jester)x).Player == PlayerControl.LocalPlayer);
@@ -46,6 +44,8 @@ namespace TownOfUs.Patches
                 if (pbRole != null) return;
                 var wwRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Werewolf && ((Werewolf)x).WerewolfWins);
                 if (wwRole != null) return;
+                var doomRole = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Doomsayer && ((Doomsayer)x).WonByGuessing);
+                if (doomRole != null) return;
                 __instance.BackgroundBar.material.SetColor("_Color", Palette.CrewmateBlue);
             }
         }
