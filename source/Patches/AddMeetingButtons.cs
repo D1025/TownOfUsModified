@@ -33,7 +33,13 @@ namespace TownOfUs.Patches
 
                 if (PlayerControl.LocalPlayer == StartImitate.ImitatingPlayer)
                 {
-                    if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator)) Footprint.DestroyAll(Role.GetRole<Investigator>(PlayerControl.LocalPlayer));
+                    if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator))
+                    {
+                        var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                        Footprint.DestroyAll(investigator);
+                        investigator.SenseArrows.Values.DestroyAll();
+                        investigator.SenseArrows.Clear();
+                    }
 
                     if (PlayerControl.LocalPlayer.Is(RoleEnum.Engineer))
                     {

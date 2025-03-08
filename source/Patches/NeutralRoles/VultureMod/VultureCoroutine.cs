@@ -25,6 +25,7 @@ namespace TownOfUs.NeutralRoles.VultureMod
             KillButtonTarget.SetTarget(DestroyableSingleton<HudManager>.Instance.KillButton, null, role);
             role.LastEaten = DateTime.UtcNow;
             role.eatenBodies++;
+            role.HiddenBodies++;
             SpriteRenderer renderer = null;
             foreach (var body2 in body.bodyRenderers) renderer = body2;
             var backColor = renderer.material.GetColor(BackColor);

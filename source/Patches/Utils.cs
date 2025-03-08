@@ -575,6 +575,11 @@ namespace TownOfUs
                 var aurial = Role.GetRole<Aurial>(PlayerControl.LocalPlayer);
                 Coroutines.Start(aurial.Sense(player));
             }
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator) && !PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                Coroutines.Start(investigator.Sense(player));
+            }
             else if (PlayerControl.LocalPlayer.Is(RoleEnum.Lookout) && target != null)
             {
                 var lookout = Role.GetRole<Lookout>(PlayerControl.LocalPlayer);
@@ -842,6 +847,12 @@ namespace TownOfUs
                     var aurial = Role.GetRole<Aurial>(PlayerControl.LocalPlayer);
                     aurial.SenseArrows.Values.DestroyAll();
                     aurial.SenseArrows.Clear();
+                }
+                if (PlayerControl.LocalPlayer == target && PlayerControl.LocalPlayer.Is(RoleEnum.Investigator))
+                {
+                    var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                    investigator.SenseArrows.Values.DestroyAll();
+                    investigator.SenseArrows.Clear();
                 }
 
                 if (target.AmOwner)
@@ -1505,7 +1516,8 @@ namespace TownOfUs
             {
                 var doom = Role.GetRole<Doomsayer>(PlayerControl.LocalPlayer);
                 doom.LastObserved = DateTime.UtcNow;
-                doom.LastObservedPlayer = null;
+                doom.LastObservedPlayers.Clear();
+                doom.ClosestPlayer = null;
             }
             if (PlayerControl.LocalPlayer.Is(RoleEnum.SoulCollector))
             {

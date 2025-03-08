@@ -134,7 +134,13 @@ namespace TownOfUs.NeutralRoles.VampireMod
                 else if (PlayerControl.LocalPlayer.Is(RoleEnum.Altruist)) CrewmateRoles.AltruistMod.KillButtonTarget.SetTarget(HudManager.Instance.KillButton, null, Role.GetRole<Altruist>(PlayerControl.LocalPlayer));
                 else if (PlayerControl.LocalPlayer.Is(RoleEnum.Amnesiac)) AmnesiacMod.KillButtonTarget.SetTarget(HudManager.Instance.KillButton, null, Role.GetRole<Amnesiac>(PlayerControl.LocalPlayer));
 
-                if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator)) Footprint.DestroyAll(Role.GetRole<Investigator>(PlayerControl.LocalPlayer));
+                if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator))
+                {
+                    var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                    Footprint.DestroyAll(investigator);
+                    investigator.SenseArrows.Values.DestroyAll();
+                    investigator.SenseArrows.Clear();
+                }
 
                 if (PlayerControl.LocalPlayer.Is(RoleEnum.Sheriff)) HudManager.Instance.KillButton.buttonLabelText.gameObject.SetActive(false);
 

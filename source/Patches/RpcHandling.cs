@@ -1424,7 +1424,7 @@ namespace TownOfUs
                         var traitor = SetTraitor.WillBeTraitor;
                         if (traitor == StartImitate.ImitatingPlayer) StartImitate.ImitatingPlayer = null;
                         var oldRole = Role.GetRole(traitor);
-                        var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills);
+                        var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills, oldRole.HiddenBodies);
                         Role.RoleDictionary.Remove(traitor.PlayerId);
                         var traitorRole = new Traitor(traitor);
                         traitorRole.formerRole = oldRole.RoleType;
@@ -1432,6 +1432,7 @@ namespace TownOfUs
                         traitorRole.IncorrectKills = killsList.IncorrectKills;
                         traitorRole.CorrectAssassinKills = killsList.CorrectAssassinKills;
                         traitorRole.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
+                        traitorRole.HiddenBodies = killsList.HiddenBodies;
                         traitorRole.RegenTask();
                         SetTraitor.TurnImp(traitor);
                         break;
@@ -1498,6 +1499,11 @@ namespace TownOfUs
                         {
                             var aurial = Role.GetRole<Aurial>(PlayerControl.LocalPlayer);
                             Coroutines.Start(aurial.Sense(abilityUser));
+                        }
+                        if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator) && !PlayerControl.LocalPlayer.Data.IsDead)
+                        {
+                            var investigator = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                            Coroutines.Start(investigator.Sense(abilityUser));
                         }
                         else if (PlayerControl.LocalPlayer.Is(RoleEnum.Lookout) && abilitytarget != null)
                         {

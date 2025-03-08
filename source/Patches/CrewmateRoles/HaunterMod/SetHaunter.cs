@@ -33,7 +33,7 @@ namespace TownOfUs.CrewmateRoles.HaunterMod
             if (!WillBeHaunter.Is(RoleEnum.Haunter))
             {
                 var oldRole = Role.GetRole(WillBeHaunter);
-                var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills);
+                var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills, oldRole.HiddenBodies);
                 Role.RoleDictionary.Remove(WillBeHaunter.PlayerId);
                 if (PlayerControl.LocalPlayer == WillBeHaunter)
                 {
@@ -43,6 +43,7 @@ namespace TownOfUs.CrewmateRoles.HaunterMod
                     role.IncorrectKills = killsList.IncorrectKills;
                     role.CorrectAssassinKills = killsList.CorrectAssassinKills;
                     role.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
+                    role.HiddenBodies = killsList.HiddenBodies;
                     role.RegenTask();
                 }
                 else
@@ -53,6 +54,7 @@ namespace TownOfUs.CrewmateRoles.HaunterMod
                     role.IncorrectKills = killsList.IncorrectKills;
                     role.CorrectAssassinKills = killsList.CorrectAssassinKills;
                     role.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
+                    role.HiddenBodies = killsList.HiddenBodies;
                 }
 
                 Utils.RemoveTasks(WillBeHaunter);

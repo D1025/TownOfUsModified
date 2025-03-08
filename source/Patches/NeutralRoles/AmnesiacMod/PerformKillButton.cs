@@ -532,7 +532,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var doomRole = Role.GetRole<Doomsayer>(amnesiac);
                 doomRole.LastObserved = DateTime.UtcNow;
-                doomRole.LastObservedPlayer = null;
+                doomRole.LastObservedPlayers.Clear();
             }
 
             else if (role == RoleEnum.Plaguebearer)
@@ -583,18 +583,20 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
             }
 
-            var killsList = (newRole.Kills, newRole.CorrectKills, newRole.IncorrectKills, newRole.CorrectAssassinKills, newRole.IncorrectAssassinKills);
+            var killsList = (newRole.Kills, newRole.CorrectKills, newRole.IncorrectKills, newRole.CorrectAssassinKills, newRole.IncorrectAssassinKills, newRole.HiddenBodies);
             var otherRole = Role.GetRole(other);
             newRole.Kills = otherRole.Kills;
             newRole.CorrectKills = otherRole.CorrectKills;
             newRole.IncorrectKills = otherRole.IncorrectKills;
             newRole.CorrectAssassinKills = otherRole.CorrectAssassinKills;
             newRole.IncorrectAssassinKills = otherRole.IncorrectAssassinKills;
+            newRole.HiddenBodies = otherRole.HiddenBodies;
             otherRole.Kills = killsList.Kills;
             otherRole.CorrectKills = killsList.CorrectKills;
             otherRole.IncorrectKills = killsList.IncorrectKills;
             otherRole.CorrectAssassinKills = killsList.CorrectAssassinKills;
             otherRole.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
+            otherRole.HiddenBodies = killsList.HiddenBodies;
 
             if (amnesiac.Is(Faction.Impostors) && (!amnesiac.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor))
             {

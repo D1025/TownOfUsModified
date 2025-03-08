@@ -53,7 +53,13 @@ namespace TownOfUs.ImpostorRoles.TraitorMod
                     CompleteTask.Postfix(PlayerControl.LocalPlayer);
                 }
 
-                if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator)) Footprint.DestroyAll(Role.GetRole<Investigator>(PlayerControl.LocalPlayer));
+                if (PlayerControl.LocalPlayer.Is(RoleEnum.Investigator))
+                {
+                    var investigatorRole = Role.GetRole<Investigator>(PlayerControl.LocalPlayer);
+                    Footprint.DestroyAll(investigatorRole);
+                    investigatorRole.SenseArrows.Values.DestroyAll();
+                    investigatorRole.SenseArrows.Clear();
+                }
 
                 if (PlayerControl.LocalPlayer.Is(RoleEnum.Detective))
                 {
@@ -129,7 +135,7 @@ namespace TownOfUs.ImpostorRoles.TraitorMod
                 if (PlayerControl.LocalPlayer == StartImitate.ImitatingPlayer) StartImitate.ImitatingPlayer = null;
 
                 var oldRole = Role.GetRole(PlayerControl.LocalPlayer);
-                var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills);
+                var killsList = (oldRole.CorrectKills, oldRole.IncorrectKills, oldRole.CorrectAssassinKills, oldRole.IncorrectAssassinKills, oldRole.HiddenBodies);
                 Role.RoleDictionary.Remove(PlayerControl.LocalPlayer.PlayerId);
                 var role = new Traitor(PlayerControl.LocalPlayer);
                 role.formerRole = oldRole.RoleType;
@@ -137,6 +143,7 @@ namespace TownOfUs.ImpostorRoles.TraitorMod
                 role.IncorrectKills = killsList.IncorrectKills;
                 role.CorrectAssassinKills = killsList.CorrectAssassinKills;
                 role.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
+                role.HiddenBodies = killsList.HiddenBodies;
                 role.RegenTask();
 
                 Utils.Rpc(CustomRPC.TraitorSpawn);

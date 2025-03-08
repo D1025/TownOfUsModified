@@ -90,7 +90,7 @@ namespace TownOfUs
         public static int WarlockOn => (int)Generate.WarlockOn.Get();
         public static int OracleOn => (int)Generate.OracleOn.Get();
         public static int VenererOn => (int)Generate.VenererOn.Get();
-        public static int AurialOn => (int)Generate.AurialOn.Get();
+        public static int AurialOn => 0;
         public static int WardenOn => (int)Generate.WardenOn.Get();
         public static int HypnotistOn => (int)Generate.HypnotistOn.Get();
         public static int JailorOn => (int)Generate.JailorOn.Get();
@@ -311,6 +311,8 @@ namespace TownOfUs
         public static bool DoomsayerGuessNeutralKilling => Generate.DoomsayerGuessNeutralKilling.Get();
         public static bool DoomsayerGuessImpostors => Generate.DoomsayerGuessImpostors.Get();
         public static int DoomsayerKillNeedToVictory => (int) Generate.DoomsayerKillNeedToVictory.Get();
+
+        public static int DoomsayerObserveRoleCount => (int) Generate.DoomsayerObserveRoleCount.Get();
         public static float BiteCd => Generate.BiteCooldown.Get();
         public static bool VampImpVision => Generate.VampImpVision.Get();
         public static bool VampVent => Generate.VampVent.Get();

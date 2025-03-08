@@ -37,7 +37,6 @@ namespace TownOfUs.ImpostorRoles.JanitorMod
                 }
 
                 Utils.Rpc(CustomRPC.JanitorClean, PlayerControl.LocalPlayer.PlayerId, playerId);
-                role.HiddenBodies += 1;
                 Coroutines.Start(Coroutine.CleanCoroutine(role.CurrentTarget, role));
                 return false;
             }
