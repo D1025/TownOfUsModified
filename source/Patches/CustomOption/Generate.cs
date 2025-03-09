@@ -978,7 +978,7 @@ namespace TownOfUs.CustomOption
             WhoSeesDead = new CustomStringOption(num++, MultiMenu.crewmate, "Who Sees Dead Bodies On Admin",
                 new[] { "Nobody", "Spy", "Everyone But Spy", "Everyone" });
             SpyAdminAnywhere = new CustomToggleOption(num++, MultiMenu.crewmate, "Spy Can Access Admin Map From Anywhere", true);
-            SpyAdminTableCd = new CustomNumberOption(num++, MultiMenu.crewmate, "Track Cooldown", 10f, 2.5f, 30f, 2.5f, CooldownFormat);
+            SpyAdminTableCd = new CustomNumberOption(num++, MultiMenu.crewmate, "Admin Table Button From Anywhere Cooldown", 10f, 2.5f, 30f, 2.5f, CooldownFormat);
 
             Tracker =
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#009900FF>Tracker</color>");
