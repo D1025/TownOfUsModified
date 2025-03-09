@@ -33,12 +33,12 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                 {
                     if (role.InvestigatedPlayers.Contains(role.ClosestPlayer.PlayerId))
                     {
-                        Coroutines.Start(Utils.FlashCoroutine(Color.red));
+                        Coroutines.Start(Utils.FlashCoroutine(Color.green));
                         var deadPlayer = role.InvestigatingScene.DeadPlayer;
                         if (DestroyableSingleton<HudManager>.Instance)
                             DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{role.ClosestPlayer.GetDefaultOutfit().PlayerName} was at the scene of {deadPlayer.GetDefaultOutfit().PlayerName}'s death!");
                     }
-                    else Coroutines.Start(Utils.FlashCoroutine(Color.green));
+                    else Coroutines.Start(Utils.FlashCoroutine(Color.red));
                 }
                 if (interact[0] == true)
                 {

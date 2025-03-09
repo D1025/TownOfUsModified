@@ -300,6 +300,8 @@ namespace TownOfUs
         public static float EscapeCd => Generate.EscapeCooldown.Get();
         public static bool EscapistVent => Generate.EscapistVent.Get();
         public static bool ImitatorCanBecomeMayor => Generate.ImitatorCanBecomeMayor.Get();
+
+        public static bool ImitateAllCrewmates => Generate.ImitateAllCrewmates.Get();
         public static float DetonateDelay => Generate.DetonateDelay.Get();
         public static int MaxKillsInDetonation => (int) Generate.MaxKillsInDetonation.Get();
         public static float DetonateRadius => Generate.DetonateRadius.Get();
@@ -338,6 +340,8 @@ namespace TownOfUs
         public static float AuraOuterRadius => (float)Generate.AuraOuterRadius.Get();
         public static float SenseDuration => (float)Generate.SenseDuration.Get();
         public static AdminDeadPlayers WhoSeesDead => (AdminDeadPlayers)Generate.WhoSeesDead.Get();
+        public static bool SpyAdminAnywhere => Generate.SpyAdminAnywhere.Get();
+        public static float SpyAdminTableCd => (float)Generate.SpyAdminTableCd.Get();
         public static bool VentImprovements => Generate.VentImprovements.Get();
         public static bool VitalsLab => Generate.VitalsLab.Get();
         public static bool ColdTempDeathValley => Generate.ColdTempDeathValley.Get();

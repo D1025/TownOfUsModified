@@ -44,6 +44,8 @@ namespace TownOfUs
         private static Sprite Watch => TownOfUs.WatchSprite;
         private static Sprite Camp => TownOfUs.CampSprite;
 
+        private static Sprite Spy => TownOfUs.SpySprite;
+
         private static Sprite Kill;
 
 
@@ -172,6 +174,11 @@ namespace TownOfUs
             else if (PlayerControl.LocalPlayer.Is(RoleEnum.Deputy))
             {
                 __instance.KillButton.graphic.sprite = Camp;
+                flag = true;
+            }
+            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Spy))
+            {
+                __instance.KillButton.graphic.sprite = Spy;
                 flag = true;
             }
             else

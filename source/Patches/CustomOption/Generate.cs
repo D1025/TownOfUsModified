@@ -213,6 +213,7 @@ namespace TownOfUs.CustomOption
         public static CustomHeaderOption Spy;
         public static CustomStringOption WhoSeesDead;
         public static CustomToggleOption SpyAdminAnywhere;
+        public static CustomNumberOption SpyAdminTableCd;
 
         public static CustomHeaderOption Swapper;
         public static CustomToggleOption SwapperButton;
@@ -413,6 +414,7 @@ namespace TownOfUs.CustomOption
 
         public static CustomHeaderOption Imitator;
         public static CustomToggleOption ImitatorCanBecomeMayor;
+        public static CustomToggleOption ImitateAllCrewmates;
 
         public static CustomHeaderOption Escapist;
         public static CustomNumberOption EscapeCooldown;
@@ -976,6 +978,7 @@ namespace TownOfUs.CustomOption
             WhoSeesDead = new CustomStringOption(num++, MultiMenu.crewmate, "Who Sees Dead Bodies On Admin",
                 new[] { "Nobody", "Spy", "Everyone But Spy", "Everyone" });
             SpyAdminAnywhere = new CustomToggleOption(num++, MultiMenu.crewmate, "Spy Can Access Admin Map From Anywhere", true);
+            SpyAdminTableCd = new CustomNumberOption(num++, MultiMenu.crewmate, "Track Cooldown", 10f, 2.5f, 30f, 2.5f, CooldownFormat);
 
             Tracker =
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#009900FF>Tracker</color>");
@@ -1086,6 +1089,8 @@ namespace TownOfUs.CustomOption
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#B3D94DFF>Imitator</color>");
             ImitatorCanBecomeMayor =
                 new CustomToggleOption(num++, MultiMenu.crewmate, "Imitator Can Become Mayor", true);
+            ImitateAllCrewmates =
+                new CustomToggleOption(num++, MultiMenu.crewmate, "Imitator Can Imitate All Crewmates", false);
 
             Medium =
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#A680FFFF>Medium</color>");
@@ -1124,7 +1129,7 @@ namespace TownOfUs.CustomOption
 
             Amnesiac = new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#80B2FFFF>Amnesiac</color>");
             RememberArrows =
-                new CustomToggleOption(num++, MultiMenu.neutral, "Amnesiac Gets Arrows Pointing To Dead Bodies", false);
+                new CustomToggleOption(num++, MultiMenu.neutral, "Amnesiac Gets Arrows Pointing To Dead Bodies", true);
             RememberArrowDelay =
                 new CustomNumberOption(num++, MultiMenu.neutral, "Time After Death Arrow Appears", 3f, 0f, 15f, 1f, CooldownFormat);
 
@@ -1275,7 +1280,7 @@ namespace TownOfUs.CustomOption
             Vulture = new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Vulture</color>");
             VultureKillCooldown = new CustomNumberOption(num++, MultiMenu.neutral, "Vulture Eat Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
             VultureRememberArrows =
-                new CustomToggleOption(num++, MultiMenu.neutral, "Vulture Gets Arrows Pointing To Dead Bodies", false);
+                new CustomToggleOption(num++, MultiMenu.neutral, "Vulture Gets Arrows Pointing To Dead Bodies", true);
             VultureRememberArrowDelay =
                 new CustomNumberOption(num++, MultiMenu.neutral, "Time After Death Arrow Appears", 3f, 0f, 15f, 1f, CooldownFormat);
             VultureEatCount = new CustomNumberOption(num++, MultiMenu.neutral, "Eat Count Need To Vicotory", 3, 1, 15, 1);

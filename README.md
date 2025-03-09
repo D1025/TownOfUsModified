@@ -1,35 +1,32 @@
 ## *Note: This repository is an unofficial continuation of Town of Us due to the original repository being discontinued.*
 
 ![LOGO](./Images/TOU-logo.png)
-![Roles](./Images/Roles.png)
 
 An Among Us mod that adds a bunch of roles, modifiers and game settings
 
-Join our [Discord](https://discord.gg/ugyc4EVUYZ) if you have any problems or want to find people to play with!
 
 | **Impostor Roles**           | **Crewmate Roles**                | **Neutral Roles**                | **Modifiers**                |
 |:----------------------------:|:---------------------------------:|:--------------------------------:|:----------------------------:|
 | [Blackmailer](#blackmailer)  | [Altruist](#altruist)             | [Amnesiac](#amnesiac)            | [Aftermath](#aftermath)      |
-| [Bomber](#bomber)            | [Aurial](#aurial)                 | [Arsonist](#arsonist)            | [Bait](#bait)                |
-| [Escapist](#escapist)        | [Deputy](#deputy)                 | [Doomsayer](#doomsayer)          | [Button Barry](#button-barry)|
-| [Grenadier](#grenadier)      | [Detective](#detective)           | [Executioner](#executioner)      | [Diseased](#diseased)        |
-| [Hypnotist](#hypnotist)      | [Engineer](#engineer)             | [Guardian Angel](#guardian-angel)| [Disperser](#disperser)      |
-| [Janitor](#janitor)          | [Haunter](#haunter)               | [Jester](#jester)                | [Double Shot](#double-shot)  |
-| [Miner](#miner)              | [Hunter](#hunter)                 | [Juggernaut](#juggernaut)        | [Flash](#flash)              |
-| [Morphling](#morphling)      | [Imitator](#imitator)             | [Phantom](#phantom)              | [Frosty](#frosty)            |
-| [Scavenger](#scavenger)      | [Investigator](#investigator)     | [Plaguebearer](#plaguebearer)    | [Giant](#giant)              |
-| [Swooper](#swooper)          | [Jailor](#jailor)                 | [Soul Collector](#soul-collector)| [Lovers](#lovers)            |
-| [Traitor](#traitor)          | [Lookout](#lookout)               | [Survivor](#survivor)            | [Mini](#mini)                |
-| [Undertaker](#undertaker)    | [Medic](#medic)                   | [The Glitch](#the-glitch)        | [Multitasker](#multitasker)  |
-| [Venerer](#venerer)          | [Medium](#medium)                 | [Vampire](#vampire)              | [Radar](#radar)              |
-| [Warlock](#warlock)          | [Mystic](#mystic)                 | [Werewolf](#werewolf)            | [Saboteur](#saboteur)        |
-|                              | [Oracle](#oracle)                 |                                  | [Shy](#shy)                  |
-|                              | [Politician](#politician)         |                                  | [Sixth Sense](#sixth-sense)  |
-|                              | [Prosecutor](#prosecutor)         |                                  | [Sleuth](#sleuth)            |
-|                              | [Seer](#seer)                     |                                  | [Tiebreaker](#tiebreaker)    |
-|                              | [Sheriff](#sheriff)               |                                  | [Torch](#torch)              |
-|                              | [Snitch](#snitch)                 |                                  | [Underdog](#underdog)        |
-|                              | [Spy](#spy)                       |                                  |                              |
+| [Bomber](#bomber)            | [Deputy](#deputy)                 | [Arsonist](#arsonist)            | [Bait](#bait)                |
+| [Escapist](#escapist)        | [Detective](#detective)           | [Doomsayer](#doomsayer)          | [Button Barry](#button-barry)|
+| [Grenadier](#grenadier)      | [Engineer](#engineer)             | [Executioner](#executioner)      | [Diseased](#diseased)        |
+| [Hypnotist](#hypnotist)      | [Haunter](#haunter)               | [Guardian Angel](#guardian-angel)| [Disperser](#disperser)      |
+| [Janitor](#janitor)          | [Hunter](#hunter)                 | [Jester](#jester)                | [Double Shot](#double-shot)  |
+| [Miner](#miner)              | [Imitator](#imitator)             | [Juggernaut](#juggernaut)        | [Flash](#flash)              |
+| [Morphling](#morphling)      | [Investigator](#investigator)     | [Phantom](#phantom)              | [Frosty](#frosty)            |
+| [Scavenger](#scavenger)      | [Jailor](#jailor)                 | [Plaguebearer](#plaguebearer)    | [Giant](#giant)              |
+| [Swooper](#swooper)          | [Lookout](#lookout)               | [Soul Collector](#soul-collector)| [Lovers](#lovers)            |
+| [Traitor](#traitor)          | [Medic](#medic)                   | [Survivor](#survivor)            | [Mini](#mini)                |
+| [Undertaker](#undertaker)    | [Medium](#medium)                 | [The Glitch](#the-glitch)        | [Multitasker](#multitasker)  |
+| [Venerer](#venerer)          | [Mystic](#mystic)                 | [Vampire](#vampire)              | [Radar](#radar)              |
+| [Warlock](#warlock)          | [Oracle](#oracle)                 | [Werewolf](#werewolf)            | [Saboteur](#saboteur)        |
+|                              | [Politician](#politician)         | [Vulture](#vulture)              | [Shy](#shy)                  |
+|                              | [Prosecutor](#prosecutor)         |                                  | [Sixth Sense](#sixth-sense)  |
+|                              | [Seer](#seer)                     |                                  | [Sleuth](#sleuth)            |
+|                              | [Sheriff](#sheriff)               |                                  | [Tiebreaker](#tiebreaker)    |
+|                              | [Snitch](#snitch)                 |                                  | [Torch](#torch)              |
+|                              | [Spy](#spy)                       |                                  | [Underdog](#underdog)        |
 |                              | [Swapper](#swapper)               |                                  |                              |
 |                              | [Tracker](#tracker)               |                                  |                              |
 |                              | [Trapper](#trapper)               |                                  |                              |
@@ -37,75 +34,8 @@ Join our [Discord](https://discord.gg/ugyc4EVUYZ) if you have any problems or wa
 |                              | [Veteran](#veteran)               |                                  |                              |
 |                              | [Vigilante](#vigilante)           |                                  |                              |
 |                              | [Warden](#warden)                 |                                  |                              |
+|                              |                                   |                                  |                              |
 -----------------------
-# Releases
-| Among Us - Version| Mod Version | Link |
-|----------|-------------|-----------------|
-| 2024.10.29s & 2024.10.29e | v5.2.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.2.1/ToU.v5.2.1.zip) |
-| 2024.10.29s & 2024.10.29e | v5.2.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.2.0/ToU.v5.2.0.zip) |
-| 2024.10.29s & 2024.10.29e | v5.1.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.1.2/ToU.v5.1.2.zip) |
-| 2024.9.4s & 2024.9.4e | v5.1.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.1.1/ToU.v5.1.1.zip) |
-| 2024.9.4s & 2024.9.4e | v5.1.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.1.0/ToU.v5.1.0.zip) |
-| 2024.3.5s & 2024.3.5e | v5.0.4 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.0.4/ToU.v5.0.4.zip) |
-| 2023.11.28s & 2023.11.28e | v5.0.3 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.0.3/ToU.v5.0.3.zip) |
-| 2023.7.12s & 2023.7.12e | v5.0.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.0.2/ToU.v5.0.2.zip) |
-| 2023.6.13s & 2023.6.13e | v5.0.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.0.1/ToU.v5.0.1.zip) |
-| 2023.6.13s & 2023.6.13e | v5.0.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v5.0.0/ToU.v5.0.0.zip) |
-| 2023.3.28s & 2023.3.28e | v4.0.6 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.6/ToU.v4.0.6.zip) |
-| 2023.3.28s & 2023.3.28e | v4.0.5 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.5/ToU.v4.0.5.zip) |
-| 2023.3.28s & 2023.3.28e | v4.0.4 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.4/ToU.v4.0.4.zip) |
-| 2023.2.28s & 2023.2.28e | v4.0.3 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.3/ToU.v4.0.3.zip) |
-| 2022.12.14s & 2022.12.14e | v4.0.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.2/ToU.v4.0.2.zip) |
-| 2022.12.14s & 2022.12.14e | v4.0.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.1/ToU.v4.0.1.zip) |
-| 2022.12.14s & 2022.12.14e | v4.0.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v4.0.0/ToU.v4.0.0.zip) |
-| 2022.10.25s & 2022.10.25e | v3.4.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.4.0/ToU.v3.4.0.zip) |
-| 2022.8.24s & 2022.8.24e & 2022.9.20s & 2022.9.20e | v3.3.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.3.2/ToU.v3.3.2.zip) |
-| 2022.8.24s & 2022.8.24e & 2022.9.20s & 2022.9.20e | v3.3.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.3.1/ToU.v3.3.1.zip) |
-| 2022.8.24s & 2022.8.24e & 2022.9.20s & 2022.9.20e | v3.3.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.3.0/ToU.v3.3.0.zip) |
-| 2022.6.21s & 2022.6.21e & 2022.7.12s & 2022.7.12e | v3.2.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.2.0/ToU.v3.2.0.zip) |
-| 2022.3.29s & 2022.3.29e & 2022.4.19e | v3.1.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.1.0/ToU.v3.1.0.zip) |
-| 2022.3.29s & 2022.3.29e & 2022.4.19e | v3.0.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.0.1/ToU.v3.0.1.zip) |
-| 2022.3.29s & 2022.3.29e & 2022.4.19e | v3.0.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v3.0.0/ToU.v3.0.0.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.5 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.5/ToU.v2.6.5.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.4 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.4/ToU.v2.6.4.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.6.4 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.4/ToU.v2.6.4-2021.6.30.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.3 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.3/ToU.v2.6.3.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.6.3 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.3/ToU.v2.6.3-2021.6.30.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.2/ToU.v2.6.2.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.6.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.2/ToU.v2.6.2-2021.6.30.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.1/ToU.v2.6.1.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.6.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.1/ToU.v2.6.1.Old.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.6.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.0/ToU.v2.6.0.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.6.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.6.0/ToU.v2.6.0.Old.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.5.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.5.1/ToU.v2.5.1.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.5.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.5.0/ToU.v2.5.0.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.5.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.5.0/ToU.v2.5.0.Old.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.4.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.4.2/ToU.v2.4.2.zip) |
-| 2021.12.15s & 2021.12.15e Until 2022.2.24s & 2022.2.24e | v2.4.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.4.1/ToU.v2.4.1.zip) |
-| 2021.11.9.5s & 2021.11.9.5e | v2.4.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.4.0/ToU.v2.4.0.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.3.4 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.3.4/ToU.v2.3.4.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.3.3 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.3.3/ToU.v2.3.3.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.3.2 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.3.2/ToU.v2.3.2.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.3.1 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.3.1/ToU.v2.3.1.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.3.0 | [Download](https://github.com/eDonnes124/Town-Of-Us/releases/download/v2.3.0/ToU.v2.3.0.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.2.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.2.1/TOU_221.zip) |
-| 2021.6.30s & 2021.6.30e & 2021.7.20e | v2.2.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.2.0/TOU_220.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.4 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.4/TOU_214.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.3/TownOfUs213_1.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.2/TownOfUs212_1.zip) |
-| 2021.6.15s & 2021.6.15e | v2.1.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.1.1/TownOfUs211_1.zip) |
-| 2021.5.10s | v2.0.4 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.4/TownOfUs-v2.0.4.zip) |
-| 2021.5.10s | v2.0.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.3/TownOfUs-v2.0.3.zip) |
-| 2021.4.12s & 2021.4.14s | v2.0.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.2/TownOfUs-v2.0.2.zip) |
-| 2021.4.12s | v2.0.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.1/TownOfUs-v2.0.1.zip) |
-| 2021.3.31.3s | v2.0.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v2.0.0/TownOfUs-v2.0.0.zip) |
-| 2021.3.5s | v1.2.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.2.0/TownOfUs-v1.2.0.zip) |
-| 2021.3.5s | v1.1.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.1.0/TownOfUs-v1.1.0-2021.3.5s.zip) |
-| 2020.12.19s | v1.1.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.1.0/TownOfUs-v1.1.0-2020.12.9s.zip) |
-| 2020.12.19s | v1.0.3 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.3/TownOfUs-v1.0.3.zip) |
-| 2020.12.19s | v1.0.2 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.2/TownOfUs-v1.0.2.zip) |
-| 2020.12.19s | v1.0.1 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.1/TownOfUs-v1.0.1.zip) |
-| 2020.12.19s | v1.0.0 | [Download](https://github.com/polusgg/Town-Of-Us/releases/download/v1.0.0/TownOfUs-v1.0.0.zip) |
 
 <details>
   <summary> Changelog </summary>
@@ -865,25 +795,15 @@ If you have issues installing Town of Us, you can join our [Discord](https://dis
 -----------------------
 # Roles
 # Crewmate Roles
-## Aurial
-### **Team: Crewmates**
-The Aurial is a Crewmate that can sense things in their surrounding Aura.\
-If any player near the Aurial uses a button ability, the Aurial will get an arrow pointing towards where that ability was used.
-### Game Options
-| Name | Description | Type | Default |
-|----------|:-------------:|:------:|:------:|
-| Aurial | The percentage probability of the Aurial appearing | Percentage | 0% |
-| Radiate Colour Range | The range of the Aurial's aura where they see the colour of the ability user | Multiplier | 0.5x |
-| Radiate Max Range | The max range of the Aurial's aura where they see ability uses | Multiplier | 1.5x |
-| Sense Duration | The duration of the arrow to show an ability use | Time | 10s |
 
 -----------------------
 ## Detective
 ### **Team: Crewmates**
-The Detective is a Crewmate that can inspect crime scenes and then examine players.\
-The Detective must first find a crime scene and inspect it.\
-During the same or following rounds the Detective can then examine players to see if they were the killer.\
-If the examined player is the killer or were near the crime scene at any point, they will receive a red flash, else the flash will be green.
+Detective jest crewmatem który może sprawdzać miejsca śmierci oraz graczy.\
+W pierwszej kolejności Detective musi znaleźć miejsce śmierci i użyć umiejętności na nim\
+Potem Detective może sprawdzać graczy aby określić czy byli na miejscu zdarzenia\
+Uwaga! Nawet podczas nowej rundy jak ktoś podszedł do miejsca zdarzenia gdy już nie ma ciała będzie pokazywało, że był w pobliżu.\
+Jeżeli gracz był w pobliżu ekran zaświeci się na zielono, oraz otrzymamy odpowiedni komunikat na czacie podczas najbliższego spotkania, jeśli nie było go, to na czerwono.
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
@@ -911,8 +831,7 @@ However, if the Haunter is clicked they lose their ability to reveal Impostors a
 -----------------------
 ## Investigator
 ### **Team: Crewmates**
-The Investigator is a Crewmate that can see the footprints of players.\
-Every footprint disappears after a set amount of time.
+Investigator widzi ślady stóp graczy które zanikają po określonym czasie. Dodatkowo wyczuwa w pobliżu użycie umiejętności innych, dostając na chwilę strzałkę
 
 ### Game Options
 | Name | Description | Type | Default |
@@ -923,6 +842,9 @@ Every footprint disappears after a set amount of time.
 | Footprint Duration | The amount of time that the footprint stays on the ground for | Time | 10s |
 | Anonymous Footprint | When enabled, all footprints are grey instead of the player's colors | Toggle | False |
 | Footprint Vent Visible | Whether footprints near vents are shown | Toggle | False |
+| Radiate Colour Range | The range of the Aurial's aura where they see the colour of the ability user | Multiplier | 0.5x |
+| Radiate Max Range | The max range of the Aurial's aura where they see ability uses | Multiplier | 1.5x |
+| Sense Duration | The duration of the arrow to show an ability use | Time | 2s |
 
 -----------------------
 ## Lookout
@@ -947,7 +869,7 @@ On top of this, the Mystic briefly gets an arrow pointing in the direction of th
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Mystic | The percentage probability of the Mystic appearing | Percentage | 0% |
-| Arrow Duration | The duration of the arrows pointing to the bodies | Time | 0.1s |
+| Arrow Duration | The duration of the arrows pointing to the bodies | Time | 1.5s |
 
 -----------------------
 ## Oracle
@@ -1010,6 +932,8 @@ On Admin Table, the Spy can see the colors of every person on the map.
 |----------|:-------------:|:------:|:------:|
 | Spy | The percentage probability of the Spy appearing | Percentage | 0% |
 | Who Sees Dead Bodies On Admin | Which players see dead bodies on the admin map | Nobody / Spy / Everyone But Spy / Everyone | Nobody |
+| Spy Can Use Admin Panel Everywhere On Map | | Toggle | True |
+| Spy Use Admin Everywhere On Map Cooldown | | Time | 10s |
 
 -----------------------
 ## Tracker
@@ -1250,6 +1174,7 @@ They can choose to use each dead players as many times as they wish.
 |----------|:-------------:|:------:|:------:|
 | Imitator | The percentage probability of the Imitator appearing | Percentage | 0% |
 | Imitator Can Become Mayor | Whether the Imitator can permanently become the Mayor | Toggle | True |
+| Imitator Can Imitate All Crewmates | | Toggle | False |
 
 -----------------------
 ## Medium
@@ -1374,20 +1299,21 @@ However, if Lovers, or a Neutral Evil role wins the game, the survivor loses.
 -----------------------
 ## Doomsayer
 ### **Team: Neutral**
-The Doomsayer is a Neutral role with its own win condition.\
-Their goal is to assassinate 3 players to win.\
-If there are only 2 other people alive, the Doomsayer only needs to assassinate the remainder of the players.\
-They have an additional observe ability that hints towards certain player's roles.
+Doomsayer jest neutralną rolą która musi zabijać na spotkaniu poprzez zgadywanie ról.\
+Wygrywa po trafieniu określonej ilości osób przez ustawienia.\
+Dodatkowo może obserwować graczy podczas gry, co daje mu informacje na czacie o 5 potencjalnych rolach które dana osoba może posiadać.
 ### Game Options
 | Name | Description | Type | Default |
 |----------|:-------------:|:------:|:------:|
 | Doomsayer | The percentage probability of the Doomsayer appearing | Percentage | 0% |
-| Observe Cooldown | The Cooldown of the Doomsayer's Observe button | Time | 25s |
+| Observe Cooldown | The Cooldown of the Doomsayer's Observe button | Time | 45s |
 | Doomsayer Guess Neutral Benign  | Whether the Doomsayer can Guess Neutral Benign roles | Toggle | False |
 | Doomsayer Guess Neutral Evil  | Whether the Doomsayer can Guess Neutral Evil roles | Toggle | False |
 | Doomsayer Guess Neutral Killing  | Whether the Doomsayer can Guess Neutral Killing roles | Toggle | False |
 | Doomsayer Guess Impostors  | Whether the Doomsayer can Guess Impostor roles | Toggle | False |
 | (Experienced) Doomsayer Can't Observe | The Doomsayer doesn't have the observe feature | Toggle | False |
+| Doomsayer Kill Need ToVictory | | Number | 3 |
+| Doomsayer Observe Role Count | | Number | 5 |
 
 -----------------------
 ## Executioner
@@ -1445,6 +1371,18 @@ Their goal is to collect a certain number of souls to win.
 | Reap Cooldown | The Cooldown of the Soul Collector's Reap button | Time | 25s |
 | Passively Collect Soul Each Round | Whether the Soul Collector collects a soul after each meeting | Toggle | True |
 | Amount Of Souls Required To Win | The amount of souls the Soul Collector requires to win | Number | 5 |
+
+## Vulture
+### **Team: Neutral**
+Vulture jest klasą neutralną która musi zjeść (usunąć) odpowiednią ilość ciał aby wygrać.\
+Nie może zabijać, ale może otrzymać strzałkę w kierunku ciał.
+| Name | Description | Type | Default |
+|----------|:-------------:|:------:|:------:|
+| Vulture | The percentage probability of the Vulture appearing | Percentage | 0% |
+| Eat Cooldown | The Cooldown of the Vulture Eat button | Time | 25s |
+| Vulture Remember Arrows | Vulture Gets Arrows Pointing To Dead Bodies | Toggle | True |
+| Vulture Remember Arrow Delay | Time After Death Arrow Appears | Time | 3s |
+| Vulture Eat Count | Eat Count Need To Vicotory | Number | 3 |
 
 -----------------------
 ## Arsonist

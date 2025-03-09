@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using AmongUs.GameOptions;
 using HarmonyLib;
 using UnityEngine;
+using AmongUs.GameOptions;
 
 namespace TownOfUs.CrewmateRoles.SpyMod
 {
@@ -23,7 +23,7 @@ namespace TownOfUs.CrewmateRoles.SpyMod
             area.UpdateCount(colorMapping.Count);
             var icons = area.myIcons.ToArray();
             colorMapping.Sort();
-            for (var i = 0;i < colorMapping.Count;i++)
+            for (var i = 0; i < colorMapping.Count; i++)
             {
                 var icon = icons[i];
                 var sprite = icon.GetComponent<SpriteRenderer>();

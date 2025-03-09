@@ -21,8 +21,16 @@ namespace TownOfUs.CrewmateRoles.ImitatorMod
                     !player.Data.IsDead ||
                     player.Data.Disconnected
                 ) return true;
+
+            if (!CustomGameOptions.ImitateAllCrewmates &&
+                (player.Is(RoleEnum.Vigilante) || player.Is(RoleEnum.Prosecutor) || player.Is(RoleEnum.Crewmate)))
+            {
+                return true;
+            }
+
             return !player.Is(Faction.Crewmates);
         }
+
 
 
         public static void GenButton(Imitator role, PlayerVoteArea voteArea, bool replace = false)
