@@ -1,6 +1,10 @@
 ﻿using System;
+using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
+using TownOfUs.CrewmateRoles.InvestigatorMod;
 using TownOfUs.Roles;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace TownOfUs.Patches.CrewmateRoles.SpyMod
 {
@@ -17,12 +21,12 @@ namespace TownOfUs.Patches.CrewmateRoles.SpyMod
             if (!__instance.enabled) return false;
 
             role.LastCheckAdmin = DateTime.UtcNow;
-
-            var adminOverlay = UnityEngine.Object.FindObjectOfType<MapCountOverlay>();
-            if (adminOverlay != null)
+            if (!__instance.isActiveAndEnabled) return false;
+            DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
             {
-                adminOverlay.gameObject.SetActive(true);
-            }
+                Mode = MapOptions.Modes.CountOverlay
+            });
+            PlayerControl.LocalPlayer.NetTransform.Halt();
             return false;
         }
     }

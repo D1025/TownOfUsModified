@@ -28,6 +28,8 @@ namespace TownOfUs.Patches.CrewmateRoles.SpyMod
                 && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                 && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
             investigateButton.SetCoolDown(role.SpyTimer(), CustomGameOptions.SpyAdminTableCd);
+
+            investigateButton.SetEnabled();
         }
     }
 }

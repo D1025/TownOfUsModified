@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using TownOfUs.Extensions;
 
 namespace TownOfUs.Roles
 {
