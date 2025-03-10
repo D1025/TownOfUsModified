@@ -19,10 +19,7 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
             {
                 foreach (var observed in doomsayerRole.LastObservedPlayers)
                 {
-                    var playerResults = PlayerReportFeedback(observed);
                     var roleResults = RoleReportFeedback(observed);
-                    if (!string.IsNullOrWhiteSpace(playerResults))
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, playerResults);
                     if (!string.IsNullOrWhiteSpace(roleResults))
                         DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, roleResults);
                 }
