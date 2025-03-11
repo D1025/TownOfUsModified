@@ -247,6 +247,7 @@ namespace TownOfUs
         public static float TransportCooldown => Generate.TransportCooldown.Get();
         public static int TransportMaxUses => (int)Generate.TransportMaxUses.Get();
         public static bool TransporterVitals => Generate.TransporterVitals.Get();
+        public static bool SpyVitals => Generate.SpyVitals.Get();
         public static bool RememberArrows => Generate.RememberArrows.Get();
         public static float RememberArrowDelay => Generate.RememberArrowDelay.Get();
         public static float MediateCooldown => Generate.MediateCooldown.Get();

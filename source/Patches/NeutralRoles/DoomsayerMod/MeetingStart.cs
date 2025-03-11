@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TownOfUs.CrewmateRoles.ImitatorMod;
 using TownOfUs.Extensions;
 using TownOfUs.Roles;
@@ -21,49 +22,44 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
                 {
                     var roleResults = RoleReportFeedback(observed);
                     if (!string.IsNullOrWhiteSpace(roleResults))
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, roleResults);
+                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"You observe that {observed.GetDefaultOutfit().PlayerName} has characteristics related to {roleResults}");
                 }
                 doomsayerRole.LastObservedPlayers.Clear();
             }
-        }
-
-        public static string PlayerReportFeedback(PlayerControl player)
-        {
-            RoleEnum role = GetPlayerRole(player);
-            if (role == RoleEnum.Crewmate || role == RoleEnum.Impostor)
-                return $"You observe that {player.GetDefaultOutfit().PlayerName} appears to be roleless";
-            return $"You observe that {player.GetDefaultOutfit().PlayerName} has characteristics related to {role}";
         }
 
         public static string RoleReportFeedback(PlayerControl player)
         {
             RoleEnum actualRole = GetPlayerRole(player);
             if (actualRole == RoleEnum.None) return "Error";
+
             List<RoleEnum> activeRoles = new List<RoleEnum>();
             foreach (RoleEnum role in Enum.GetValues(typeof(RoleEnum)))
             {
-                if (role == RoleEnum.None) continue;
+                if (role == RoleEnum.None || role == actualRole) continue;
                 if (IsRoleActive(role))
                     activeRoles.Add(role);
             }
-            activeRoles.Remove(actualRole);
-            List<RoleEnum> randomRoles = new List<RoleEnum>();
+
             Random rnd = new Random();
-            int countToPick = Math.Min(CustomGameOptions.DoomsayerObserveRoleCount, activeRoles.Count);
+            List<RoleEnum> randomRoles = new List<RoleEnum> { actualRole };
+
+            int countToPick = Math.Min(CustomGameOptions.DoomsayerObserveRoleCount - 1, activeRoles.Count);
             for (int i = 0; i < countToPick; i++)
             {
                 int index = rnd.Next(activeRoles.Count);
                 randomRoles.Add(activeRoles[index]);
                 activeRoles.RemoveAt(index);
             }
+
             while (randomRoles.Count < CustomGameOptions.DoomsayerObserveRoleCount)
             {
                 randomRoles.Add(RoleEnum.Crewmate);
             }
-            string result = $"({actualRole}";
-            foreach (var r in randomRoles)
-                result += $", {r}";
-            result += ")";
+
+            randomRoles = randomRoles.OrderBy(x => rnd.Next()).ToList();
+
+            string result = $"({string.Join(", ", randomRoles)})";
             return result;
         }
 

@@ -214,6 +214,7 @@ namespace TownOfUs.CustomOption
         public static CustomStringOption WhoSeesDead;
         public static CustomToggleOption SpyAdminAnywhere;
         public static CustomNumberOption SpyAdminTableCd;
+        public static CustomToggleOption SpyVitals;
 
         public static CustomHeaderOption Swapper;
         public static CustomToggleOption SwapperButton;
@@ -979,6 +980,7 @@ namespace TownOfUs.CustomOption
                 new[] { "Nobody", "Spy", "Everyone But Spy", "Everyone" });
             SpyAdminAnywhere = new CustomToggleOption(num++, MultiMenu.crewmate, "Spy Can Access Admin Map From Anywhere", true);
             SpyAdminTableCd = new CustomNumberOption(num++, MultiMenu.crewmate, "Admin Table Button From Anywhere Cooldown", 10f, 2.5f, 30f, 2.5f, CooldownFormat);
+            SpyVitals = new CustomToggleOption(num++, MultiMenu.crewmate, "Spy Can Use Vitals", false);
 
             Tracker =
                 new CustomHeaderOption(num++, MultiMenu.crewmate, "<color=#009900FF>Tracker</color>");

@@ -131,6 +131,9 @@ namespace TownOfUs
             var crewRoles = new List<(Type, int, bool)>();
             var impRoles = new List<(Type, int, bool)>();
 
+            bool janitorSelected = false;
+            bool vultureSelected = false;
+
             // sort out bad lists
             var players = impostors.Count + crewmates.Count;
             List<RoleOptions> crewBuckets = [RoleOptions.CrewInvest, RoleOptions.CrewKilling, RoleOptions.CrewProtective, RoleOptions.CrewSupport, RoleOptions.CrewCommon, RoleOptions.CrewRandom];
@@ -259,9 +262,34 @@ namespace TownOfUs
                     }
                     break;
                 }
+                
+                // If Vulture is already selected, remove Janitor from possible choices
+                if (vultureSelected)
+                {
+                    ImpostorSupportRoles.RemoveAll(x => x.Item1 == typeof(Janitor));
+                    if (ImpostorSupportRoles.Count == 0)
+                    {
+                        while (buckets.Contains(RoleOptions.ImpSupport))
+                        {
+                            buckets.Remove(buckets.FindLast(x => x == RoleOptions.ImpSupport));
+                            buckets.Add(RoleOptions.ImpCommon);
+                        }
+                        break;
+                    }
+                }
+                
                 var addedRole = SelectRole(ImpostorSupportRoles);
                 impRoles.Add(addedRole);
                 ImpostorSupportRoles.Remove(addedRole);
+                
+                // Check if we just added a Janitor
+                if (addedRole.Item1 == typeof(Janitor))
+                {
+                    janitorSelected = true;
+                    // Remove Vulture from neutral evil roles if it hasn't been selected yet
+                    NeutralEvilRoles.RemoveAll(x => x.Item1 == typeof(Vulture));
+                }
+                
                 addedRole.Item2 -= 5;
                 if (addedRole.Item2 > 0 && !addedRole.Item3) ImpostorSupportRoles.Add(addedRole);
                 buckets.Remove(RoleOptions.ImpSupport);
@@ -470,9 +498,34 @@ namespace TownOfUs
                     }
                     break;
                 }
+                
+                // If Janitor is already selected, remove Vulture from possible choices
+                if (janitorSelected)
+                {
+                    NeutralEvilRoles.RemoveAll(x => x.Item1 == typeof(Vulture));
+                    if (NeutralEvilRoles.Count == 0)
+                    {
+                        while (buckets.Contains(RoleOptions.NeutEvil))
+                        {
+                            buckets.Remove(buckets.FindLast(x => x == RoleOptions.NeutEvil));
+                            buckets.Add(RoleOptions.NeutCommon);
+                        }
+                        break;
+                    }
+                }
+                
                 var addedRole = SelectRole(NeutralEvilRoles);
                 crewRoles.Add(addedRole);
                 NeutralEvilRoles.Remove(addedRole);
+                
+                // Check if we just added a Vulture
+                if (addedRole.Item1 == typeof(Vulture))
+                {
+                    vultureSelected = true;
+                    // Remove Janitor from impostor support roles if it hasn't been selected yet
+                    ImpostorSupportRoles.RemoveAll(x => x.Item1 == typeof(Janitor));
+                }
+                
                 addedRole.Item2 -= 5;
                 if (addedRole.Item2 > 0 && !addedRole.Item3) NeutralEvilRoles.Add(addedRole);
                 buckets.Remove(RoleOptions.NeutEvil);
@@ -634,7 +687,8 @@ namespace TownOfUs
                 if (canHaveModifier.Count == 0) break;
                 if (type.FullName.Contains("Lover"))
                 {
-                    if (canHaveModifier.Count == 1) continue;
+                    canHaveModifier = canHaveModifier.Where(player => !player.Is(RoleEnum.Jester)).ToList();
+                    if (canHaveModifier.Count <= 1) continue;
                     Lover.Gen(canHaveModifier);
                 }
                 else if (type.FullName.Contains("Sleuth") && CustomGameOptions.MysticSleuthAbility)

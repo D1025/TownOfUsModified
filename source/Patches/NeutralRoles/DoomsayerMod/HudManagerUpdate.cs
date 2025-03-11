@@ -1,5 +1,8 @@
 using HarmonyLib;
+using System.Linq;
+using TownOfUs.Extensions;
 using TownOfUs.Roles;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace TownOfUs.NeutralRoles.DoomsayerMod
 {
@@ -19,7 +22,23 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started && !CustomGameOptions.DoomsayerCantObserve);
 
             __instance.KillButton.SetCoolDown(role.ObserveTimer(), CustomGameOptions.ObserveCooldown);
-            Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton);
+
+            var notObserved = PlayerControl.AllPlayerControls
+                .ToArray()
+                .Where(x => !role.LastObservedPlayers.Contains(x))
+                .ToList();
+
+            Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton, float.NaN, notObserved);
+
+            if (!PlayerControl.LocalPlayer.IsHypnotised())
+            {
+                foreach (var player in PlayerControl.AllPlayerControls)
+                {
+                    if (!role.LastObservedPlayers.Contains(player)) continue;
+                    player.nameText().color = Patches.Colors.Doomsayer;
+                }
+
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
+using HarmonyLib;
 using System;
 using System.Linq;
-using HarmonyLib;
 using TownOfUs.CrewmateRoles.MedicMod;
+using TownOfUs.Roles;
 
 namespace TownOfUs.CrewmateRoles.DetectiveMod
 {
@@ -13,19 +14,14 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
             if (info == null) return;
             var matches = Murder.KilledPlayers.Where(x => x.PlayerId == info.PlayerId).ToArray();
             DeadPlayer killer = null;
-
             if (matches.Length > 0)
                 killer = matches[0];
-
             if (killer == null)
                 return;
-
             var isDetectiveAlive = __instance.Is(RoleEnum.Detective);
             var areReportsEnabled = CustomGameOptions.DetectiveReportOn;
-
             if (!isDetectiveAlive || !areReportsEnabled)
                 return;
-
             var isUserDetective = PlayerControl.LocalPlayer.Is(RoleEnum.Detective);
             if (!isUserDetective)
                 return;
@@ -34,16 +30,11 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                 Killer = Utils.PlayerById(killer.KillerId),
                 Reporter = __instance,
                 Body = Utils.PlayerById(killer.PlayerId),
-                KillAge = (float) (DateTime.UtcNow - killer.KillTime).TotalMilliseconds
+                KillAge = (float)(DateTime.UtcNow - killer.KillTime).TotalMilliseconds
             };
-
             var reportMsg = BodyReport.ParseBodyReport(br);
-
-            if (string.IsNullOrWhiteSpace(reportMsg))
-                return;
-
-            if (DestroyableSingleton<HudManager>.Instance)
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, reportMsg);
+            var detective = Role.GetRole<Detective>(PlayerControl.LocalPlayer);
+            detective.StoredReport = reportMsg;
         }
     }
 }

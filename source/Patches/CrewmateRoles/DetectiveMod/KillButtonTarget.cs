@@ -26,7 +26,6 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
             {
                 role.CurrentTarget.gameObject.GetComponent<SpriteRenderer>().material.SetFloat("_Outline", 0f);
             }
-
             if (target != null && target.DeadPlayer.PlayerId == DontRevive) target = null;
             role.CurrentTarget = target;
             if (role.CurrentTarget && __instance.enabled)
@@ -38,7 +37,6 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                 __instance.graphic.material.SetFloat("_Desat", 0f);
                 return;
             }
-
             __instance.graphic.color = Palette.DisabledClear;
             __instance.graphic.material.SetFloat("_Desat", 1f);
         }

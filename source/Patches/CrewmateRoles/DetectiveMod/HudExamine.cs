@@ -17,35 +17,26 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
             if (PlayerControl.LocalPlayer == null) return;
             if (PlayerControl.LocalPlayer.Data == null) return;
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Detective)) return;
-
             var role = Role.GetRole<Detective>(PlayerControl.LocalPlayer);
-
             if (role.ExamineButton == null)
             {
                 role.ExamineButton = Object.Instantiate(__instance.KillButton, __instance.KillButton.transform.parent);
                 role.ExamineButton.graphic.enabled = true;
                 role.ExamineButton.gameObject.SetActive(false);
             }
-
             role.ExamineButton.graphic.sprite = ExamineSprite;
             role.ExamineButton.transform.localPosition = new Vector3(-2f, 0f, 0f);
-
             if (PlayerControl.LocalPlayer.Data.IsDead) role.ExamineButton.SetTarget(null);
-
             __instance.KillButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
-
             role.ExamineButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
-
             role.ExamineButton.SetCoolDown(role.ExamineTimer(), CustomGameOptions.ExamineCd);
-
             if (role.InvestigatedPlayers.Count > 0)
             {
                 Utils.SetTarget(ref role.ClosestPlayer, role.ExamineButton, float.NaN);
-
                 var renderer = role.ExamineButton.graphic;
                 if (role.ClosestPlayer != null && role.InvestigatingScene != null)
                 {
@@ -58,7 +49,6 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                     renderer.material.SetFloat("_Desat", 1f);
                 }
             }
-
             var data = PlayerControl.LocalPlayer.Data;
             var isDead = data.IsDead;
             var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
@@ -68,7 +58,6 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                        PlayerControl.LocalPlayer.CanMove;
             var allocs = Physics2D.OverlapCircleAll(truePosition, maxDistance,
                 LayerMask.GetMask(new[] { "Players", "Ghost" }));
-
             var killButton = __instance.KillButton;
             CrimeScene closestScene = null;
             var closestDistance = float.MaxValue;
@@ -78,16 +67,12 @@ namespace TownOfUs.CrewmateRoles.DetectiveMod
                 var component = collider2D.GetComponent<CrimeScene>();
                 if (component == null) continue;
                 if (role.InvestigatingScene == component) continue;
-
-                if (!(Vector2.Distance(truePosition, component.gameObject.transform.position) <=
-                      maxDistance)) continue;
-
+                if (!(Vector2.Distance(truePosition, component.gameObject.transform.position) <= maxDistance)) continue;
                 var distance = Vector2.Distance(truePosition, component.gameObject.transform.position);
                 if (!(distance < closestDistance)) continue;
                 closestScene = component;
                 closestDistance = distance;
             }
-
             KillButtonTarget.SetTarget(killButton, closestScene, role);
             killButton.SetCoolDown(0f, 1f);
         }

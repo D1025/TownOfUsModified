@@ -14,7 +14,7 @@ namespace TownOfUs.Roles
         public CrimeScene InvestigatingScene;
         public List<byte> InvestigatedPlayers = new List<byte>();
         public List<GameObject> CrimeScenes = new List<GameObject>();
-
+        public string StoredReport = "";
         public Detective(PlayerControl player) : base(player)
         {
             Name = "Detective";
@@ -25,7 +25,6 @@ namespace TownOfUs.Roles
             RoleType = RoleEnum.Detective;
             AddToRoleHistory(RoleType);
         }
-
         public KillButton ExamineButton
         {
             get => _examineButton;
@@ -36,15 +35,14 @@ namespace TownOfUs.Roles
                 ExtraButtons.Add(value);
             }
         }
-
         public float ExamineTimer()
         {
             var utcNow = DateTime.UtcNow;
             var timeSpan = utcNow - LastExamined;
             var num = CustomGameOptions.ExamineCd * 1000f;
-            var flag2 = num - (float) timeSpan.TotalMilliseconds < 0f;
+            var flag2 = num - (float)timeSpan.TotalMilliseconds < 0f;
             if (flag2) return 0;
-            return (num - (float) timeSpan.TotalMilliseconds) / 1000f;
+            return (num - (float)timeSpan.TotalMilliseconds) / 1000f;
         }
     }
 }

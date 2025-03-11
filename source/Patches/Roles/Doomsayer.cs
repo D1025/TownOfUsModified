@@ -130,9 +130,12 @@ namespace TownOfUs.Roles
 
         internal override bool GameEnd(LogicGameFlowNormal __instance)
         {
-            if (Player.Data.IsDead) return true;
-            if (!WonByGuessing) return true;
-            Utils.EndGame();
+            if (Player.Data.IsDead || Player.Data.Disconnected) return true;
+            if (WonByGuessing)
+            {
+                Utils.EndGame();
+                return true;
+            }
             return false;
         }
     }
