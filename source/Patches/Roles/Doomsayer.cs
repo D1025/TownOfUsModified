@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using TownOfUs.Patches;
-using UnityEngine;
+using TownOfUs.Extensions;
 using TownOfUs.NeutralRoles.ExecutionerMod;
 using TownOfUs.NeutralRoles.GuardianAngelMod;
+using TownOfUs.Patches;
+using UnityEngine;
 
 namespace TownOfUs.Roles
 {
@@ -131,6 +132,10 @@ namespace TownOfUs.Roles
         internal override bool GameEnd(LogicGameFlowNormal __instance)
         {
             if (Player.Data.IsDead || Player.Data.Disconnected) return true;
+            if (PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected) <= 2 
+                && 
+                CustomGameOptions.DoomsayerKillNeedToVictory + PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected && x.Is(RoleEnum.Mayor)) - CorrectAssassinKills > 1) 
+                return true;
             if (WonByGuessing)
             {
                 Utils.EndGame();

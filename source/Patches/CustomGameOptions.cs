@@ -381,6 +381,7 @@ namespace TownOfUs
         public static RoleOptions Slot15 => (RoleOptions)Generate.Slot15.Get();
         public static bool CamoCommsKillAnyone => Generate.CamoCommsKillAnyone.Get();
         public static bool CrewKillersContinue => Generate.CrewKillersContinue.Get();
+        public static bool VultureJanitorInSameGame => Generate.VultureJanitorInSameGame.Get();
         public static float HunterKillCd => Generate.HunterKillCd.Get();
         public static float HunterStalkCd => Generate.HunterStalkCd.Get();
         public static float HunterStalkDuration => Generate.HunterStalkDuration.Get();

@@ -136,6 +136,7 @@ namespace TownOfUs.CustomOption
         public static CustomToggleOption FirstDeathShield;
         public static CustomToggleOption NeutralEvilWinEndsGame;
         public static CustomToggleOption CrewKillersContinue;
+        public static CustomToggleOption VultureJanitorInSameGame;
 
         public static CustomHeaderOption BetterPolusSettings;
         public static CustomToggleOption VentImprovements;
@@ -867,6 +868,7 @@ namespace TownOfUs.CustomOption
             FirstDeathShield = new CustomToggleOption(num++, MultiMenu.main, "First Death Shield Next Game", false);
             NeutralEvilWinEndsGame = new CustomToggleOption(num++, MultiMenu.main, "Neutral Evil Win Ends Game", true);
             CrewKillersContinue = new CustomToggleOption(num++, MultiMenu.main, "Crew Killers Continue Game", false);
+            VultureJanitorInSameGame = new CustomToggleOption(num++, MultiMenu.main, "Vulture and Janitor together in game", true);
 
             TaskTrackingSettings =
                 new CustomHeaderOption(num++, MultiMenu.main, "Task Tracking Settings");

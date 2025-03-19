@@ -29,16 +29,6 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
                 .ToList();
 
             Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton, float.NaN, notObserved);
-
-            if (!PlayerControl.LocalPlayer.IsHypnotised())
-            {
-                foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    if (!role.LastObservedPlayers.Contains(player)) continue;
-                    player.nameText().color = Patches.Colors.Doomsayer;
-                }
-
-            }
         }
     }
 }
