@@ -16,7 +16,7 @@ namespace TownOfUs.Roles
 
         public Wraith(PlayerControl player) : base(player)
         {
-            Name = "Noclip";
+            Name = "Wraith";
             ImpostorText = () => "Walk Through Walls and Kill Your Enemies";
             TaskText = () => "Use your power to surprise your enemies";
             Color = Patches.Colors.Impostor;

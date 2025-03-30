@@ -1291,6 +1291,7 @@ namespace TownOfUs.CustomOption
             Wraith = new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Wraith</color>");
             WraithCooldown = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
             WraithDuration = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Duration", 10f, 5f, 25f, 1f, CooldownFormat);
+            WraithVent = new CustomToggleOption(num++, MultiMenu.imposter, "Wraith Can Vent", false);
 
             Bomber =
                 new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>");

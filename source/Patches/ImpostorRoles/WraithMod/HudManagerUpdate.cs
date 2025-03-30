@@ -2,7 +2,7 @@
 using TownOfUs.Roles;
 using UnityEngine;
 
-namespace TownOfUs.Patches.ImpostorRoles.WraithMod
+namespace TownOfUs.ImpostorRoles.WraithMod
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManagerUpdate
@@ -26,6 +26,7 @@ namespace TownOfUs.Patches.ImpostorRoles.WraithMod
             role.NoclipButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
+
             if (role.Noclipped)
             {
                 role.NoclipButton.SetCoolDown(role.TimeRemaining, CustomGameOptions.WraithDuration);
