@@ -86,6 +86,11 @@ namespace TownOfUs
                         var ww = Role.GetRole<Werewolf>(PlayerControl.LocalPlayer);
                         if (ww.Rampaged) disableExtra = false;
                     }
+                    else if (PlayerControl.LocalPlayer.Is(RoleEnum.Wraith))
+                    {
+                        var wraith = Role.GetRole<Wraith>(PlayerControl.LocalPlayer);
+                        if (wraith.Noclipped) disableExtra = false;
+                    }
 
                     if (HudManager.Instance.KillButton != null && disableKill)
                     {

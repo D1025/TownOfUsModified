@@ -16,6 +16,8 @@ namespace TownOfUs.Roles
         public TextMeshPro UsesText;
 
         public List<RoleEnum> trappedPlayers;
+        public bool TrappedError = false;
+        public RoleEnum TrappedErrorRole = RoleEnum.None;
 
         public bool ButtonUsable => UsesLeft != 0;
         public Trapper(PlayerControl player) : base(player)

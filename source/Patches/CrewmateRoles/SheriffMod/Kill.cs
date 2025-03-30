@@ -26,11 +26,20 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             var distBetweenPlayers = Utils.GetDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers < GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (!flag3) return false;
-
             var flag4 = role.ClosestPlayer.Data.IsImpostor() ||
                         (role.ClosestPlayer.Is(Faction.NeutralEvil) && CustomGameOptions.SheriffKillsNE) ||
                         (role.ClosestPlayer.Is(Faction.NeutralKilling) && CustomGameOptions.SheriffKillsNK);
-
+            if (role.ClosestPlayer.Is(ModifierEnum.Error))
+            {
+                if (flag4)
+                {
+                    if (CustomGameOptions.SheriffKillOther)
+                    {
+                        Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                        return false;
+                    }
+                }
+            }
             var abilityUsed = Utils.AbilityUsed(PlayerControl.LocalPlayer);
             if (!abilityUsed) return false;
             if (role.ClosestPlayer.Is(RoleEnum.Pestilence))
@@ -40,7 +49,8 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             }
             if (role.ClosestPlayer.IsInfected() || role.Player.IsInfected())
             {
-                foreach (var pb in Role.GetRoles(RoleEnum.Plaguebearer)) ((Plaguebearer)pb).RpcSpreadInfection(role.ClosestPlayer, role.Player);
+                foreach (var pb in Role.GetRoles(RoleEnum.Plaguebearer))
+                    ((Plaguebearer)pb).RpcSpreadInfection(role.ClosestPlayer, role.Player);
             }
             if (role.ClosestPlayer.IsOnAlert())
             {
@@ -48,11 +58,8 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
                 {
                     var medic = role.ClosestPlayer.GetMedic().Player.PlayerId;
                     Utils.Rpc(CustomRPC.AttemptSound, medic, role.ClosestPlayer.PlayerId);
-
                     if (CustomGameOptions.ShieldBreaks) role.LastKilled = DateTime.UtcNow;
-
                     StopKill.BreakShield(medic, role.ClosestPlayer.PlayerId, CustomGameOptions.ShieldBreaks);
-
                     Utils.RpcMurderPlayer(role.ClosestPlayer, PlayerControl.LocalPlayer);
                 }
                 else if (role.Player.IsShielded())
@@ -73,7 +80,6 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
                         Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, role.ClosestPlayer);
                     }
                 }
-
                 return false;
             }
             else if (role.ClosestPlayer == ShowRoundOneShield.FirstRoundShielded) return false;
@@ -81,17 +87,13 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             {
                 var medic = role.ClosestPlayer.GetMedic().Player.PlayerId;
                 Utils.Rpc(CustomRPC.AttemptSound, medic, role.ClosestPlayer.PlayerId);
-
                 if (CustomGameOptions.ShieldBreaks) role.LastKilled = DateTime.UtcNow;
-
                 StopKill.BreakShield(medic, role.ClosestPlayer.PlayerId, CustomGameOptions.ShieldBreaks);
-
                 return false;
             }
             else if (role.ClosestPlayer.IsVesting())
             {
                 Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
-
                 return false;
             }
             else if (role.ClosestPlayer.IsProtected())
@@ -103,12 +105,18 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
                 role.LastKilled.AddSeconds(CustomGameOptions.ProtectKCReset);
                 return false;
             }
-
             if (!flag4)
             {
-                if (CustomGameOptions.SheriffKillOther)
+                if (role.ClosestPlayer.Is(ModifierEnum.Error))
+                {
                     Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, role.ClosestPlayer);
-                Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                }
+                else
+                {
+                    if (CustomGameOptions.SheriffKillOther)
+                        Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, role.ClosestPlayer);
+                    Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                }
                 role.LastKilled = DateTime.UtcNow;
             }
             else

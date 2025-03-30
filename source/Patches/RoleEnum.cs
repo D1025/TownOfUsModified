@@ -62,6 +62,7 @@ namespace TownOfUs
         Venerer,
         Hypnotist,
         Scavenger,
+        Wraith,
 
         Crewmate,
         Impostor,
@@ -90,7 +91,9 @@ namespace TownOfUs
         SixthSense,
         Shy,
         Mini,
-        Saboteur
+        Saboteur,
+        Drunk,
+        Error
     }
 
     public enum AbilityEnum

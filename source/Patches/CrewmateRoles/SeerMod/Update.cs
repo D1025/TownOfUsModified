@@ -79,7 +79,7 @@ namespace TownOfUs.CrewmateRoles.SeerMod
                                 (player.Is(Faction.NeutralEvil) && !CustomGameOptions.NeutEvilRed) ||
                                 (player.Is(Faction.NeutralKilling) && !CustomGameOptions.NeutKillingRed))
                             {
-                                colour = Color.green;
+                                    colour = Color.green;
                             }
                             else if (player.Is(RoleEnum.Traitor) && CustomGameOptions.TraitorColourSwap)
                             {
@@ -94,8 +94,22 @@ namespace TownOfUs.CrewmateRoles.SeerMod
                             }
 
                             if (player.Is(ModifierEnum.Shy)) colour.a = Modifier.GetModifier<Shy>(player).Opacity;
+                            if (player.Is(ModifierEnum.Error))
+                            {
+                                switch (colour)
+                                {
+                                    case Color c when c == Color.red:
+                                        colour = Color.green;
+                                        break;
+                                    case Color c when c == Color.green:
+                                        colour = Color.red;
+                                        break;
+                                    default:
+                                        colour = Color.red;
+                                        break;
+                                }
+                            }
                             player.nameText().color = colour;
-
                             break;
                     }
                 }

@@ -29,6 +29,7 @@ namespace TownOfUs.Roles
         public IEnumerator Sense(PlayerControl player)
         {
             if (!CheckRange(player, CustomGameOptions.AuraOuterRadius)) yield break;
+            if (player.Is(ModifierEnum.Error)) yield break;
             var position = player.GetTruePosition();
             var gameObj = new GameObject();
             var arrow = gameObj.AddComponent<ArrowBehaviour>();

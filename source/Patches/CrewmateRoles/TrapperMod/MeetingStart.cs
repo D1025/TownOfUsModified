@@ -26,6 +26,11 @@ namespace TownOfUs.CrewmateRoles.TrapperMod
                 string message = "Roles caught in your trap:\n";
                 foreach (RoleEnum role in trapperRole.trappedPlayers.OrderBy(x => Guid.NewGuid()))
                 {
+                    if (trapperRole.TrappedError && role == trapperRole.TrappedErrorRole)
+                    {
+                        message += $" Error,";
+                        continue;
+                    }
                     message += $" {role},";
                 }
                 message = message.Remove(message.Length - 1, 1);

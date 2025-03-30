@@ -107,6 +107,7 @@ namespace TownOfUs.Patches {
                     else if (role.Value == RoleEnum.SoulCollector) { playerRole += "<color=#" + Patches.Colors.SoulCollector.ToHtmlStringRGBA() + ">Soul Collector</color> > "; }
                     else if (role.Value == RoleEnum.Lookout) { playerRole += "<color=#" + Patches.Colors.Lookout.ToHtmlStringRGBA() + ">Lookout</color> > "; }
                     else if (role.Value == RoleEnum.Scavenger) { playerRole += "<color=#" + Patches.Colors.Impostor.ToHtmlStringRGBA() + ">Scavenger</color> > "; }
+                    else if (role.Value == RoleEnum.Wraith) { playerRole += "<color=#" + Patches.Colors.Impostor.ToHtmlStringRGBA() + ">Wraith</color> > "; }
                     else if (role.Value == RoleEnum.Deputy) { playerRole += "<color=#" + Patches.Colors.Deputy.ToHtmlStringRGBA() + ">Deputy</color> > "; }
                     else if (role.Value == RoleEnum.Vulture) { playerRole += "<color=#" + Patches.Colors.Vulture.ToHtmlStringRGBA() + ">Vulture</color> > "; }
                 }
@@ -132,6 +133,8 @@ namespace TownOfUs.Patches {
                 else if (playerControl.Is(ModifierEnum.Shy)) playerRole += " (<color=#" + Patches.Colors.Shy.ToHtmlStringRGBA() + ">Shy</color>)";
                 else if (playerControl.Is(ModifierEnum.Mini)) playerRole += " (<color=#" + Patches.Colors.Mini.ToHtmlStringRGBA() + ">Mini</color>)";
                 else if (playerControl.Is(ModifierEnum.Saboteur)) playerRole += " (<color=#" + Patches.Colors.Impostor.ToHtmlStringRGBA() + ">Saboteur</color>)";
+                else if (playerControl.Is(ModifierEnum.Drunk)) playerRole += " (<color=#" + Patches.Colors.Drunk.ToHtmlStringRGBA() + ">Drunk</color>)";
+                else if (playerControl.Is(ModifierEnum.Error)) playerRole += " (<color=#" + Patches.Colors.Error.ToHtmlStringRGBA() + ">Error</color>)";
 
                 var player = Role.GetRole(playerControl);
                 if (playerControl.Is(RoleEnum.Phantom) || playerControl.Is(Faction.Crewmates))

@@ -487,6 +487,12 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 swooperRole.LastSwooped = DateTime.UtcNow;
             }
 
+            else if (role == RoleEnum.Wraith)
+            {
+                var wraithRole = Role.GetRole<Wraith>(amnesiac);
+                wraithRole.LastNoclip = DateTime.UtcNow;
+            }
+
             else if (role == RoleEnum.Venerer)
             {
                 var venererRole = Role.GetRole<Venerer>(amnesiac);

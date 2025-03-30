@@ -45,13 +45,15 @@ namespace TownOfUs
 
             if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2) return false;
 
-            if (player.Is(RoleEnum.Morphling) && !CustomGameOptions.MorphlingVent
+            if ((player.Is(RoleEnum.Morphling) && !CustomGameOptions.MorphlingVent
                 || player.Is(RoleEnum.Swooper) && !CustomGameOptions.SwooperVent
                 || player.Is(RoleEnum.Grenadier) && !CustomGameOptions.GrenadierVent
                 || player.Is(RoleEnum.Undertaker) && !CustomGameOptions.UndertakerVent
                 || player.Is(RoleEnum.Escapist) && !CustomGameOptions.EscapistVent
                 || player.Is(RoleEnum.Bomber) && !CustomGameOptions.BomberVent
-                || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody))
+                || player.Is(RoleEnum.Wraith) && !CustomGameOptions.WraithVent
+                || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody)) 
+                && !player.Is(ModifierEnum.Error))
                 return false;
 
             if (player.Is(RoleEnum.Engineer) ||

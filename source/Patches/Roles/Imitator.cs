@@ -16,6 +16,8 @@ namespace TownOfUs.Roles
         public Dictionary<byte, List<RoleEnum>> watchedPlayers = null;
         public PlayerControl confessingPlayer = null;
         public PlayerControl jailedPlayer = null;
+        public bool TrappedError = false;
+        public RoleEnum TrappedErrorRole = RoleEnum.None;
 
 
         public Imitator(PlayerControl player) : base(player)

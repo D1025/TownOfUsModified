@@ -35,8 +35,10 @@ namespace TownOfUs.CrewmateRoles.SnitchMod
                         {
                             Coroutines.Start(Utils.FlashCoroutine(role.Color));
                         }
-                        else if ((PlayerControl.LocalPlayer.Data.IsImpostor() && (!PlayerControl.LocalPlayer.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor))
-                            || (PlayerControl.LocalPlayer.Is(Faction.NeutralKilling) && CustomGameOptions.SnitchSeesNeutrals))
+                        else if ((PlayerControl.LocalPlayer.Data.IsImpostor()
+                                  && !PlayerControl.LocalPlayer.Is(ModifierEnum.Error)
+                                  && (!PlayerControl.LocalPlayer.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor))
+                                 || (PlayerControl.LocalPlayer.Is(Faction.NeutralKilling) && CustomGameOptions.SnitchSeesNeutrals))
                         {
                             Coroutines.Start(Utils.FlashCoroutine(role.Color));
                             var gameObj = new GameObject();
@@ -56,10 +58,10 @@ namespace TownOfUs.CrewmateRoles.SnitchMod
                     if (PlayerControl.LocalPlayer.Is(RoleEnum.Snitch))
                     {
                         Coroutines.Start(Utils.FlashCoroutine(Color.green));
-                        var impostors = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Data.IsImpostor());
+                        var impostors = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Data.IsImpostor() || x.Is(ModifierEnum.Error));
                         foreach (var imp in impostors)
                         {
-                            if (!imp.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor)
+                            if ((!imp.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor) && !(imp.Is(ModifierEnum.Error) && imp.Data.IsImpostor()))
                             {
                                 var gameObj = new GameObject();
                                 var arrow = gameObj.AddComponent<ArrowBehaviour>();

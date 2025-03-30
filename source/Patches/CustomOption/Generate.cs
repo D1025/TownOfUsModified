@@ -7,80 +7,81 @@ namespace TownOfUs.CustomOption
     public class Generate
     {
         public static CustomHeaderOption CrewInvestigativeRoles;
-        public static CustomNumberOption DetectiveOn;
-        public static CustomNumberOption HaunterOn;
-        public static CustomNumberOption InvestigatorOn;
-        public static CustomNumberOption LookoutOn;
-        public static CustomNumberOption MysticOn;
-        public static CustomNumberOption OracleOn;
-        public static CustomNumberOption SeerOn;
-        public static CustomNumberOption SnitchOn;
-        public static CustomNumberOption SpyOn;
-        public static CustomNumberOption TrackerOn;
-        public static CustomNumberOption TrapperOn;
+        public static CustomToggleOption DetectiveOn;
+        public static CustomToggleOption HaunterOn;
+        public static CustomToggleOption InvestigatorOn;
+        public static CustomToggleOption LookoutOn;
+        public static CustomToggleOption MysticOn;
+        public static CustomToggleOption OracleOn;
+        public static CustomToggleOption SeerOn;
+        public static CustomToggleOption SnitchOn;
+        public static CustomToggleOption SpyOn;
+        public static CustomToggleOption TrackerOn;
+        public static CustomToggleOption TrapperOn;
 
         public static CustomHeaderOption CrewKillingRoles;
-        public static CustomNumberOption DeputyOn;
-        public static CustomNumberOption HunterOn;
-        public static CustomNumberOption JailorOn;
-        public static CustomNumberOption SheriffOn;
-        public static CustomNumberOption VeteranOn;
-        public static CustomNumberOption VigilanteOn;
+        public static CustomToggleOption DeputyOn;
+        public static CustomToggleOption HunterOn;
+        public static CustomToggleOption JailorOn;
+        public static CustomToggleOption SheriffOn;
+        public static CustomToggleOption VeteranOn;
+        public static CustomToggleOption VigilanteOn;
 
         public static CustomHeaderOption CrewProtectiveRoles;
-        public static CustomNumberOption AltruistOn;
-        public static CustomNumberOption MedicOn;
-        public static CustomNumberOption WardenOn;
+        public static CustomToggleOption AltruistOn;
+        public static CustomToggleOption MedicOn;
+        public static CustomToggleOption WardenOn;
 
         public static CustomHeaderOption CrewSupportRoles;
-        public static CustomNumberOption EngineerOn;
-        public static CustomNumberOption ImitatorOn;
-        public static CustomNumberOption MediumOn;
-        public static CustomNumberOption PoliticianOn;
-        public static CustomNumberOption ProsecutorOn;
-        public static CustomNumberOption SwapperOn;
-        public static CustomNumberOption TransporterOn;
+        public static CustomToggleOption EngineerOn;
+        public static CustomToggleOption ImitatorOn;
+        public static CustomToggleOption MediumOn;
+        public static CustomToggleOption PoliticianOn;
+        public static CustomToggleOption ProsecutorOn;
+        public static CustomToggleOption SwapperOn;
+        public static CustomToggleOption TransporterOn;
 
         public static CustomHeaderOption NeutralBenignRoles;
-        public static CustomNumberOption AmnesiacOn;
-        public static CustomNumberOption GuardianAngelOn;
-        public static CustomNumberOption SurvivorOn;
+        public static CustomToggleOption AmnesiacOn;
+        public static CustomToggleOption GuardianAngelOn;
+        public static CustomToggleOption SurvivorOn;
 
         public static CustomHeaderOption NeutralEvilRoles;
-        public static CustomNumberOption ExecutionerOn;
-        public static CustomNumberOption JesterOn;
-        public static CustomNumberOption PhantomOn;
-        public static CustomNumberOption SoulCollectorOn;
-        public static CustomNumberOption VultureOn;
+        public static CustomToggleOption ExecutionerOn;
+        public static CustomToggleOption JesterOn;
+        public static CustomToggleOption PhantomOn;
+        public static CustomToggleOption SoulCollectorOn;
+        public static CustomToggleOption VultureOn;
 
         public static CustomHeaderOption NeutralKillingRoles;
-        public static CustomNumberOption DoomsayerOn;
-        public static CustomNumberOption ArsonistOn;
-        public static CustomNumberOption JuggernautOn;
-        public static CustomNumberOption PlaguebearerOn;
-        public static CustomNumberOption GlitchOn;
-        public static CustomNumberOption VampireOn;
-        public static CustomNumberOption WerewolfOn;
+        public static CustomToggleOption DoomsayerOn;
+        public static CustomToggleOption ArsonistOn;
+        public static CustomToggleOption JuggernautOn;
+        public static CustomToggleOption PlaguebearerOn;
+        public static CustomToggleOption GlitchOn;
+        public static CustomToggleOption VampireOn;
+        public static CustomToggleOption WerewolfOn;
 
         public static CustomHeaderOption ImpostorConcealingRoles;
-        public static CustomNumberOption EscapistOn;
-        public static CustomNumberOption GrenadierOn;
-        public static CustomNumberOption MorphlingOn;
-        public static CustomNumberOption SwooperOn;
-        public static CustomNumberOption VenererOn;
+        public static CustomToggleOption EscapistOn;
+        public static CustomToggleOption GrenadierOn;
+        public static CustomToggleOption MorphlingOn;
+        public static CustomToggleOption SwooperOn;
+        public static CustomToggleOption VenererOn;
+        public static CustomToggleOption WraithOn;
 
         public static CustomHeaderOption ImpostorKillingRoles;
-        public static CustomNumberOption BomberOn;
-        public static CustomNumberOption ScavengerOn;
-        public static CustomNumberOption TraitorOn;
-        public static CustomNumberOption WarlockOn;
+        public static CustomToggleOption BomberOn;
+        public static CustomToggleOption ScavengerOn;
+        public static CustomToggleOption TraitorOn;
+        public static CustomToggleOption WarlockOn;
 
         public static CustomHeaderOption ImpostorSupportRoles;
-        public static CustomNumberOption BlackmailerOn;
-        public static CustomNumberOption HypnotistOn;
-        public static CustomNumberOption JanitorOn;
-        public static CustomNumberOption MinerOn;
-        public static CustomNumberOption UndertakerOn;
+        public static CustomToggleOption BlackmailerOn;
+        public static CustomToggleOption HypnotistOn;
+        public static CustomToggleOption JanitorOn;
+        public static CustomToggleOption MinerOn;
+        public static CustomToggleOption UndertakerOn;
 
         public static CustomHeaderOption CrewmateModifiers;
         public static CustomNumberOption AftermathOn;
@@ -101,6 +102,7 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption SixthSenseOn;
         public static CustomNumberOption SleuthOn;
         public static CustomNumberOption TiebreakerOn;
+        public static CustomNumberOption ErrorOn;
 
         public static CustomHeaderOption ImpostorModifiers;
         public static CustomNumberOption DisperserOn;
@@ -468,6 +470,11 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption SprintSpeed;
         public static CustomNumberOption FreezeSpeed;
 
+        public static CustomHeaderOption Wraith;
+        public static CustomNumberOption WraithCooldown;
+        public static CustomNumberOption WraithDuration;
+        public static CustomToggleOption WraithVent;
+
         public static CustomHeaderOption Politician;
         public static CustomNumberOption CampaignCooldown;
 
@@ -535,138 +542,83 @@ namespace TownOfUs.CustomOption
             var num = 0;
 
             CrewInvestigativeRoles = new CustomHeaderOption(num++, MultiMenu.crewmate, "Crewmate Investigative Roles");
-            DetectiveOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#4D4DFFFF>Detective</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            HaunterOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#D3D3D3FF>Haunter</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            InvestigatorOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#00B3B3FF>Investigator</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            LookoutOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#33FF66FF>Lookout</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            MysticOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#4D99E6FF>Mystic</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            OracleOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#BF00BFFF>Oracle</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SeerOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#FFCC80FF>Seer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SnitchOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#D4AF37FF>Snitch</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SpyOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#CCA3CCFF>Spy</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            TrackerOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#009900FF>Tracker</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            TrapperOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#A7D1B3FF>Trapper</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            DetectiveOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#4D4DFFFF>Detective</color>", false);
+            HaunterOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#D3D3D3FF>Haunter</color>", false);
+            InvestigatorOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#00B3B3FF>Investigator</color>", false);
+            LookoutOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#33FF66FF>Lookout</color>", false);
+            MysticOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#4D99E6FF>Mystic</color>", false);
+            OracleOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#BF00BFFF>Oracle</color>", false);
+            SeerOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#FFCC80FF>Seer</color>", false);
+            SnitchOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#D4AF37FF>Snitch</color>", false);
+            SpyOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#CCA3CCFF>Spy</color>", false);
+            TrackerOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#009900FF>Tracker</color>", false);
+            TrapperOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#A7D1B3FF>Trapper</color>", false);
 
             CrewKillingRoles = new CustomHeaderOption(num++, MultiMenu.crewmate, "Crewmate Killing Roles");
-            DeputyOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#FFCC00FF>Deputy</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            HunterOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#29AB87FF>Hunter</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            JailorOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#A6A6A6FF>Jailor</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SheriffOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#FFFF00FF>Sheriff</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            VeteranOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#998040FF>Veteran</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            VigilanteOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#FFFF99FF>Vigilante</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            DeputyOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#FFCC00FF>Deputy</color>", false);
+            HunterOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#29AB87FF>Hunter</color>", false);
+            JailorOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#A6A6A6FF>Jailor</color>", false);
+            SheriffOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#FFFF00FF>Sheriff</color>", false);
+            VeteranOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#998040FF>Veteran</color>", false);
+            VigilanteOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#FFFF99FF>Vigilante</color>", false);
 
             CrewProtectiveRoles = new CustomHeaderOption(num++, MultiMenu.crewmate, "Crewmate Protective Roles");
-            AltruistOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#660000FF>Altruist</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            MedicOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#006600FF>Medic</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            WardenOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#9900FFFF>Warden</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            AltruistOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#660000FF>Altruist</color>", false);
+            MedicOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#006600FF>Medic</color>", false);
+            WardenOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#9900FFFF>Warden</color>", false);
 
             CrewSupportRoles = new CustomHeaderOption(num++, MultiMenu.crewmate, "Crewmate Support Roles");
-            EngineerOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#FFA60AFF>Engineer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            ImitatorOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#B3D94DFF>Imitator</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            MediumOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#A680FFFF>Medium</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            PoliticianOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#660099FF>Politician</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            ProsecutorOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#B38000FF>Prosecutor</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SwapperOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#66E666FF>Swapper</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            TransporterOn = new CustomNumberOption(num++, MultiMenu.crewmate, "<color=#00EEFFFF>Transporter</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            EngineerOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#FFA60AFF>Engineer</color>", false);
+            ImitatorOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#B3D94DFF>Imitator</color>", false);
+            MediumOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#A680FFFF>Medium</color>", false);
+            PoliticianOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#660099FF>Politician</color>", false);
+            ProsecutorOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#B38000FF>Prosecutor</color>", false);
+            SwapperOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#66E666FF>Swapper</color>", false);
+            TransporterOn = new CustomToggleOption(num++, MultiMenu.crewmate, "<color=#00EEFFFF>Transporter</color>", false);
 
 
             NeutralBenignRoles = new CustomHeaderOption(num++, MultiMenu.neutral, "Neutral Benign Roles");
-            AmnesiacOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#80B2FFFF>Amnesiac</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            GuardianAngelOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#B3FFFFFF>Guardian Angel</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SurvivorOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#FFE64DFF>Survivor</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            AmnesiacOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#80B2FFFF>Amnesiac</color>", false);
+            GuardianAngelOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#B3FFFFFF>Guardian Angel</color>", false);
+            SurvivorOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FFE64DFF>Survivor</color>", false);
 
             NeutralEvilRoles = new CustomHeaderOption(num++, MultiMenu.neutral, "Neutral Evil Roles");
 
-            ExecutionerOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#8C4005FF>Executioner</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            JesterOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#FFBFCCFF>Jester</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            PhantomOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#662962FF>Phantom</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SoulCollectorOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#99FFCCFF>Soul Collector</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            VultureOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Vulture</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            ExecutionerOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#8C4005FF>Executioner</color>", false);
+            JesterOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FFBFCCFF>Jester</color>", false);
+            PhantomOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#662962FF>Phantom</color>", false);
+            SoulCollectorOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#99FFCCFF>Soul Collector</color>", false);
+            VultureOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Vulture</color>", false);
 
             NeutralKillingRoles = new CustomHeaderOption(num++, MultiMenu.neutral, "Neutral Killing Roles");
-            DoomsayerOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#00FF80FF>Doomsayer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            ArsonistOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Arsonist</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            JuggernautOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#8C004DFF>Juggernaut</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            PlaguebearerOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#E6FFB3FF>Plaguebearer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            GlitchOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#00FF00FF>The Glitch</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            VampireOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#262626FF>Vampire</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            WerewolfOn = new CustomNumberOption(num++, MultiMenu.neutral, "<color=#A86629FF>Werewolf</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            DoomsayerOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#00FF80FF>Doomsayer</color>", false);
+            ArsonistOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Arsonist</color>", false);
+            JuggernautOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#8C004DFF>Juggernaut</color>", false);
+            PlaguebearerOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#E6FFB3FF>Plaguebearer</color>", false);
+            GlitchOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#00FF00FF>The Glitch</color>", false);
+            VampireOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#262626FF>Vampire</color>", false);
+            WerewolfOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#A86629FF>Werewolf</color>", false);
 
             ImpostorConcealingRoles = new CustomHeaderOption(num++, MultiMenu.imposter, "Impostor Concealing Roles");
-            EscapistOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Escapist</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            GrenadierOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Grenadier</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            MorphlingOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Morphling</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            SwooperOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Swooper</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            VenererOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Venerer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            EscapistOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Escapist</color>", false);
+            GrenadierOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Grenadier</color>", false);
+            MorphlingOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Morphling</color>", false);
+            SwooperOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Swooper</color>", false);
+            VenererOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Venerer</color>", false);
+            WraithOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Wraith</color>", false);
 
             ImpostorKillingRoles = new CustomHeaderOption(num++, MultiMenu.imposter, "Impostor Killing Roles");
-            BomberOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            ScavengerOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Scavenger</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            TraitorOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Traitor</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            WarlockOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Warlock</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            BomberOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>", false);
+            ScavengerOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Scavenger</color>", false);
+            TraitorOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Traitor</color>", false);
+            WarlockOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Warlock</color>", false);
 
             ImpostorSupportRoles = new CustomHeaderOption(num++, MultiMenu.imposter, "Impostor Support Roles");
-            BlackmailerOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Blackmailer</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            HypnotistOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Hypnotist</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            JanitorOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Janitor</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            MinerOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Miner</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
-            UndertakerOn = new CustomNumberOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Undertaker</color>", 0f, 0f, 100f, 10f,
-                PercentFormat);
+            BlackmailerOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Blackmailer</color>", false);
+            HypnotistOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Hypnotist</color>", false);
+            JanitorOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Janitor</color>", false);
+            MinerOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Miner</color>", false);
+            UndertakerOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Undertaker</color>", false);
 
             CrewmateModifiers = new CustomHeaderOption(num++, MultiMenu.modifiers, "Crewmate Modifiers");
             AftermathOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#A6FFA6FF>Aftermath</color>", 0f, 0f, 100f, 10f,
@@ -702,6 +654,8 @@ namespace TownOfUs.CustomOption
             SleuthOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#803333FF>Sleuth</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
             TiebreakerOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#99E699FF>Tiebreaker</color>", 0f, 0f, 100f, 10f,
+                PercentFormat);
+            ErrorOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#FF0000FF>Error</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
 
             ImpostorModifiers = new CustomHeaderOption(num++, MultiMenu.modifiers, "Impostor Modifiers");
@@ -1333,6 +1287,10 @@ namespace TownOfUs.CustomOption
                 new CustomNumberOption(num++, MultiMenu.imposter, "Ability Duration", 10f, 5f, 15f, 1f, CooldownFormat);
             SprintSpeed = new CustomNumberOption(num++, MultiMenu.imposter, "Sprint Speed", 1.25f, 1.05f, 2.5f, 0.05f, MultiplierFormat);
             FreezeSpeed = new CustomNumberOption(num++, MultiMenu.imposter, "Freeze Speed", 0.75f, 0.25f, 1f, 0.05f, MultiplierFormat);
+
+            Wraith = new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Wraith</color>");
+            WraithCooldown = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
+            WraithDuration = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Duration", 10f, 5f, 25f, 1f, CooldownFormat);
 
             Bomber =
                 new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>");

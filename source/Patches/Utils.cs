@@ -27,6 +27,7 @@ using TownOfUs.NeutralRoles.SoulCollectorMod;
 using static TownOfUs.Roles.Glitch;
 using TownOfUs.Patches.NeutralRoles;
 using Il2CppSystem.Linq;
+using static Rewired.Utils.Classes.Utility.ObjectInstanceTracker;
 
 namespace TownOfUs
 {
@@ -1404,6 +1405,8 @@ namespace TownOfUs
                 var trapper = Role.GetRole<Trapper>(PlayerControl.LocalPlayer);
                 trapper.LastTrapped = DateTime.UtcNow;
                 trapper.trappedPlayers.Clear();
+                trapper.TrappedErrorRole = RoleEnum.None;
+                trapper.TrappedError = false;
                 if (CustomGameOptions.TrapsRemoveOnNewRound)
                 {
                     trapper.traps.ClearTraps();
@@ -1426,6 +1429,8 @@ namespace TownOfUs
             {
                 var imitator = (Imitator)role;
                 imitator.trappedPlayers = null;
+                imitator.TrappedError = false;
+                imitator.TrappedErrorRole = RoleEnum.None;
                 imitator.watchedPlayers = null;
                 imitator.confessingPlayer = null;
                 imitator.jailedPlayer = null;
@@ -1601,6 +1606,11 @@ namespace TownOfUs
             {
                 var swooper = Role.GetRole<Swooper>(PlayerControl.LocalPlayer);
                 swooper.LastSwooped = DateTime.UtcNow;
+            }
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Wraith))
+            {
+                var noclip = Role.GetRole<Wraith>(PlayerControl.LocalPlayer);
+                noclip.LastNoclip = DateTime.UtcNow;
             }
             if (PlayerControl.LocalPlayer.Is(RoleEnum.Venerer))
             {

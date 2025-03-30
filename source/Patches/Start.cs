@@ -169,6 +169,13 @@ namespace TownOfUs.Patches
                 swooper.LastSwooped = swooper.LastSwooped.AddSeconds(CustomGameOptions.InitialCooldowns - CustomGameOptions.SwoopCd);
             }
 
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Wraith))
+            {
+                var noclip = Role.GetRole<Wraith>(PlayerControl.LocalPlayer);
+                noclip.LastNoclip = DateTime.UtcNow;
+                noclip.LastNoclip = noclip.LastNoclip.AddSeconds(CustomGameOptions.InitialCooldowns - CustomGameOptions.WraithCd);
+            }
+
             if (PlayerControl.LocalPlayer.Is(RoleEnum.Venerer))
             {
                 var venerer = Role.GetRole<Venerer>(PlayerControl.LocalPlayer);

@@ -13,6 +13,7 @@ namespace TownOfUs.Patches.NeutralRoles.DoomsayerMod
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public static class ColorHudManagerUpdate
     {
+        [HarmonyPriority(Priority.Last)]
         public static void Postfix(HudManager __instance)
         {
             if (PlayerControl.AllPlayerControls.Count <= 1) return;
@@ -28,7 +29,6 @@ namespace TownOfUs.Patches.NeutralRoles.DoomsayerMod
                     if (!role.LastObservedPlayers.Contains(player)) continue;
                     player.nameText().color = Color.magenta;
                 }
-
             }
         }
     }
