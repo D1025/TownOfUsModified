@@ -73,10 +73,10 @@ namespace TownOfUs.Roles
 
             if (CustomGameOptions.VigilanteGuessModifiers)
             {
-                if (CustomGameOptions.DisperserOn > 0) ColorMapping.Add("Disperser", Colors.Impostor);
-                if (CustomGameOptions.DoubleShotOn > 0) ColorMapping.Add("Double Shot", Colors.Impostor);
-                if (CustomGameOptions.SaboteurOn > 0) ColorMapping.Add("Saboteur", Colors.Impostor);
-                if (CustomGameOptions.UnderdogOn > 0) ColorMapping.Add("Underdog", Colors.Impostor);
+                if (CustomGameOptions.DisperserOn) ColorMapping.Add("Disperser", Colors.Impostor);
+                if (CustomGameOptions.DoubleShotOn) ColorMapping.Add("Double Shot", Colors.Impostor);
+                if (CustomGameOptions.SaboteurOn) ColorMapping.Add("Saboteur", Colors.Impostor);
+                if (CustomGameOptions.UnderdogOn) ColorMapping.Add("Underdog", Colors.Impostor);
             }
 
             SortedColorMapping = ColorMapping.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
