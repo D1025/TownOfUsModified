@@ -27,14 +27,6 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
                         DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"You observe that {observed.GetDefaultOutfit().PlayerName} has characteristics related to {roleResults}");
                 }
                 doomsayerRole.LastObservedPlayers.Clear();
-                if (!PlayerControl.LocalPlayer.IsHypnotised())
-                {
-                    foreach (var player in PlayerControl.AllPlayerControls)
-                    {
-                        if (player.Is(RoleEnum.Doomsayer)) continue;
-                        player.nameText().color = Color.white;
-                    }
-                }
             }
         }
 

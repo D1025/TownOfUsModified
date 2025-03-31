@@ -18,34 +18,54 @@ namespace TownOfUs.CrewmateRoles.SeerMod
                 {
                     if (player.PlayerId != state.TargetPlayerId) continue;
                     var roleType = Utils.GetRole(player);
+                    Color colour;
                     switch (roleType)
                     {
                         default:
-                            if ((player.Is(Faction.Crewmates) && !(player.Is(RoleEnum.Sheriff) || player.Is(RoleEnum.Veteran) || player.Is(RoleEnum.Vigilante) || player.Is(RoleEnum.Hunter) || player.Is(RoleEnum.Jailor))) ||
-                            ((player.Is(RoleEnum.Sheriff) || player.Is(RoleEnum.Veteran) || player.Is(RoleEnum.Vigilante) || player.Is(RoleEnum.Hunter) || player.Is(RoleEnum.Jailor)) && !CustomGameOptions.CrewKillingRed) ||
-                            (player.Is(Faction.NeutralBenign) && !CustomGameOptions.NeutBenignRed) ||
-                            (player.Is(Faction.NeutralEvil) && !CustomGameOptions.NeutEvilRed) ||
-                            (player.Is(Faction.NeutralKilling) && !CustomGameOptions.NeutKillingRed))
+                            if ((player.Is(Faction.Crewmates) && !(player.Is(RoleEnum.Sheriff) || player.Is(RoleEnum.Veteran) ||
+                                player.Is(RoleEnum.Vigilante) || player.Is(RoleEnum.Hunter) || player.Is(RoleEnum.Jailor))) ||
+                                ((player.Is(RoleEnum.Sheriff) || player.Is(RoleEnum.Veteran) || player.Is(RoleEnum.Vigilante) ||
+                                player.Is(RoleEnum.Hunter) || player.Is(RoleEnum.Jailor)) && !CustomGameOptions.CrewKillingRed) ||
+                                (player.Is(Faction.NeutralBenign) && !CustomGameOptions.NeutBenignRed) ||
+                                (player.Is(Faction.NeutralEvil) && !CustomGameOptions.NeutEvilRed) ||
+                                (player.Is(Faction.NeutralKilling) && !CustomGameOptions.NeutKillingRed))
                             {
-                                state.NameText.color = Color.green;
+                                colour = Color.green;
                             }
                             else if (player.Is(RoleEnum.Traitor) && CustomGameOptions.TraitorColourSwap)
                             {
+                                colour = Color.red;
                                 foreach (var role in Role.GetRoles(RoleEnum.Traitor))
                                 {
                                     var traitor = (Traitor)role;
                                     if ((traitor.formerRole == RoleEnum.Sheriff || traitor.formerRole == RoleEnum.Vigilante ||
-                                        traitor.formerRole == RoleEnum.Veteran || traitor.formerRole == RoleEnum.Hunter ||
-                                        traitor.formerRole == RoleEnum.Jailor) && CustomGameOptions.CrewKillingRed) state.NameText.color = Color.red;
-                                    else state.NameText.color = Color.green;
+                                         traitor.formerRole == RoleEnum.Veteran || traitor.formerRole == RoleEnum.Hunter ||
+                                         traitor.formerRole == RoleEnum.Jailor) && CustomGameOptions.CrewKillingRed)
+                                    {
+                                        colour = Color.red;
+                                    }
+                                    else
+                                    {
+                                        colour = Color.green;
+                                    }
                                 }
                             }
                             else
                             {
-                                state.NameText.color = Color.red;
+                                colour = Color.red;
                             }
                             break;
                     }
+                    if (player.Is(ModifierEnum.Error))
+                    {
+                        if (colour == Color.red)
+                            colour = Color.green;
+                        else if (colour == Color.green)
+                            colour = Color.red;
+                        else
+                            colour = Color.red;
+                    }
+                    state.NameText.color = colour;
                 }
             }
         }

@@ -45,6 +45,9 @@ namespace TownOfUs
 
             if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2) return false;
 
+            if (CustomGameOptions.AllVent)
+                return true;
+
             if ((player.Is(RoleEnum.Morphling) && !CustomGameOptions.MorphlingVent
                 || player.Is(RoleEnum.Swooper) && !CustomGameOptions.SwooperVent
                 || player.Is(RoleEnum.Grenadier) && !CustomGameOptions.GrenadierVent

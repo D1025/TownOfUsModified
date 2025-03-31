@@ -13,14 +13,14 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             if (!__instance.AmOwner) return;
             if (!__instance.CanMove) return;
             if (!__instance.Is(RoleEnum.Sheriff)) return;
-            if (CustomGameOptions.SheriffBodyReport) return;
+            if (CustomGameOptions.SheriffBodyReport && !CustomGameOptions.SheriffBomberMode) return;
             var truePosition = __instance.GetTruePosition();
 
             var data = __instance.Data;
             var stuff = Physics2D.OverlapCircleAll(truePosition, __instance.MaxReportDistance, Constants.Usables);
             var flag = (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !data.IsDead) &&
                        (!AmongUsClient.Instance || !AmongUsClient.Instance.IsGameOver) && __instance.CanMove;
-            var flag2 = false;
+            var flag2 = CustomGameOptions.SheriffBomberMode;
 
             foreach (var collider2D in stuff)
                 if (flag && !data.IsDead && !flag2 && collider2D.tag == "DeadBody")
@@ -46,10 +46,11 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
         public static bool Prefix(PlayerControl __instance)
         {
             if (!__instance.Is(RoleEnum.Sheriff)) return true;
-            if (CustomGameOptions.SheriffBodyReport) return true;
+            if (CustomGameOptions.SheriffBodyReport && !CustomGameOptions.SheriffBomberMode) return true;
 
             if (AmongUsClient.Instance.IsGameOver) return false;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
+            if (CustomGameOptions.SheriffBomberMode) return true;
             foreach (var collider2D in Physics2D.OverlapCircleAll(__instance.GetTruePosition(),
                 __instance.MaxReportDistance, Constants.PlayersOnlyMask))
                 if (!(collider2D.tag != "DeadBody"))

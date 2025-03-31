@@ -12,7 +12,7 @@ namespace TownOfUs.Patches.Roles.Modifiers
         public ErrorMod(PlayerControl player) : base(player)
         {
             Name = "Error";
-            TaskText = () => "&^%@!%^&&@#$% ^#$^ ^$^ #";
+            TaskText = () => "Interactions with you are changed. As impostor you cannot vent.";
             Color = Patches.Colors.Error;
             ModifierType = ModifierEnum.Error;
         }

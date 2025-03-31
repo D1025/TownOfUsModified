@@ -44,6 +44,10 @@ namespace TownOfUs
     }
     public static class CustomGameOptions
     {
+        public static bool AllSameModifier { get; set; } = false;
+        public static bool AllDrunk { get; set; } = false;
+        public static bool SheriffBomberMode { get; set; } = false;
+        public static bool AllVent { get; set; } = false;
         public static bool PoliticianOn => Generate.PoliticianOn.Get();
         public static bool JesterOn => Generate.JesterOn.Get();
         public static bool SheriffOn => Generate.SheriffOn.Get();
