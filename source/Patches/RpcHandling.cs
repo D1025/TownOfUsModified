@@ -680,7 +680,6 @@ namespace TownOfUs
                 while (abilityList.Count > 0 && assassinNumber > 0)
                 {
                     var (type, rpc, _) = AssassinAbility[0];
-                    AssassinAbility.RemoveAt(0);
                     Role.Gen<Ability>(type, abilityList.TakeFirst(), rpc);
                     assassinNumber -= 1;
                 }
