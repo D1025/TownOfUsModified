@@ -82,8 +82,8 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
             var prop = typeof(CustomGameOptions).GetProperty(propertyName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
             if (prop == null) return false;
             object value = prop.GetValue(null);
-            if (value is int intValue)
-                return intValue > 0;
+            if (value is bool boolValue)
+                return boolValue;
             return false;
         }
     }

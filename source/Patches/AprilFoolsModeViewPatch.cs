@@ -1,96 +1,107 @@
-﻿using HarmonyLib;
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using Object = UnityEngine.Object;
+using System.Collections;
+using HarmonyLib;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+using Il2CppSystem.Web.Util;
 
 namespace TownOfUs.Patches
 {
-    [HarmonyPatch]
-    public static class AprilFoolsModeViewPatch
+    [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowTeam))]
+    class AprilFoolsMessagePatch
     {
-        static void ShowAprilFoolsModeView()
+        private static TMPro.TextMeshPro feedText;
+
+        [HarmonyPostfix]
+        public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.IEnumerator __result)
         {
-            if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+            var newEnumerator = new PatchedEnumerator()
             {
-                Canvas canvas = Object.FindObjectOfType<Canvas>();
-                if (canvas != null)
+                enumerator = __result.WrapToManaged(),
+                Postfix = ShowAprilFoolsMessage(__instance)
+            };
+            __result = newEnumerator.GetEnumerator().WrapToIl2Cpp();
+        }
+
+        private static IEnumerator ShowAprilFoolsMessage(IntroCutscene __instance)
+        {
+            feedText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
+            var aspectPosition = feedText.gameObject.AddComponent<AspectPosition>();
+            aspectPosition.Alignment = AspectPosition.EdgeAlignments.Left;
+            aspectPosition.DistanceFromEdge = new Vector2(5.5f, 1.2f);
+            aspectPosition.AdjustPosition();
+            feedText.transform.localScale = new Vector3(1f, 1f, 1);
+            feedText.text = $"<size=280%>{GetAprilFoolsModeMessage()}</size>\n\n";
+            feedText.alignment = TMPro.TextAlignmentOptions.Center;
+            feedText.autoSizeTextContainer = true;
+            feedText.fontSize = 3f;
+            feedText.enableAutoSizing = false;
+            feedText.color = Color.white;
+            var title = __instance.TeamTitle.text;
+            __instance.TeamTitle.text = "";
+            __instance.BackgroundBar.enabled = false;
+            __instance.ImpostorText.gameObject.SetActive(false);
+            GameObject.Find("BackgroundLayer")?.SetActive(false);
+            foreach (var player in UnityEngine.Object.FindObjectsOfType<PoolablePlayer>())
+            {
+                if (player.name.Contains("Dummy"))
                 {
-                    GameObject panel = new GameObject("AprilFoolsModePanel");
-                    panel.transform.SetParent(canvas.transform, false);
-                    RectTransform rt = panel.AddComponent<RectTransform>();
-                    rt.anchorMin = new Vector2(0, 0);
-                    rt.anchorMax = new Vector2(1, 1);
-                    rt.offsetMin = Vector2.zero;
-                    rt.offsetMax = Vector2.zero;
-
-                    Image bg = panel.AddComponent<Image>();
-                    bg.color = new Color(0, 0, 0, 0.7f);
-
-                    GameObject textObj = new GameObject("AprilFoolsModeText");
-                    textObj.transform.SetParent(panel.transform, false);
-                    RectTransform rtText = textObj.AddComponent<RectTransform>();
-                    rtText.anchorMin = new Vector2(0.5f, 0.5f);
-                    rtText.anchorMax = new Vector2(0.5f, 0.5f);
-                    rtText.anchoredPosition = Vector2.zero;
-                    TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
-                    text.alignment = TextAlignmentOptions.Center;
-                    text.fontSize = 60;
-                    text.text = GetAprilFoolsModeMessage();
-                    text.color = Color.magenta;
-
-                    panel.AddComponent<AprilFoolsPanelFadeOut>();
+                    player.gameObject.SetActive(false);
                 }
             }
+            __instance.FrontMost.gameObject.SetActive(false);
+
+
+            yield return new WaitForSeconds(3f);
+            UnityEngine.Object.Destroy(feedText.gameObject);
+            foreach (var player in UnityEngine.Object.FindObjectsOfType<PoolablePlayer>())
+            {
+                if (player.name.Contains("Dummy"))
+                {
+                    player.gameObject.SetActive(true);
+                }
+            }
+            __instance.FrontMost.gameObject.SetActive(true);
+            __instance.TeamTitle.text = title;
+            __instance.BackgroundBar.enabled = true;
+            __instance.BackgroundBar.enabled = true;
         }
 
         private static string GetAprilFoolsModeMessage()
         {
             if (CustomGameOptions.SheriffBomberMode)
-                return "Prima Aprilis: Let Play With Bombs";
+                return "Prima Aprilis:\nLet Play With Bombs";
             if (CustomGameOptions.AllDrunk)
-                return "Prima Aprilis: Who Got Free Beer?";
+                return "Prima Aprilis:\nWho Got Free Beer?";
             if (CustomGameOptions.AllSameModifier)
-                return "Prima Aprilis: We Have Same Modifier!";
+                return "Prima Aprilis:\nWe Have Same Modifier!";
             if (CustomGameOptions.AllVent)
-                return "Prima Aprilis: All Can Vent!";
-            return "Prima Aprilis: Standard Mode!";
+                return "Prima Aprilis:\nAll Can Vent!";
+            return "Prima Aprilis:\nStandard Mode!";
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), "BeginCrewmate")]
-        public static class IntroCutscene_BeginCrewmate_AprilFools
+        class PatchedEnumerator : IEnumerable
         {
-            public static void Prefix() => ShowAprilFoolsModeView();
-        }
-
-        [HarmonyPatch(typeof(IntroCutscene), "BeginImpostor")]
-        public static class IntroCutscene_BeginImpostor_AprilFools
-        {
-            public static void Prefix() => ShowAprilFoolsModeView();
-        }
-    }
-
-    public class AprilFoolsPanelFadeOut : MonoBehaviour
-    {
-        public float Duration = 3f;
-        private float timer = 0f;
-        private CanvasGroup canvasGroup;
-
-        void Start()
-        {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
-            canvasGroup.alpha = 1f;
-        }
-
-        void Update()
-        {
-            timer += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / Duration);
-            if (timer >= Duration)
+            public IEnumerator enumerator;
+            public IEnumerator Postfix;
+            public IEnumerator GetEnumerator()
             {
-                Destroy(gameObject);
+                while (enumerator.MoveNext())
+                    yield return enumerator.Current;
+                while (Postfix.MoveNext())
+                    yield return Postfix.Current;
             }
+        }
+
+        public static string cs(Color c, string s)
+        {
+            return string.Format("<color=#{0:X2}{1:X2}{2:X2}{3:X2}>{4}</color>", ToByte(c.r), ToByte(c.g), ToByte(c.b), ToByte(c.a), s);
+        }
+
+        private static byte ToByte(float f)
+        {
+            f = Mathf.Clamp01(f);
+            return (byte)(f * 255);
         }
     }
 }

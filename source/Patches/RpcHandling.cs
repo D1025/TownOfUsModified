@@ -58,6 +58,7 @@ namespace TownOfUs
         private static readonly List<(Type, int, bool)> ImpostorSupportRoles = new();
         private static readonly List<(Type, int)> CrewmateModifiers = new();
         private static readonly List<(Type, int)> GlobalModifiers = new();
+        private static readonly List<(Type, int)> GlobalModifiersForEvent = new();
         private static readonly List<(Type, int)> ImpostorModifiers = new();
         private static readonly List<(Type, int)> ButtonModifiers = new();
         private static readonly List<(Type, int)> AssassinModifiers = new();
@@ -167,7 +168,7 @@ namespace TownOfUs
             var possibleCrewCount = 0;
             var impCount = 0;
             var anySlots = 0;
-            var minCrewmates = 2;
+            var minCrewmates = 1;
             var empty = 0;
 
             if (players > 4) buckets.Add(CustomGameOptions.Slot5);
@@ -695,80 +696,81 @@ namespace TownOfUs
                 Role.GenModifier<Modifier>(type, canHaveAssassinModifier);
             }
 
-            var canHaveImpModifier = PlayerControl.AllPlayerControls.ToArray().Where(player => player.Is(Faction.Impostors) && !player.Is(ModifierEnum.DoubleShot)).ToList();
-            canHaveImpModifier.Shuffle();
-            ImpostorModifiers.SortModifiers(canHaveImpModifier.Count);
-            ImpostorModifiers.Shuffle();
-            foreach (var (type, _) in ImpostorModifiers)
-            {
-                if (canHaveImpModifier.Count == 0) break;
-                Role.GenModifier<Modifier>(type, canHaveImpModifier);
-            }
-
             if (CustomGameOptions.AllDrunk)
             {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     Role.GenModifier<Modifier>(typeof(Drunk), new List<PlayerControl> { player });
                 }
-                return;
             }
+            else
 
             if (CustomGameOptions.AllSameModifier)
             {
-                GlobalModifiers.Shuffle();
-                var (type, _) = GlobalModifiers.First();
+                GlobalModifiersForEvent.Shuffle();
+                var (type, _) = GlobalModifiersForEvent.First();
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
                     Role.GenModifier<Modifier>(type, new List<PlayerControl> { player });
                 }
-                return;
             }
-
-            var canHaveModifier = PlayerControl.AllPlayerControls.ToArray()
-                .Where(player => !player.Is(ModifierEnum.Disperser) && !player.Is(ModifierEnum.DoubleShot) && !player.Is(ModifierEnum.Saboteur) && !player.Is(ModifierEnum.Underdog))
-                .ToList();
-            canHaveModifier.Shuffle();
-
-            GlobalModifiers.SortModifiers(canHaveModifier.Count);
-            GlobalModifiers.Shuffle();
-            foreach (var (type, id) in GlobalModifiers)
+            else
             {
-                if (canHaveModifier.Count == 0) break;
-                if (type.FullName.Contains("Lover"))
+                var canHaveImpModifier = PlayerControl.AllPlayerControls.ToArray().Where(player => player.Is(Faction.Impostors) && !player.Is(ModifierEnum.DoubleShot)).ToList();
+                canHaveImpModifier.Shuffle();
+                ImpostorModifiers.SortModifiers(canHaveImpModifier.Count);
+                ImpostorModifiers.Shuffle();
+                foreach (var (type, _) in ImpostorModifiers)
                 {
-                    canHaveModifier = canHaveModifier.Where(player => !player.Is(RoleEnum.Jester)).ToList();
-                    if (canHaveModifier.Count <= 1) continue;
-                    Lover.Gen(canHaveModifier);
+                    if (canHaveImpModifier.Count == 0) break;
+                    Role.GenModifier<Modifier>(type, canHaveImpModifier);
                 }
-                else if (type.FullName.Contains("Sleuth") && CustomGameOptions.MysticSleuthAbility)
+
+                var canHaveModifier = PlayerControl.AllPlayerControls.ToArray()
+                    .Where(player => !player.Is(ModifierEnum.Disperser) && !player.Is(ModifierEnum.DoubleShot) && !player.Is(ModifierEnum.Saboteur) && !player.Is(ModifierEnum.Underdog))
+                    .ToList();
+                canHaveModifier.Shuffle();
+
+                GlobalModifiers.SortModifiers(canHaveModifier.Count);
+                GlobalModifiers.Shuffle();
+                foreach (var (type, id) in GlobalModifiers)
                 {
-                    var candidate = canHaveModifier.FirstOrDefault(player => !player.Is(RoleEnum.Mystic));
-                    if (candidate == null) continue;
-                    Role.GenModifier<Modifier>(type, new List<PlayerControl> { candidate });
-                    canHaveModifier.Remove(candidate);
+                    if (canHaveModifier.Count == 0) break;
+                    if (type.FullName.Contains("Lover"))
+                    {
+                        canHaveModifier = canHaveModifier.Where(player => !player.Is(RoleEnum.Jester)).ToList();
+                        if (canHaveModifier.Count <= 1) continue;
+                        Lover.Gen(canHaveModifier);
+                    }
+                    else if (type.FullName.Contains("Sleuth") && CustomGameOptions.MysticSleuthAbility)
+                    {
+                        var candidate = canHaveModifier.FirstOrDefault(player => !player.Is(RoleEnum.Mystic));
+                        if (candidate == null) continue;
+                        Role.GenModifier<Modifier>(type, new List<PlayerControl> { candidate });
+                        canHaveModifier.Remove(candidate);
+                    }
+                    else
+                    {
+                        Role.GenModifier<Modifier>(type, canHaveModifier);
+                    }
                 }
-                else
+
+                canHaveModifier.RemoveAll(player => player.Is(RoleEnum.Glitch));
+                ButtonModifiers.SortModifiers(canHaveModifier.Count);
+                foreach (var (type, id) in ButtonModifiers)
                 {
+                    if (canHaveModifier.Count == 0) break;
                     Role.GenModifier<Modifier>(type, canHaveModifier);
                 }
-            }
 
-            canHaveModifier.RemoveAll(player => player.Is(RoleEnum.Glitch));
-            ButtonModifiers.SortModifiers(canHaveModifier.Count);
-            foreach (var (type, id) in ButtonModifiers)
-            {
-                if (canHaveModifier.Count == 0) break;
-                Role.GenModifier<Modifier>(type, canHaveModifier);
-            }
-
-            canHaveModifier.RemoveAll(player => !player.Is(Faction.Crewmates));
-            CrewmateModifiers.SortModifiers(canHaveModifier.Count);
-            CrewmateModifiers.Shuffle();
-            while (canHaveModifier.Count > 0 && CrewmateModifiers.Count > 0)
-            {
-                var (type, _) = CrewmateModifiers.TakeFirst();
-                Role.GenModifier<Modifier>(type, canHaveModifier.TakeFirst());
+                canHaveModifier.RemoveAll(player => !player.Is(Faction.Crewmates));
+                CrewmateModifiers.SortModifiers(canHaveModifier.Count);
+                CrewmateModifiers.Shuffle();
+                while (canHaveModifier.Count > 0 && CrewmateModifiers.Count > 0)
+                {
+                    var (type, _) = CrewmateModifiers.TakeFirst();
+                    Role.GenModifier<Modifier>(type, canHaveModifier.TakeFirst());
+                }
             }
 
             var toChooseFromCrew = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) && !x.Is(RoleEnum.Politician) && !x.Is(ModifierEnum.Lover)).ToList();
@@ -1634,7 +1636,33 @@ namespace TownOfUs
                         GameOptionsManager.Instance.currentNormalGameOptions.RoleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
                         RandomMap.AdjustSettings(readByte);
                         break;
-
+                    case CustomRPC.SetEvent:
+                        readByte = reader.ReadByte();
+                        CustomGameOptions.AllVent = false;
+                        CustomGameOptions.SheriffBomberMode = false;
+                        CustomGameOptions.AllDrunk = false;
+                        CustomGameOptions.AllSameModifier = false;
+                        int gameMode = (int)readByte;
+                        switch (gameMode)
+                        {
+                            case 1:
+                                CustomGameOptions.SheriffBomberMode = true;
+                                break;
+                            case 2:
+                                CustomGameOptions.AllDrunk = true;
+                                break;
+                            case 3:
+                                CustomGameOptions.AllSameModifier = true;
+                                break;
+                            case 4:
+                                CustomGameOptions.AllVent = true;
+                                break;
+                            case 5:
+                            default:
+                                break;
+                        }
+                        
+                        break;
                     case CustomRPC.HunterStalk:
                         var stalker = Utils.PlayerById(reader.ReadByte());
                         var stalked = Utils.PlayerById(reader.ReadByte());
@@ -1725,6 +1753,7 @@ namespace TownOfUs
                 ImpostorSupportRoles.Clear();
                 CrewmateModifiers.Clear();
                 GlobalModifiers.Clear();
+                GlobalModifiersForEvent.Clear();
                 ImpostorModifiers.Clear();
                 ButtonModifiers.Clear();
                 AssassinModifiers.Clear();
@@ -1740,10 +1769,9 @@ namespace TownOfUs
                 CustomGameOptions.AllVent = false;
                 CustomGameOptions.AllSameModifier = false;
 
-                int randomNumber = Random.RandomRange(1, 3); 
-                if (randomNumber == 1 && DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+                if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
                 {
-                    int randomEvent = Random.RandomRange(1, 5);
+                    int randomEvent = Random.RandomRange(1, 6);
                     switch (randomEvent)
                     {
                         case 1:
@@ -1758,9 +1786,11 @@ namespace TownOfUs
                         case 4:
                             CustomGameOptions.AllSameModifier = true;
                             break;
+                        case 5:
                         default:
                             break;
                     }
+                    Utils.Rpc(CustomRPC.SetEvent, randomEvent);
                 }
 
                 if (ShowRoundOneShield.FirstRoundShielded != null && !CustomGameOptions.SheriffBomberMode)
@@ -1966,6 +1996,14 @@ namespace TownOfUs
                     CrewmateModifiers.Add((typeof(Frosty), CustomGameOptions.FrostyOn));
                 #endregion
                 #region Global Modifiers
+
+                GlobalModifiersForEvent.Add((typeof(ErrorMod), 10));
+                GlobalModifiersForEvent.Add((typeof(Flash), 10));
+                GlobalModifiersForEvent.Add((typeof(Giant), 10));
+                GlobalModifiersForEvent.Add((typeof(Radar), 10));
+                GlobalModifiersForEvent.Add((typeof(SixthSense), 10));
+                GlobalModifiersForEvent.Add((typeof(Mini), 10));
+
                 if (Check(CustomGameOptions.TiebreakerOn))
                     GlobalModifiers.Add((typeof(Tiebreaker), CustomGameOptions.TiebreakerOn));
 

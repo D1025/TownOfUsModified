@@ -95,6 +95,7 @@ namespace TownOfUs
         FixAnimation,
         SetPos,
         SetSettings,
+        SetEvent,
         
         RemoveAllBodies,
         CheckMurder,

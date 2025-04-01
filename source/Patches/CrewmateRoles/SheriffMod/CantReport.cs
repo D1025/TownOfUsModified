@@ -12,8 +12,15 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
         {
             if (!__instance.AmOwner) return;
             if (!__instance.CanMove) return;
-            if (!__instance.Is(RoleEnum.Sheriff)) return;
-            if (CustomGameOptions.SheriffBodyReport && !CustomGameOptions.SheriffBomberMode) return;
+            if (!__instance.Is(RoleEnum.Sheriff) && !__instance.Is(RoleEnum.Bomber)) return;
+            if (CustomGameOptions.SheriffBomberMode)
+            {
+                DestroyableSingleton<HudManager>.Instance.ReportButton.SetActive(false);
+                return;
+            }
+            if (CustomGameOptions.SheriffBodyReport) {
+                return;
+            } 
             var truePosition = __instance.GetTruePosition();
 
             var data = __instance.Data;
