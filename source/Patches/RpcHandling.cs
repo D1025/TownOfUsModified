@@ -1652,10 +1652,10 @@ namespace TownOfUs
                                 CustomGameOptions.AllDrunk = true;
                                 break;
                             case 3:
-                                CustomGameOptions.AllSameModifier = true;
+                                CustomGameOptions.AllVent = true;
                                 break;
                             case 4:
-                                CustomGameOptions.AllVent = true;
+                                CustomGameOptions.AllSameModifier = true;
                                 break;
                             case 5:
                             default:
