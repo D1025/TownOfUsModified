@@ -599,6 +599,7 @@ namespace TownOfUs.Patches
                     "The Deputy is a crewmate who can camp other players. If the player is killed they will receive an alert notifying them of their death. During the following meeting they may then shoot anyone. If they shoot the killer, they die unless fortified or invincible, if they are wrong nothing happens.");
                 if (role == RoleEnum.Vulture) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "Eat them all...");
+                if (role == RoleEnum.Wraith) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You're impostor, kill everyone, use your ability to run through walls without limit for a short time");
             }
 
             public static void AddModifierMessage(ModifierEnum modifier)
@@ -643,6 +644,10 @@ namespace TownOfUs.Patches
                     PlayerControl.LocalPlayer, "The Shy is a global modifier that makes the player slightly transparent when they stand still.");
                 if (modifier == ModifierEnum.Saboteur) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Saboteur is an impostor modifier that passively reduces non-door sabotage cooldowns.");
+                if (modifier == ModifierEnum.Error) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Error is a global modifier that changes interactions by another roles with you. If Sheric could kill you - now he can't. It works form a Sherif, Seer, Investigator, Trapper and Snitch");
+                if (modifier == ModifierEnum.Drunk) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "Your controls are inverted");
             }
         }
 

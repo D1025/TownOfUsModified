@@ -18,12 +18,12 @@ namespace TownOfUs.Patches
             var newEnumerator = new PatchedEnumerator()
             {
                 enumerator = __result.WrapToManaged(),
-                Postfix = ShowAprilFoolsMessage(__instance)
+                Postfix = ShowModeMessage(__instance)
             };
             __result = newEnumerator.GetEnumerator().WrapToIl2Cpp();
         }
 
-        private static IEnumerator ShowAprilFoolsMessage(IntroCutscene __instance)
+        private static IEnumerator ShowModeMessage(IntroCutscene __instance)
         {
             feedText = UnityEngine.Object.Instantiate(__instance.TeamTitle, __instance.transform);
             var aspectPosition = feedText.gameObject.AddComponent<AspectPosition>();
@@ -70,14 +70,12 @@ namespace TownOfUs.Patches
         private static string GetAprilFoolsModeMessage()
         {
             if (CustomGameOptions.SheriffBomberMode)
-                return "Prima Aprilis:\nLet Play With Bombs";
-            if (CustomGameOptions.AllDrunk)
-                return "Prima Aprilis:\nWho Got Free Beer?";
+                return "Mode:\nLet Play With Bombs";
             if (CustomGameOptions.AllSameModifier)
-                return "Prima Aprilis:\nWe Have Same Modifier!";
+                return "Mode:\nWe Have Same Modifier!";
             if (CustomGameOptions.AllVent)
-                return "Prima Aprilis:\nAll Can Vent!";
-            return "Prima Aprilis:\nStandard Mode!";
+                return "Modes:\nAll Can Vent!";
+            return "Mode:\nStandard Mode!";
         }
 
         class PatchedEnumerator : IEnumerable
@@ -88,8 +86,9 @@ namespace TownOfUs.Patches
             {
                 while (enumerator.MoveNext())
                     yield return enumerator.Current;
-                while (Postfix.MoveNext())
-                    yield return Postfix.Current;
+                if ((CustomGameOptions.SheriffBomberMode || CustomGameOptions.AllSameModifier || CustomGameOptions.AllVent))
+                    while (Postfix.MoveNext())
+                        yield return Postfix.Current;
             }
         }
 

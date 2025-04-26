@@ -6,6 +6,9 @@ namespace TownOfUs.CustomOption
 {
     public class Generate
     {
+        public static CustomHeaderOption ModeSettingHeader;
+        public static CustomStringOption CustomGameMode;
+
         public static CustomHeaderOption CrewInvestigativeRoles;
         public static CustomToggleOption DetectiveOn;
         public static CustomToggleOption HaunterOn;
@@ -103,6 +106,7 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption SleuthOn;
         public static CustomNumberOption TiebreakerOn;
         public static CustomNumberOption ErrorOn;
+        public static CustomNumberOption DrunkOn;
 
         public static CustomHeaderOption ImpostorModifiers;
         public static CustomNumberOption DisperserOn;
@@ -657,6 +661,8 @@ namespace TownOfUs.CustomOption
                 PercentFormat);
             ErrorOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#FF0000FF>Error</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
+            DrunkOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#99E699FF>Drunk</color>", 0f, 0f, 100f, 10f,
+                PercentFormat);
 
             ImpostorModifiers = new CustomHeaderOption(num++, MultiMenu.modifiers, "Impostor Modifiers");
             DisperserOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#FF0000FF>Disperser</color>", 0f, 0f, 100f, 10f,
@@ -776,6 +782,9 @@ namespace TownOfUs.CustomOption
                 "Random <color=#999999FF>Neutral</color>", "<color=#FF0000FF>Imp</color> Concealing", "<color=#FF0000FF>Imp</color> Killing",
                 "<color=#FF0000FF>Imp</color> Support", "Common <color=#FF0000FF>Imp</color>", "Random <color=#FF0000FF>Imp</color>",
                 "Non-<color=#FF0000FF>Imp</color>", "Any" }, 16);
+
+            ModeSettingHeader = new CustomHeaderOption(num++, MultiMenu.main, "Mode Settings");
+            CustomGameMode = new CustomStringOption(num++, MultiMenu.main, "Game Mode", new[] { "Standard", "Sherif Bomber", "Same Modifiers", "All Can Vent", "Random" });
 
             MapSettings = new CustomHeaderOption(num++, MultiMenu.main, "Map Settings");
             RandomMapEnabled = new CustomToggleOption(num++, MultiMenu.main, "Choose Random Map", false);

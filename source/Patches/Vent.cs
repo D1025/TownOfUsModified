@@ -56,7 +56,7 @@ namespace TownOfUs
                 || player.Is(RoleEnum.Bomber) && !CustomGameOptions.BomberVent
                 || player.Is(RoleEnum.Wraith) && !CustomGameOptions.WraithVent
                 || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody)) 
-                && !player.Is(ModifierEnum.Error))
+                || player.Is(ModifierEnum.Error))
                 return false;
 
             if (player.Is(RoleEnum.Engineer) ||

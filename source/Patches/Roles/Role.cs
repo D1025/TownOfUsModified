@@ -12,6 +12,7 @@ using Random = UnityEngine.Random;
 using TownOfUs.Extensions;
 using AmongUs.GameOptions;
 using TownOfUs.ImpostorRoles.TraitorMod;
+using System.Reflection.Metadata;
 
 namespace TownOfUs.Roles
 {
@@ -297,6 +298,10 @@ namespace TownOfUs.Roles
                 {
                     PlayerName += "<color=#B3FFFFFF> ★</color>";
                 }
+            }
+
+            if (Player.Is(ModifierEnum.Error) && (PlayerControl.LocalPlayer.Is(ModifierEnum.Error) || PlayerControl.LocalPlayer.Data.IsDead)) {
+                PlayerName += "<color=#D525A9FF> !</color>";
             }
 
             foreach (var role in GetRoles(RoleEnum.Executioner))

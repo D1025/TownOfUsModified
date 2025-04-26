@@ -696,15 +696,6 @@ namespace TownOfUs
                 Role.GenModifier<Modifier>(type, canHaveAssassinModifier);
             }
 
-            if (CustomGameOptions.AllDrunk)
-            {
-                foreach (var player in PlayerControl.AllPlayerControls)
-                {
-                    Role.GenModifier<Modifier>(typeof(Drunk), new List<PlayerControl> { player });
-                }
-            }
-            else
-
             if (CustomGameOptions.AllSameModifier)
             {
                 GlobalModifiersForEvent.Shuffle();
@@ -1640,7 +1631,6 @@ namespace TownOfUs
                         readByte = reader.ReadByte();
                         CustomGameOptions.AllVent = false;
                         CustomGameOptions.SheriffBomberMode = false;
-                        CustomGameOptions.AllDrunk = false;
                         CustomGameOptions.AllSameModifier = false;
                         int gameMode = (int)readByte;
                         switch (gameMode)
@@ -1649,15 +1639,12 @@ namespace TownOfUs
                                 CustomGameOptions.SheriffBomberMode = true;
                                 break;
                             case 2:
-                                CustomGameOptions.AllDrunk = true;
-                                break;
-                            case 3:
                                 CustomGameOptions.AllVent = true;
                                 break;
-                            case 4:
+                            case 3:
                                 CustomGameOptions.AllSameModifier = true;
                                 break;
-                            case 5:
+                            case 4:
                             default:
                                 break;
                         }
@@ -1765,28 +1752,37 @@ namespace TownOfUs
                 HudUpdate.ZoomStart();
 
                 CustomGameOptions.SheriffBomberMode = false;
-                CustomGameOptions.AllDrunk = false;
                 CustomGameOptions.AllVent = false;
                 CustomGameOptions.AllSameModifier = false;
 
-                if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+                if (CustomGameOptions.CustomGameMode == 3)
                 {
-                    int randomEvent = Random.RandomRange(1, 6);
+                    CustomGameOptions.AllVent = true;
+                }
+                if (CustomGameOptions.CustomGameMode == 1)
+                {
+                    CustomGameOptions.SheriffBomberMode = true;
+                }
+                if (CustomGameOptions.CustomGameMode == 2)
+                {
+                    CustomGameOptions.AllSameModifier = true;
+                }
+
+                if (CustomGameOptions.CustomGameMode == 4)
+                {
+                    int randomEvent = Random.RandomRange(1, 5);
                     switch (randomEvent)
                     {
                         case 1:
                             CustomGameOptions.SheriffBomberMode = true;
                             break;
                         case 2:
-                            CustomGameOptions.AllDrunk = true;
-                            break;
-                        case 3:
                             CustomGameOptions.AllVent = true;
                             break;
-                        case 4:
+                        case 3:
                             CustomGameOptions.AllSameModifier = true;
                             break;
-                        case 5:
+                        case 4:
                         default:
                             break;
                     }
@@ -1998,10 +1994,9 @@ namespace TownOfUs
                 #region Global Modifiers
 
                 GlobalModifiersForEvent.Add((typeof(ErrorMod), 10));
-                GlobalModifiersForEvent.Add((typeof(Flash), 10));
                 GlobalModifiersForEvent.Add((typeof(Giant), 10));
-                GlobalModifiersForEvent.Add((typeof(Radar), 10));
-                GlobalModifiersForEvent.Add((typeof(SixthSense), 10));
+                GlobalModifiersForEvent.Add((typeof(Drunk), 10));
+                GlobalModifiersForEvent.Add((typeof(Shy), 10));
                 GlobalModifiersForEvent.Add((typeof(Mini), 10));
 
                 if (Check(CustomGameOptions.TiebreakerOn))

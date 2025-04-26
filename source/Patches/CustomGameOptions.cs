@@ -44,8 +44,8 @@ namespace TownOfUs
     }
     public static class CustomGameOptions
     {
+        public static int CustomGameMode { get; set; } = Generate.CustomGameMode.Get();
         public static bool AllSameModifier { get; set; } = false;
-        public static bool AllDrunk { get; set; } = false;
         public static bool SheriffBomberMode { get; set; } = false;
         public static bool AllVent { get; set; } = false;
         public static bool PoliticianOn => Generate.PoliticianOn.Get();
@@ -184,7 +184,7 @@ namespace TownOfUs
         public static int ShyOn => (int)Generate.ShyOn.Get();
         public static int MiniOn => (int)Generate.MiniOn.Get();
         public static int SaboteurOn => (int)Generate.SaboteurOn.Get();
-        public static int DrunkOn => DateTime.Today.Month == 4 && DateTime.Today.Day == 1 ? 100 : 0;
+        public static int DrunkOn => (int)Generate.DrunkOn.Get();
         public static int ErrorOn => (int)Generate.ErrorOn.Get();
         public static float InitialCooldowns => Generate.InitialCooldowns.Get();
         public static bool BothLoversDie => Generate.BothLoversDie.Get();
