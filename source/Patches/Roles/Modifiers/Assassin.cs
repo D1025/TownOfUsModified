@@ -74,8 +74,8 @@ namespace TownOfUs.Roles.Modifiers
             }
             if (CustomGameOptions.AssassinGuessNeutralKilling)
             {
+                if (CustomGameOptions.WraithOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Wraith)) ColorMapping.Add("Wraith", Colors.Wraith);
                 if (CustomGameOptions.DoomsayerOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Doomsayer)) ColorMapping.Add("Doomsayer", Colors.Doomsayer);
-                if (CustomGameOptions.ArsonistOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Arsonist)) ColorMapping.Add("Arsonist", Colors.Arsonist);
                 if (CustomGameOptions.GlitchOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Glitch)) ColorMapping.Add("The Glitch", Colors.Glitch);
                 if (CustomGameOptions.PlaguebearerOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Plaguebearer)) ColorMapping.Add("Plaguebearer", Colors.Plaguebearer);
                 if (CustomGameOptions.VampireOn && !PlayerControl.LocalPlayer.Is(RoleEnum.Vampire)) ColorMapping.Add("Vampire", Colors.Vampire);
@@ -99,7 +99,8 @@ namespace TownOfUs.Roles.Modifiers
                 if (CustomGameOptions.VenererOn) ColorMapping.Add("Venerer", Colors.Impostor);
                 if (CustomGameOptions.HypnotistOn) ColorMapping.Add("Hypnotist", Colors.Impostor);
                 if (CustomGameOptions.ScavengerOn) ColorMapping.Add("Scavenger", Colors.Impostor);
-                if (CustomGameOptions.WraithOn) ColorMapping.Add("Wraith", Colors.Impostor);
+                if (CustomGameOptions.ArsonistOn) ColorMapping.Add("Arsonist", Colors.Impostor);
+
             }
 
             // Add vanilla crewmate if enabled

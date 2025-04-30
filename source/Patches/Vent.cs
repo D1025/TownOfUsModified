@@ -54,14 +54,16 @@ namespace TownOfUs
                 || player.Is(RoleEnum.Undertaker) && !CustomGameOptions.UndertakerVent
                 || player.Is(RoleEnum.Escapist) && !CustomGameOptions.EscapistVent
                 || player.Is(RoleEnum.Bomber) && !CustomGameOptions.BomberVent
-                || player.Is(RoleEnum.Wraith) && !CustomGameOptions.WraithVent
                 || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody)) 
                 || player.Is(ModifierEnum.Error))
                 return false;
 
             if (player.Is(RoleEnum.Engineer) ||
-                (player.Is(RoleEnum.Glitch) && CustomGameOptions.GlitchVent) || (player.Is(RoleEnum.Juggernaut) && CustomGameOptions.JuggVent) ||
-                (player.Is(RoleEnum.Pestilence) && CustomGameOptions.PestVent) || (player.Is(RoleEnum.Jester) && CustomGameOptions.JesterVent) ||
+                (player.Is(RoleEnum.Glitch) && CustomGameOptions.GlitchVent) || 
+                (player.Is(RoleEnum.Juggernaut) && CustomGameOptions.JuggVent) ||
+                (player.Is(RoleEnum.Wraith) && !CustomGameOptions.WraithVent) ||
+                (player.Is(RoleEnum.Pestilence) && CustomGameOptions.PestVent) || 
+                (player.Is(RoleEnum.Jester) && CustomGameOptions.JesterVent) ||
                 (player.Is(RoleEnum.Vampire) && CustomGameOptions.VampVent))
                 return true;
 

@@ -42,9 +42,18 @@ namespace TownOfUs
         NonImp,
         Any
     }
+
+    public enum GameType
+    {
+        Standard,
+        SherifBomber,
+        SameModifier,
+        AllCanVent,
+        Random
+    }
     public static class CustomGameOptions
     {
-        public static int CustomGameMode { get; set; } = Generate.CustomGameMode.Get();
+        public static GameType CustomGameMode => (GameType)Generate.CustomGameMode.Get();
         public static bool AllSameModifier { get; set; } = false;
         public static bool SheriffBomberMode { get; set; } = false;
         public static bool AllVent { get; set; } = false;
@@ -459,6 +468,7 @@ namespace TownOfUs
         public static float WraithCd => Generate.WraithCooldown.Get();
         public static float WraithDuration => Generate.WraithDuration.Get();
         public static bool WraithVent => Generate.WraithVent.Get();
+        public static float WraithKillCd => Generate.WraithKillCd.Get();
         public static float JailCd => Generate.JailCooldown.Get();
         public static int MaxExecutes => (int)Generate.MaxExecutes.Get();
         public static float ReapCd => Generate.ReapCooldown.Get();

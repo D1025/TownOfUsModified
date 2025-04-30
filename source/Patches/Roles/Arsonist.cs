@@ -25,11 +25,11 @@ namespace TownOfUs.Roles
             Name = "Arsonist";
             ImpostorText = () => "Douse Players And Ignite The Light";
             TaskText = () => "Douse players and ignite to kill all douses\nFake Tasks:";
-            Color = Patches.Colors.Arsonist;
+            Color = Patches.Colors.Impostor;
             LastDoused = DateTime.UtcNow;
             RoleType = RoleEnum.Arsonist;
             AddToRoleHistory(RoleType);
-            Faction = Faction.NeutralKilling;
+            Faction = Faction.Impostors;
         }
 
         public KillButton IgniteButton

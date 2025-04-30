@@ -29,16 +29,15 @@ namespace TownOfUs.CrewmateRoles.SheriffMod
             var flag4 = role.ClosestPlayer.Data.IsImpostor() ||
                         (role.ClosestPlayer.Is(Faction.NeutralEvil) && CustomGameOptions.SheriffKillsNE) ||
                         (role.ClosestPlayer.Is(Faction.NeutralKilling) && CustomGameOptions.SheriffKillsNK);
-            if (role.ClosestPlayer.Is(ModifierEnum.Error))
+            if (role.ClosestPlayer.Is(ModifierEnum.Error) && flag4)
             {
-                if (flag4)
+                Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
+                // Jeśli Sheriff ma opcje "zabija przypadkowo" to zabije impostora z 
+                if (CustomGameOptions.SheriffKillOther)
                 {
-                    if (CustomGameOptions.SheriffKillOther)
-                    {
-                        Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer);
-                        return false;
-                    }
+                    Utils.RpcMurderPlayer(PlayerControl.LocalPlayer, role.ClosestPlayer);
                 }
+                return false;
             }
             var abilityUsed = Utils.AbilityUsed(PlayerControl.LocalPlayer);
             if (!abilityUsed) return false;

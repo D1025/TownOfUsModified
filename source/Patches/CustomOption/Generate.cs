@@ -58,7 +58,6 @@ namespace TownOfUs.CustomOption
 
         public static CustomHeaderOption NeutralKillingRoles;
         public static CustomToggleOption DoomsayerOn;
-        public static CustomToggleOption ArsonistOn;
         public static CustomToggleOption JuggernautOn;
         public static CustomToggleOption PlaguebearerOn;
         public static CustomToggleOption GlitchOn;
@@ -78,6 +77,7 @@ namespace TownOfUs.CustomOption
         public static CustomToggleOption ScavengerOn;
         public static CustomToggleOption TraitorOn;
         public static CustomToggleOption WarlockOn;
+        public static CustomToggleOption ArsonistOn;
 
         public static CustomHeaderOption ImpostorSupportRoles;
         public static CustomToggleOption BlackmailerOn;
@@ -475,6 +475,7 @@ namespace TownOfUs.CustomOption
         public static CustomNumberOption FreezeSpeed;
 
         public static CustomHeaderOption Wraith;
+        public static CustomNumberOption WraithKillCd;
         public static CustomNumberOption WraithCooldown;
         public static CustomNumberOption WraithDuration;
         public static CustomToggleOption WraithVent;
@@ -596,12 +597,12 @@ namespace TownOfUs.CustomOption
 
             NeutralKillingRoles = new CustomHeaderOption(num++, MultiMenu.neutral, "Neutral Killing Roles");
             DoomsayerOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#00FF80FF>Doomsayer</color>", false);
-            ArsonistOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Arsonist</color>", false);
             JuggernautOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#8C004DFF>Juggernaut</color>", false);
             PlaguebearerOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#E6FFB3FF>Plaguebearer</color>", false);
             GlitchOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#00FF00FF>The Glitch</color>", false);
             VampireOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#262626FF>Vampire</color>", false);
             WerewolfOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#A86629FF>Werewolf</color>", false);
+            WraithOn = new CustomToggleOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Wraith</color>", false);
 
             ImpostorConcealingRoles = new CustomHeaderOption(num++, MultiMenu.imposter, "Impostor Concealing Roles");
             EscapistOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Escapist</color>", false);
@@ -609,9 +610,9 @@ namespace TownOfUs.CustomOption
             MorphlingOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Morphling</color>", false);
             SwooperOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Swooper</color>", false);
             VenererOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Venerer</color>", false);
-            WraithOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Wraith</color>", false);
 
             ImpostorKillingRoles = new CustomHeaderOption(num++, MultiMenu.imposter, "Impostor Killing Roles");
+            ArsonistOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Arsonist</color>", false);
             BomberOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>", false);
             ScavengerOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Scavenger</color>", false);
             TraitorOn = new CustomToggleOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Traitor</color>", false);
@@ -673,6 +674,9 @@ namespace TownOfUs.CustomOption
                 PercentFormat);
             UnderdogOn = new CustomNumberOption(num++, MultiMenu.modifiers, "<color=#FF0000FF>Underdog</color>", 0f, 0f, 100f, 10f,
                 PercentFormat);
+
+            ModeSettingHeader = new CustomHeaderOption(num++, MultiMenu.main, "Mode Settings");
+            CustomGameMode = new CustomStringOption(num++, MultiMenu.main, "Game Mode", new[] { "Standard", "Sherif Bomber", "Same Modifiers", "All Can Vent", "Random" });
 
             RoleListSettings =
                 new CustomHeaderOption(num++, MultiMenu.main, "Role List Settings");
@@ -782,9 +786,6 @@ namespace TownOfUs.CustomOption
                 "Random <color=#999999FF>Neutral</color>", "<color=#FF0000FF>Imp</color> Concealing", "<color=#FF0000FF>Imp</color> Killing",
                 "<color=#FF0000FF>Imp</color> Support", "Common <color=#FF0000FF>Imp</color>", "Random <color=#FF0000FF>Imp</color>",
                 "Non-<color=#FF0000FF>Imp</color>", "Any" }, 16);
-
-            ModeSettingHeader = new CustomHeaderOption(num++, MultiMenu.main, "Mode Settings");
-            CustomGameMode = new CustomStringOption(num++, MultiMenu.main, "Game Mode", new[] { "Standard", "Sherif Bomber", "Same Modifiers", "All Can Vent", "Random" });
 
             MapSettings = new CustomHeaderOption(num++, MultiMenu.main, "Map Settings");
             RandomMapEnabled = new CustomToggleOption(num++, MultiMenu.main, "Choose Random Map", false);
@@ -1180,15 +1181,11 @@ namespace TownOfUs.CustomOption
             SoulsToWin =
                  new CustomNumberOption(num++, MultiMenu.neutral, "Amount Of Souls Required To Win", 5, 1, 15, 1);
 
-            Arsonist = new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Arsonist</color>");
-            DouseCooldown =
-                new CustomNumberOption(num++, MultiMenu.neutral, "Douse Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
-            MaxDoused =
-                new CustomNumberOption(num++, MultiMenu.neutral, "Maximum Alive Players Doused", 5, 1, 15, 1);
-            ArsoImpVision =
-                new CustomToggleOption(num++, MultiMenu.neutral, "Arsonist Has Impostor Vision", false);
-            IgniteCdRemoved =
-                new CustomToggleOption(num++, MultiMenu.neutral, "Ignite Cooldown Removed When Arsonist Is Last Killer", false);
+            Wraith = new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#FF4D00FF>Wraith</color>");
+            WraithKillCd = new CustomNumberOption(num++, MultiMenu.neutral, "Wraith Kill Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
+            WraithCooldown = new CustomNumberOption(num++, MultiMenu.neutral, "Wraith Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
+            WraithDuration = new CustomNumberOption(num++, MultiMenu.neutral, "Wraith Duration", 10f, 5f, 25f, 1f, CooldownFormat);
+            WraithVent = new CustomToggleOption(num++, MultiMenu.neutral, "Wraith Can Vent", false);
 
             Juggernaut =
                 new CustomHeaderOption(num++, MultiMenu.neutral, "<color=#8C004DFF>Juggernaut</color>");
@@ -1297,10 +1294,15 @@ namespace TownOfUs.CustomOption
             SprintSpeed = new CustomNumberOption(num++, MultiMenu.imposter, "Sprint Speed", 1.25f, 1.05f, 2.5f, 0.05f, MultiplierFormat);
             FreezeSpeed = new CustomNumberOption(num++, MultiMenu.imposter, "Freeze Speed", 0.75f, 0.25f, 1f, 0.05f, MultiplierFormat);
 
-            Wraith = new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Wraith</color>");
-            WraithCooldown = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Cooldown", 25f, 10f, 60f, 2.5f, CooldownFormat);
-            WraithDuration = new CustomNumberOption(num++, MultiMenu.imposter, "Wraith Duration", 10f, 5f, 25f, 1f, CooldownFormat);
-            WraithVent = new CustomToggleOption(num++, MultiMenu.imposter, "Wraith Can Vent", false);
+            Arsonist = new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Arsonist</color>");
+            DouseCooldown =
+                new CustomNumberOption(num++, MultiMenu.imposter, "Douse Cooldown", 15f, 10f, 60f, 2.5f, CooldownFormat);
+            MaxDoused =
+                new CustomNumberOption(num++, MultiMenu.imposter, "Maximum Alive Players Doused", 5, 1, 15, 1);
+            ArsoImpVision =
+                new CustomToggleOption(num++, MultiMenu.imposter, "Arsonist Has Impostor Vision", true);
+            IgniteCdRemoved =
+                new CustomToggleOption(num++, MultiMenu.imposter, "Ignite Cooldown Removed When Arsonist Is Last Killer", false);
 
             Bomber =
                 new CustomHeaderOption(num++, MultiMenu.imposter, "<color=#FF0000FF>Bomber</color>");

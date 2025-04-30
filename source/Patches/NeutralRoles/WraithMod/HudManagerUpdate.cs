@@ -2,7 +2,7 @@
 using TownOfUs.Roles;
 using UnityEngine;
 
-namespace TownOfUs.ImpostorRoles.WraithMod
+namespace TownOfUs.Patches.NeutralRoles.WraithMod
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManagerUpdate
@@ -16,6 +16,12 @@ namespace TownOfUs.ImpostorRoles.WraithMod
             if (PlayerControl.LocalPlayer.Data == null) return;
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Wraith)) return;
             var role = Role.GetRole<Wraith>(PlayerControl.LocalPlayer);
+
+            __instance.KillButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
+                && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
+                && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
+            __instance.KillButton.SetCoolDown(role.KillTimer(), CustomGameOptions.WraithKillCd);
+
             if (role.NoclipButton == null)
             {
                 role.NoclipButton = Object.Instantiate(__instance.KillButton, __instance.KillButton.transform.parent);

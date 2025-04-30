@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using TownOfUs.Roles;
 
-namespace TownOfUs.Patches.ImpostorRoles.WraithMod
+namespace TownOfUs.Patches.NeutralRoles.WraithMod
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     [HarmonyPriority(Priority.Last)]

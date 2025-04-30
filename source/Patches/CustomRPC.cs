@@ -20,6 +20,7 @@ namespace TownOfUs
 
         LoveWin,
         GlitchWin,
+        WraithWin,
         JuggernautWin,
         ArsonistWin,
         PhantomWin,

@@ -1164,6 +1164,10 @@ namespace TownOfUs
                         var theGlitch = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Glitch);
                         ((Glitch) theGlitch)?.Wins();
                         break;
+                    case CustomRPC.WraithWin:
+                        var theWraith = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Wraith);
+                        ((Wraith)theWraith)?.Wins();
+                        break;
                     case CustomRPC.JuggernautWin:
                         var juggernaut = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Juggernaut);
                         ((Juggernaut)juggernaut)?.Wins();
@@ -1639,10 +1643,10 @@ namespace TownOfUs
                                 CustomGameOptions.SheriffBomberMode = true;
                                 break;
                             case 2:
-                                CustomGameOptions.AllVent = true;
+                                CustomGameOptions.AllSameModifier = true;
                                 break;
                             case 3:
-                                CustomGameOptions.AllSameModifier = true;
+                                CustomGameOptions.AllVent = true;
                                 break;
                             case 4:
                             default:
@@ -1754,21 +1758,25 @@ namespace TownOfUs
                 CustomGameOptions.SheriffBomberMode = false;
                 CustomGameOptions.AllVent = false;
                 CustomGameOptions.AllSameModifier = false;
+                int eventType = 4;
 
-                if (CustomGameOptions.CustomGameMode == 3)
-                {
-                    CustomGameOptions.AllVent = true;
-                }
-                if (CustomGameOptions.CustomGameMode == 1)
+                if (CustomGameOptions.CustomGameMode == GameType.SherifBomber)
                 {
                     CustomGameOptions.SheriffBomberMode = true;
+                    eventType = 1;
                 }
-                if (CustomGameOptions.CustomGameMode == 2)
+                if (CustomGameOptions.CustomGameMode == GameType.SameModifier)
                 {
                     CustomGameOptions.AllSameModifier = true;
+                    eventType = 2;
+                }
+                if (CustomGameOptions.CustomGameMode == GameType.AllCanVent)
+                {
+                    CustomGameOptions.AllVent = true;
+                    eventType = 3;
                 }
 
-                if (CustomGameOptions.CustomGameMode == 4)
+                if (CustomGameOptions.CustomGameMode == GameType.Random)
                 {
                     int randomEvent = Random.RandomRange(1, 5);
                     switch (randomEvent)
@@ -1777,17 +1785,19 @@ namespace TownOfUs
                             CustomGameOptions.SheriffBomberMode = true;
                             break;
                         case 2:
-                            CustomGameOptions.AllVent = true;
+                            CustomGameOptions.AllSameModifier = true;
                             break;
                         case 3:
-                            CustomGameOptions.AllSameModifier = true;
+                            CustomGameOptions.AllVent = true;
                             break;
                         case 4:
                         default:
                             break;
                     }
-                    Utils.Rpc(CustomRPC.SetEvent, randomEvent);
+                    eventType = randomEvent;
                 }
+
+                Utils.Rpc(CustomRPC.SetEvent, eventType);
 
                 if (ShowRoundOneShield.FirstRoundShielded != null && !CustomGameOptions.SheriffBomberMode)
                 {
@@ -1914,8 +1924,8 @@ namespace TownOfUs
                 if (CustomGameOptions.GlitchOn)
                     NeutralKillingRoles.Add((typeof(Glitch), CustomGameOptions.GlitchValue, true));
 
-                if (CustomGameOptions.ArsonistOn)
-                    NeutralKillingRoles.Add((typeof(Arsonist), CustomGameOptions.ArsonistValue, true));
+                if (CustomGameOptions.WraithOn)
+                    NeutralKillingRoles.Add((typeof(Wraith), CustomGameOptions.WraithValue, true));
 
                 if (CustomGameOptions.PlaguebearerOn)
                     NeutralKillingRoles.Add((typeof(Plaguebearer), CustomGameOptions.PlaguebearerValue, true));
@@ -1960,14 +1970,14 @@ namespace TownOfUs
                 if (CustomGameOptions.WarlockOn)
                     ImpostorKillingRoles.Add((typeof(Warlock), CustomGameOptions.WarlockValue, false || CustomGameOptions.UniqueRoles));
 
+                if (CustomGameOptions.ArsonistOn)
+                    ImpostorKillingRoles.Add((typeof(Arsonist), CustomGameOptions.ArsonistValue, false || CustomGameOptions.UniqueRoles));
+
                 if (CustomGameOptions.VenererOn)
                     ImpostorConcealingRoles.Add((typeof(Venerer), CustomGameOptions.VenererValue, true));
 
                 if (CustomGameOptions.HypnotistOn)
                     ImpostorSupportRoles.Add((typeof(Hypnotist), CustomGameOptions.HypnotistValue, true));
-
-                if (CustomGameOptions.WraithOn)
-                    ImpostorConcealingRoles.Add((typeof(Wraith), CustomGameOptions.WraithValue, false || CustomGameOptions.UniqueRoles));
 
                 if (CustomGameOptions.ScavengerOn)
                     ImpostorKillingRoles.Add((typeof(Scavenger), CustomGameOptions.ScavengerValue, false || CustomGameOptions.UniqueRoles));

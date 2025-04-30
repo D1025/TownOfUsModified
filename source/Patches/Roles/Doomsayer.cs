@@ -77,7 +77,8 @@ namespace TownOfUs.Roles
                 if (CustomGameOptions.VenererOn) ColorMapping.Add("Venerer", Colors.Impostor);
                 if (CustomGameOptions.HypnotistOn) ColorMapping.Add("Hypnotist", Colors.Impostor);
                 if (CustomGameOptions.ScavengerOn) ColorMapping.Add("Scavenger", Colors.Impostor);
-                if (CustomGameOptions.WraithOn) ColorMapping.Add("Wraith", Colors.Impostor);
+                if (CustomGameOptions.ArsonistOn) ColorMapping.Add("Arsonist", Colors.Impostor);
+
             }
             if (CustomGameOptions.DoomsayerGuessNeutralBenign)
             {
@@ -98,7 +99,7 @@ namespace TownOfUs.Roles
             }
             if (CustomGameOptions.DoomsayerGuessNeutralKilling)
             {
-                if (CustomGameOptions.ArsonistOn) ColorMapping.Add("Arsonist", Colors.Arsonist);
+                if (CustomGameOptions.WraithOn) ColorMapping.Add("Wraith", Colors.Wraith);
                 if (CustomGameOptions.GlitchOn) ColorMapping.Add("The Glitch", Colors.Glitch);
                 if (CustomGameOptions.PlaguebearerOn) ColorMapping.Add("Plaguebearer", Colors.Plaguebearer);
                 if (CustomGameOptions.VampireOn) ColorMapping.Add("Vampire", Colors.Vampire);
