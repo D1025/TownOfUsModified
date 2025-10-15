@@ -9,16 +9,21 @@ namespace TownOfUs.Roles.Modifiers
 {
     public abstract class Modifier
     {
-        public static readonly Dictionary<byte, Modifier> ModifierDictionary = new Dictionary<byte, Modifier>();
+        public static readonly Dictionary<byte, List<Modifier>> ModifierDictionary = new();
         public Func<string> TaskText;
+        public virtual string FullModifierTaskText()
+        {
+            return $"{ColorString}Modifier: {Name}\n{TaskText()}</color>"; ;
+        }
 
         protected Modifier(PlayerControl player)
         {
             Player = player;
-            ModifierDictionary.Add(player.PlayerId, this);
+            if (ModifierDictionary.ContainsKey(player.PlayerId)) ModifierDictionary[player.PlayerId].Add(this);
+            else ModifierDictionary.Add(player.PlayerId, new List<Modifier>() { this });
         }
 
-        public static IEnumerable<Modifier> AllModifiers => ModifierDictionary.Values.ToList();
+        public static IEnumerable<Modifier> AllModifiers => ModifierDictionary.Values.SelectMany(x => x).ToList();
         protected internal string Name { get; set; }
         protected internal string SymbolName { get; set; }
 
@@ -83,10 +88,10 @@ namespace TownOfUs.Roles.Modifiers
             return !(a == b);
         }
 
-        public static Modifier GetModifier(PlayerControl player)
+        public static Modifier[] GetModifiers(PlayerControl player)
         {
-            return (from entry in ModifierDictionary where entry.Key == player.PlayerId select entry.Value)
-                .FirstOrDefault();
+            if (player == null || !ModifierDictionary.ContainsKey(player.PlayerId)) return Array.Empty<Modifier>();
+            return ModifierDictionary[player.PlayerId].ToArray();
         }
 
         public static IEnumerable<Modifier> GetModifiers(ModifierEnum modifiertype)
@@ -100,16 +105,27 @@ namespace TownOfUs.Roles.Modifiers
             return team;
         }
 
-        public static T GetModifier<T>(PlayerControl player) where T : Modifier
+        public static T[] GetModifiers<T>(PlayerControl player) where T : Modifier
         {
-            return GetModifier(player) as T;
+            if (player == null || !ModifierDictionary.ContainsKey(player.PlayerId)) return Array.Empty<T>();
+            return ModifierDictionary[player.PlayerId].Where(x => x is T).Select(x => (T)x).ToArray();
         }
 
-        public static Modifier GetModifier(PlayerVoteArea area)
+        public static T GetModifier<T>(PlayerControl player) where T : Modifier
+        {
+            return GetModifiers<T>(player).FirstOrDefault() as T;
+        }
+
+        public static T GetModifier<T>(PlayerVoteArea player) where T : Modifier
+        {
+            return GetModifiers(player).Where(x => x is T).First() as T;
+        }
+
+        public static Modifier[] GetModifiers(PlayerVoteArea area)
         {
             var player = PlayerControl.AllPlayerControls.ToArray()
                 .FirstOrDefault(x => x.PlayerId == area.TargetPlayerId);
-            return player == null ? null : GetModifier(player);
+            return player == null ? null : GetModifiers(player);
         }
     }
 

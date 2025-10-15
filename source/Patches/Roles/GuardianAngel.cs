@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using TMPro;
-using TownOfUs.Extensions;
+using TownOfUs.Patches;
 
 namespace TownOfUs.Roles
 {
@@ -55,15 +55,10 @@ namespace TownOfUs.Roles
             TimeRemaining -= Time.deltaTime;
         }
 
-
         public void UnProtect()
         {
-            var ga = GetRole<GuardianAngel>(Player);
-            if (!ga.target.IsShielded())
-            {
-                ga.target.myRend().material.SetColor("_VisorColor", Palette.VisorColor);
-                ga.target.myRend().material.SetFloat("_Outline", 0f);
-            }
+            TimeRemaining = 0f;
+            ShowShield.ResetVisor(target, Player);
             Enabled = false;
             LastProtected = DateTime.UtcNow;
         }

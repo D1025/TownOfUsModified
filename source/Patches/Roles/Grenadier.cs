@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using TownOfUs.Extensions;
+using TownOfUs.ImpostorRoles.GrenadierMod;
 
 namespace TownOfUs.Roles
 {
@@ -13,15 +14,15 @@ namespace TownOfUs.Roles
         public static Il2CppSystem.Collections.Generic.List<PlayerControl> closestPlayers = null;
 
         static readonly Color normalVision = new Color(0.6f, 0.6f, 0.6f, 0f);
-        static readonly Color dimVision = new Color(0.6f, 0.6f, 0.6f, 0.2f);
-        static readonly Color blindVision = new Color(0.6f, 0.6f, 0.6f, 1f);
         public Il2CppSystem.Collections.Generic.List<PlayerControl> flashedPlayers = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+
+        public float flashPercent = 0f;
 
         public Grenadier(PlayerControl player) : base(player)
         {
             Name = "Grenadier";
-            ImpostorText = () => "Hinder The Crewmates' Vision";
-            TaskText = () => "Blind the crewmates to get sneaky kills";
+            ImpostorText = () => "Flashbang The Crewmates";
+            TaskText = () => "Flash the Crewmates to get sneaky kills";
             Color = Patches.Colors.Impostor;
             LastFlashed = DateTime.UtcNow;
             RoleType = RoleEnum.Grenadier;
@@ -74,17 +75,9 @@ namespace TownOfUs.Roles
                 if (TimeRemaining > CustomGameOptions.GrenadeDuration - 0.5f && (!sabActive))
                 {
                     float fade = (TimeRemaining - CustomGameOptions.GrenadeDuration) * -2.0f;
-                    if (ShouldPlayerBeBlinded(PlayerControl.LocalPlayer))
+                    if (FlashUnFlash.ShouldPlayerBeBlinded(PlayerControl.LocalPlayer) || FlashUnFlash.ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = Color.Lerp(normalVision, blindVision, fade);
-                    }
-                    else if (ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
-                    {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = Color.Lerp(normalVision, dimVision, fade);
+                        flashPercent = fade;
                         try
                         {
                             if (PlayerControl.LocalPlayer.Data.IsImpostor() && MapBehaviour.Instance.infectedOverlay.sabSystem.Timer < 0.5f)
@@ -96,24 +89,14 @@ namespace TownOfUs.Roles
                     }
                     else
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = normalVision;
+                        flashPercent = 0f;
                     }
                 }
                 else if (TimeRemaining <= (CustomGameOptions.GrenadeDuration - 0.5f) && TimeRemaining >= 0.5f && (!sabActive))
                 {
-                    if (ShouldPlayerBeBlinded(PlayerControl.LocalPlayer))
+                    if (FlashUnFlash.ShouldPlayerBeBlinded(PlayerControl.LocalPlayer) || FlashUnFlash.ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = blindVision;
-                    }
-                    else if (ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
-                    {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = dimVision;
+                        flashPercent = 1f;
                         try
                         {
                             if (PlayerControl.LocalPlayer.Data.IsImpostor() && MapBehaviour.Instance.infectedOverlay.sabSystem.Timer < 0.5f)
@@ -125,38 +108,27 @@ namespace TownOfUs.Roles
                     }
                     else
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = normalVision;
+                        flashPercent = 0f;
                     }
                 }
                 else if (TimeRemaining < 0.5f && (!sabActive))
                 {
-                    float fade2 = (TimeRemaining * -2.0f) + 1.0f;
-                    if (ShouldPlayerBeBlinded(PlayerControl.LocalPlayer))
+                    float fade2 = TimeRemaining * 2.0f;
+                    if (FlashUnFlash.ShouldPlayerBeBlinded(PlayerControl.LocalPlayer) || FlashUnFlash.ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = Color.Lerp(blindVision, normalVision, fade2);
-                    }
-                    else if (ShouldPlayerBeDimmed(PlayerControl.LocalPlayer))
-                    {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = Color.Lerp(dimVision, normalVision, fade2);
+                        flashPercent = fade2;
                     }
                     else
                     {
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                        ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                        DestroyableSingleton<HudManager>.Instance.FullScreen.color = normalVision;
+                        flashPercent = 0f;
                     }
                 }
                 else
                 {
-                    ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-                    ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = true;
-                    DestroyableSingleton<HudManager>.Instance.FullScreen.color = normalVision;
+                    ((Renderer)HudManager.Instance.FullScreen).enabled = true;
+                    ((Renderer)HudManager.Instance.FullScreen).gameObject.active = true;
+                    HudManager.Instance.FullScreen.color = normalVision;
+                    flashPercent = 0f;
                     TimeRemaining = 0.0f;
                 }
             }
@@ -174,22 +146,13 @@ namespace TownOfUs.Roles
             }
         }
 
-        private static bool ShouldPlayerBeDimmed(PlayerControl player)
-        {
-            return (player.Data.IsImpostor() || player.Data.IsDead) && !MeetingHud.Instance;
-        }
-
-        private static bool ShouldPlayerBeBlinded(PlayerControl player)
-        {
-            return !player.Data.IsImpostor() && !player.Data.IsDead && !MeetingHud.Instance;
-        }
-
         public void UnFlash()
         {
             Enabled = false;
+            flashPercent = 0f;
             LastFlashed = DateTime.UtcNow;
-            ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).enabled = true;
-            DestroyableSingleton<HudManager>.Instance.FullScreen.color = normalVision;
+            ((Renderer)HudManager.Instance.FullScreen).enabled = true;
+            HudManager.Instance.FullScreen.color = normalVision;
             flashedPlayers.Clear();
         }
     }

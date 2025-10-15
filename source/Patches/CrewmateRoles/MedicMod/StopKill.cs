@@ -6,6 +6,13 @@ using UnityEngine;
 
 namespace TownOfUs.CrewmateRoles.MedicMod
 {
+    public enum NotificationOptions
+    {
+        Medic = 0,
+        Shielded = 1,
+        Nobody = 2
+    }
+
     [HarmonyPatch(typeof(KillButton), nameof(KillButton.DoClick))]
     public class StopKill
     {
@@ -19,9 +26,6 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                 CustomGameOptions.NotificationShield == NotificationOptions.Medic)
                 Coroutines.Start(Utils.FlashCoroutine(new Color(0f, 0.5f, 0f, 1f)));
 
-            if (CustomGameOptions.NotificationShield == NotificationOptions.Everyone)
-                Coroutines.Start(Utils.FlashCoroutine(new Color(0f, 0.5f, 0f, 1f)));
-
             if (!flag)
                 return;
 
@@ -30,8 +34,6 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                 if (((Medic) role).ShieldedPlayer.PlayerId == playerId)
                 {
                     ((Medic) role).ShieldedPlayer = null;
-                    ((Medic) role).exShielded = player;
-                    System.Console.WriteLine(player.name + " Is Ex-Shielded");
                 }
 
             player.myRend().material.SetColor("_VisorColor", Palette.VisorColor);

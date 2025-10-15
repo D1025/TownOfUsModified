@@ -324,6 +324,26 @@ namespace TownOfUs.Patches
                         AddRoleMessage(RoleEnum.Deputy);
                         return false;
                     }
+                    else if (chatText.ToLower().StartsWith("/plum") || chatText.ToLower().StartsWith("/ plum"))
+                    {
+                        AddRoleMessage(RoleEnum.Plumber);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/eclip") || chatText.ToLower().StartsWith("/ eclip"))
+                    {
+                        AddRoleMessage(RoleEnum.Eclipsal);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/merc") || chatText.ToLower().StartsWith("/ merc"))
+                    {
+                        AddRoleMessage(RoleEnum.Mercenary);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/cler") || chatText.ToLower().StartsWith("/ cler"))
+                    {
+                        AddRoleMessage(RoleEnum.Cleric);
+                        return false;
+                    }
                     else if (chatText.ToLower().StartsWith("/lover") || chatText.ToLower().StartsWith("/ lover"))
                     {
                         AddModifierMessage(ModifierEnum.Lover);
@@ -354,6 +374,11 @@ namespace TownOfUs.Patches
                         AddModifierMessage(ModifierEnum.Bait);
                         return false;
                     }
+                    else if (chatText.ToLower().StartsWith("/disp") || chatText.ToLower().StartsWith("/ disp"))
+                    {
+                        AddModifierMessage(ModifierEnum.Disperser);
+                        return false;
+                    }
                     else if (chatText.ToLower().StartsWith("/dis") || chatText.ToLower().StartsWith("/ dis"))
                     {
                         AddModifierMessage(ModifierEnum.Diseased);
@@ -382,11 +407,6 @@ namespace TownOfUs.Patches
                     else if (chatText.ToLower().StartsWith("/radar") || chatText.ToLower().StartsWith("/ radar"))
                     {
                         AddModifierMessage(ModifierEnum.Radar);
-                        return false;
-                    }
-                    else if (chatText.ToLower().StartsWith("/dis") || chatText.ToLower().StartsWith("/ dis"))
-                    {
-                        AddModifierMessage(ModifierEnum.Disperser);
                         return false;
                     }
                     else if (chatText.ToLower().StartsWith("/multi") || chatText.ToLower().StartsWith("/ multi"))
@@ -426,9 +446,29 @@ namespace TownOfUs.Patches
                         AddModifierMessage(ModifierEnum.Saboteur);
                         return false;
                     }
+                    else if (chatText.ToLower().StartsWith("/cel") || chatText.ToLower().StartsWith("/ cel"))
+                    {
+                        AddModifierMessage(ModifierEnum.Celebrity);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/task") || chatText.ToLower().StartsWith("/ task"))
+                    {
+                        AddModifierMessage(ModifierEnum.Taskmaster);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/imm") || chatText.ToLower().StartsWith("/ imm"))
+                    {
+                        AddModifierMessage(ModifierEnum.Immovable);
+                        return false;
+                    }
+                    else if (chatText.ToLower().StartsWith("/sat") || chatText.ToLower().StartsWith("/ sat"))
+                    {
+                        AddModifierMessage(ModifierEnum.Satellite);
+                        return false;
+                    }
                     else if (chatText.ToLower().StartsWith("/ass") || chatText.ToLower().StartsWith("/ ass"))
                     {
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                        HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                             "The Assassin is an ability which is given to killers to guess other player's roles during mettings. If they guess correctly they kill the other player, if not, they die instead.");
                         return false;
                     }
@@ -436,16 +476,25 @@ namespace TownOfUs.Patches
                     {
                         var role = Role.GetRole(PlayerControl.LocalPlayer);
                         if (role != null) AddRoleMessage(role.RoleType);
-                        else if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You do not have a role.");
-                        else DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
+                        else if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You do not have a role.");
+                        else HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
                         return false;
                     }
                     else if (chatText.ToLower().StartsWith("/m") || chatText.ToLower().StartsWith("/ m") || chatText.ToLower().StartsWith("/modifier") || chatText.ToLower().StartsWith("/ modifier"))
                     {
-                        var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-                        if (modifier != null) AddModifierMessage(modifier.ModifierType);
-                        else if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You do not have a modifier.");
-                        else DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
+                        var modifiers = Modifier.GetModifiers(PlayerControl.LocalPlayer);
+                        if (modifiers.Length == 0)
+                        {
+                            if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You do not have a modifier.");
+                            else DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
+                        }
+                        else
+                        {
+                            foreach (var modifier in modifiers)
+                            {
+                                AddModifierMessage(modifier.ModifierType);
+                            }
+                        }
                         return false;
                     }
                 }
@@ -465,7 +514,7 @@ namespace TownOfUs.Patches
                 }
                 if (chatText.ToLower().StartsWith("/"))
                 {
-                    if (sourcePlayer == PlayerControl.LocalPlayer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
+                    if (sourcePlayer == PlayerControl.LocalPlayer) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Invalid Command.");
                     return false;
                 }
                 if (sourcePlayer.IsJailed() && MeetingHud.Instance)
@@ -479,175 +528,184 @@ namespace TownOfUs.Patches
 
             public static void AddRoleMessage(RoleEnum role)
             {
-                if (role == RoleEnum.Crewmate) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "The Crewmate is a vanilla Crewmate.");
-                if (role == RoleEnum.Impostor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "The Impostor a vanilla Impostor.");
-                if (role == RoleEnum.Altruist) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "The Altruist is a crewmate with the ability to sacrifice themselves to revive another player.");
-                if (role == RoleEnum.Engineer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Crewmate) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "The Crewmate is a vanilla Crewmate.");
+                if (role == RoleEnum.Impostor) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "The Impostor a vanilla Impostor.");
+                if (role == RoleEnum.Altruist) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Altruist is a crewmate with the ability to revive other players. In order to do so they must be near a dead body, when they start reviving, all killers are alerted about the Altruist and where they are to give them a chance to prevent the revival.");
+                if (role == RoleEnum.Engineer) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Engineer is a crewmate with the ability to vent and fix sabotages.");
-                if (role == RoleEnum.Investigator) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Investigator) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Investigator is a crewmate with the ability to see other player's footsteps for a limited time.");
-                if (role == RoleEnum.Mayor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Mayor) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Mayor is a crewmate with 3 votes and their role is revealed to everyone.");
-                if (role == RoleEnum.Medic) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "The Medic is a crewmate who can place a shield on another player.");
-                if (role == RoleEnum.Sheriff) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Medic) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Medic is a crewmate who can place a shield on another player, preventing them from dying.");
+                if (role == RoleEnum.Sheriff) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Sheriff is a crewmate who can kill other players. If the other player is good, they will self-kill instead.");
-                if (role == RoleEnum.Swapper) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Swapper) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Swapper is a crewmate who can swap the votes of 2 players during meetings.");
-                if (role == RoleEnum.Seer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Seer) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Seer is a crewmate who can reveal the alliance of other players.");
-                if (role == RoleEnum.Snitch) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Snitch) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Snitch is a crewmate who can see who the Impostors are once they complete all their tasks.");
-                if (role == RoleEnum.Spy) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Spy) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Spy is a crewmate who can see the colours of players on the admin table.");
-                if (role == RoleEnum.Vigilante) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Vigilante) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Vigilante is a crewmate who can guess other people's roles during meetings. If they guess correctly they kill the other player, if not, they die instead.");
-                if (role == RoleEnum.Hunter) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Hunter) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Hunter is a crewmate who can stalk other players. If the stalked player uses an ability, the Hunter will then be permitted to kill them. The Hunter has no punishment for killing incorrectly.");
-                if (role == RoleEnum.Arsonist) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "The Arsonist is a neutral killer with the goal to kill everyone. To do so they must douse players and once enough people are doused they can ignite, killing all doused players immediately.");
-                if (role == RoleEnum.Executioner) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Arsonist) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Arsonist is a neutral killer with the goal to kill everyone. To do so they must douse players and in order to kill them, they can ignite everyone in a small radius around them.");
+                if (role == RoleEnum.Executioner) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Executioner is a neutral evil role with the goal to vote out a specific player.");
-                if (role == RoleEnum.Glitch) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Glitch) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Glitch is a neutral killer with the goal to kill everyone. In addition to killing, they can also hack players, disabling abilities and mimic players, changing their appearance to look like others.");
-                if (role == RoleEnum.Jester) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Jester) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Jester is a neutral evil role with the goal to be voted out.");
-                if (role == RoleEnum.Phantom) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Phantom) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Phantom is a neutral evil role with the goal to complete all their tasks without being clicked.");
-                if (role == RoleEnum.Grenadier) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Grenadier) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Grenadier is an impostor who can use smoke grenades to blind other players.");
-                if (role == RoleEnum.Janitor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Janitor) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Janitor is an impostor who can remove bodies from the map.");
-                if (role == RoleEnum.Miner) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Miner) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Miner is an impostor who can place new vents to create a new vent network.");
-                if (role == RoleEnum.Morphling) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Morphling) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Morphling is an impostor who can morph into other players.");
-                if (role == RoleEnum.Swooper) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Swooper) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Swooper is an impostor who can turn invisible.");
-                if (role == RoleEnum.Undertaker) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Undertaker) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Undertaker is an impostor who can drag bodies to different locations.");
-                if (role == RoleEnum.Haunter) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Haunter) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Haunter is a crewmate who can reveal all Impostors on completion of their tasks.");
-                if (role == RoleEnum.Veteran) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Veteran) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Veteran is a crewmate who can alert to kill anyone who interacts with them.");
-                if (role == RoleEnum.Amnesiac) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Amnesiac) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Amnesiac is a neutral benign role that needs to find a body in order to remember a new role.");
-                if (role == RoleEnum.Juggernaut) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Juggernaut) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Juggernaut is a neutral killer with the goal to kill everyone. Every kill they make reduces their kill cooldown.");
-                if (role == RoleEnum.Tracker) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Tracker) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Tracker is a crewmate who can track multiple other players.");
-                if (role == RoleEnum.Transporter) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Transporter) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Transporter is a crewmate who can swap the locations of 2 other players.");
-                if (role == RoleEnum.Traitor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Traitor) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Traitor is an impostor who was originally a Crewmate but switched sides.");
-                if (role == RoleEnum.Medium) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Medium) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Medium is a crewmate who can see dead players the round that they die.");
-                if (role == RoleEnum.Trapper) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Trapper) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Trapper is a crewmate who can place traps around the map. All players who stand in these traps will reveal their role to the Trapper as long as enough players trigger the trap.");
-                if (role == RoleEnum.Survivor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Survivor) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Survivor is a neutral benign role that needs to live to win.");
-                if (role == RoleEnum.GuardianAngel) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.GuardianAngel) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Guardian Angel is a neutral benign role that needs their target to win to win themselves.");
-                if (role == RoleEnum.Mystic) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Mystic) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Mystic is a crewmate who gets an alert when a player dies.");
-                if (role == RoleEnum.Blackmailer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Blackmailer) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Blackmailer is an impostor who can silence other players.");
-                if (role == RoleEnum.Plaguebearer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Plaguebearer) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Plaguebearer is a neutral killer with the goal to kill everyone. To do this they must infect everyone to turn into Pestilence.");
-                if (role == RoleEnum.Pestilence) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Pestilence) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Pestilence is a neutral killer with the goal to kill everyone. In addition to being able to kill, they are invincible and anyone who interacts with them will die.");
-                if (role == RoleEnum.Werewolf) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Werewolf) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Werewolf is a neutral killer with the goal to kill everyone. In order to kill, they must rampage which gives them a short kill cooldown to kill people in bursts.");
-                if (role == RoleEnum.Detective) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Detective) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Detective is a crewmate that can inspect crime scenes. Any player who has walked over this crime scene is suspicious. They can then examine players to see who has been at the crime scene.");
-                if (role == RoleEnum.Escapist) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Escapist) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Escapist is an impostor who can mark a location and recall to it later.");
-                if (role == RoleEnum.Imitator) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Imitator) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Imitator is a crewmate who can select dead crew roles to use during meetings. The following round they become this new role.");
-                if (role == RoleEnum.Bomber) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Bomber) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Bomber is an impostor who can place bombs, these kill anyone in the area a short duration later.");
-                if (role == RoleEnum.Doomsayer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "The Doomsayer is a neutral killing role with the goal to guess player's roles to win.");
-                if (role == RoleEnum.Vampire) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Doomsayer) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Doomsayer is a neutral evil role with the goal to guess 3 other player's roles simultaneously.");
+                if (role == RoleEnum.Vampire) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Vampire is a neutral killer with the goal to kill everyone. The first crewmate the original Vampire bites will turn into a Vampire, the rest will die.");
-                if (role == RoleEnum.Prosecutor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Prosecutor) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Prosecutor is a crewmate who can exile a player of their choosing in a meeting.");
-                if (role == RoleEnum.Warlock) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Warlock) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Warlock is an impostor who can charge their kill button to kill multiple people at once.");
-                if (role == RoleEnum.Oracle) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "The Oracle is a crewmate who can make a player confess. This makes it so each meeting the Oracle learns that at least 1 of 3 players is evil, this other player is protected from being voted out and if the Oracle were to die that their potential faction would be revealed.");
-                if (role == RoleEnum.Venerer) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "The Venerer is an impostor who improves their ability with each kill. First kill is camouflage, second is speed and third is global slow.");
-                if (role == RoleEnum.Aurial) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Oracle) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Oracle is a crewmate who can make a player confess and bless players. Making a player confess allows the Oracle to learn 1 of 3 players is evil, as well as revealing their alignment on the Oracle's death. A blessed player cannot die during a meeting.");
+                if (role == RoleEnum.Venerer) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Venerer is an impostor who improves their ability with each kill. First kill is camouflage, second is speed and third is a slow around the Venerer.");
+                if (role == RoleEnum.Aurial) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Aurial is a crewmate who can sense ability uses nearby.");
-                if (role == RoleEnum.Politician) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Politician) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Politician is a crewmate who can campaign in order to become the Mayor. During meetings they can attempt to reveal as the Mayor, if they have campaigned over half the crewmates they will be successful, if not they are unable to campaign the following round.");
-                if (role == RoleEnum.Warden) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.Warden) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Warden is a crewmate who can fortify other players. Fortified players cannot be interacted with.");
-                if (role == RoleEnum.Hypnotist) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Hypnotist) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Hypnotist is an impostor who can hypnotise other players. During meetings they can then release mass hysteria which makes all hypnotised players see everyone else as either morphed as themself, camouflaged or invisible.");
-                if (role == RoleEnum.Jailor) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Jailor) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Jailor is a crewmate who can jail other players. Jailed players cannot have meeting abilities used on them and cannot use meeting abilities themself. The Jailor and jailee may also privately talk to each other and the Jailor may also execute their jailee. If they execute a crewmate they lose the ability to jail players.");
-                if (role == RoleEnum.SoulCollector) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "The Soul Collector is a neutral evil role with the goal to collect souls. In order to obtain them they must reap players, once those players die they can pick their soul up off the ground.");
-                if (role == RoleEnum.Lookout) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (role == RoleEnum.SoulCollector) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Soul Collector is a neutral killer with the goal to kill everyone. Reaping a player instantly kills them however, instead of leaving behind a body they leave a soul behind instead.");
+                if (role == RoleEnum.Lookout) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Lookout is a crewmate who can watch other players. They will see all players who interact with each player they watch.");
-                if (role == RoleEnum.Scavenger) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Scavenger) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Scavenger is an impostor who must hunt down prey. Once their kill cooldown is up they are given a target to kill and being their scavenge. If they kill that target they get a reduced kill cooldown and regenerate their scavenge duration. If they don't kill their target they are given an increased kill cooldown.");
-                if (role == RoleEnum.Deputy) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (role == RoleEnum.Deputy) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Deputy is a crewmate who can camp other players. If the player is killed they will receive an alert notifying them of their death. During the following meeting they may then shoot anyone. If they shoot the killer, they die unless fortified or invincible, if they are wrong nothing happens.");
-                if (role == RoleEnum.Vulture) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "Eat them all...");
-                if (role == RoleEnum.Wraith) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You're impostor, kill everyone, use your ability to run through walls without limit for a short time");
+                if (role == RoleEnum.Plumber) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                    "The Plumber is a crewmate who can flush vents, ejecting everyone currently in a vent and block vents, preventing their use for the remainder of the game.");
+                if (role == RoleEnum.Eclipsal) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Eclipsal is an impostor who can blind other players. Blinded players have no vision and their report button doesn't light up (but can still be used).");
+                if (role == RoleEnum.Mercenary) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Mercenary is a neutral benign who can guard other players. Guarded players who are interacted with gain currency for the Mercenary to use to bribe players. The Mercenary wins if any bribed player lives and wins.");
+                if (role == RoleEnum.Cleric) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Cleric is a crewmate who can barrier other players temporarily or cleanse players. Barriered players cannot be killed. Cleansing a player removes all negative effects (e.g. blackmail, douse).");
             }
 
             public static void AddModifierMessage(ModifierEnum modifier)
             {
-                if (modifier == ModifierEnum.Giant) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Giant) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Giant is a global modifier that increases the size of a player.");
-                if (modifier == ModifierEnum.Mini) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Mini) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Mini is a global modifier that decreases the size of a player.");
-                if (modifier == ModifierEnum.ButtonBarry) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.ButtonBarry) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Button Barry is a global modifier that allows the player to button from anywhere on the map.");
-                if (modifier == ModifierEnum.Aftermath) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Aftermath) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Aftermath is a crewmate modifier that forces their killer to instantly use their ability.");
-                if (modifier == ModifierEnum.Bait) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Bait) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Bait is a crewmate modifier that forces their killer to report their body.");
-                if (modifier == ModifierEnum.Diseased) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Diseased) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Diseased is a crewmate modifier that increases their killer's kill cooldown.");
-                if (modifier == ModifierEnum.Flash) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Flash) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Flash is a global modifier that increases the speed of a player.");
-                if (modifier == ModifierEnum.Tiebreaker) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Tiebreaker) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Tiebreaker is a global modifier that allows a player's vote to break ties in meetings.");
-                if (modifier == ModifierEnum.Torch) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Torch) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Torch is a crewmate modifier that allows them to see when lights are off.");
-                if (modifier == ModifierEnum.Lover) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (modifier == ModifierEnum.Lover) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Lover is a global modifier that life links 2 players. They also gain an extra win condition of surviving until final 3 together.");
-                if (modifier == ModifierEnum.Sleuth) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Sleuth) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Sleuth is a global modifier that allows a player to see roles of dead bodies that they report.");
-                if (modifier == ModifierEnum.Radar) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Radar) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Radar is a global modifier that shows an arrow pointing to the closest player.");
-                if (modifier == ModifierEnum.Disperser) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
+                if (modifier == ModifierEnum.Disperser) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
                     "The Disperser is an impostor modifier that gives an extra ability to Impostors. This being once per game sending every player to a random vent on the map.");
-                if (modifier == ModifierEnum.Multitasker) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Multitasker) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Multitasker is a crewmate modifier that makes their tasks slightly transparent.");
-                if (modifier == ModifierEnum.DoubleShot) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.DoubleShot) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Double Shot is an impostor modifier that gives Assassins an extra life when assassinating.");
-                if (modifier == ModifierEnum.Underdog) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Underdog) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Underdog is an impostor modifier that grants Impostors a reduced kill cooldown when alone.");
-                if (modifier == ModifierEnum.Frosty) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Frosty) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Frosty is a crewmate modifier that reduces the speed of their killer temporarily.");
-                if (modifier == ModifierEnum.SixthSense) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.SixthSense) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Sixth Sense is a global modifier that alerts players to when someone interacts with them.");
-                if (modifier == ModifierEnum.Shy) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Shy) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Shy is a global modifier that makes the player slightly transparent when they stand still.");
-                if (modifier == ModifierEnum.Saboteur) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
+                if (modifier == ModifierEnum.Saboteur) HudManager.Instance.Chat.AddChat(
                     PlayerControl.LocalPlayer, "The Saboteur is an impostor modifier that passively reduces non-door sabotage cooldowns.");
-                if (modifier == ModifierEnum.Error) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "The Error is a global modifier that changes interactions by another roles with you. If Sheric could kill you - now he can't. It works form a Sherif, Seer, Investigator, Trapper and Snitch");
-                if (modifier == ModifierEnum.Drunk) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                    PlayerControl.LocalPlayer, "Your controls are inverted");
+                if (modifier == ModifierEnum.Celebrity) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Celebrity is a crewmate modifier that will send a message showing where, when, and how you died when the next meeting starts.");
+                if (modifier == ModifierEnum.Taskmaster) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Taskmaster is a crewmate modifier that will automatically complete a random task after each meeting.");
+                if (modifier == ModifierEnum.Immovable) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Immovable is a global modifier that makes the player unable to move via abilities and meetings.");
+                if (modifier == ModifierEnum.Satellite) HudManager.Instance.Chat.AddChat(
+                    PlayerControl.LocalPlayer, "The Satellite is a global modifier that gives a 1 time use ability to detect where all dead bodies are.");
             }
         }
 

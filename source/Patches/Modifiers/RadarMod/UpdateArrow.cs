@@ -3,12 +3,14 @@ using HarmonyLib;
 using TownOfUs.Roles.Modifiers;
 using System.Collections.Generic;
 using UnityEngine;
+using TownOfUs.Patches;
 
 namespace TownOfUs.Modifiers.RadarMod
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class UpdateArrow
     {
+        public static Sprite Sprite => TownOfUs.Arrow;
         public static void Postfix(HudManager __instance)
         {
             if (PlayerControl.AllPlayerControls.Count <= 1) return;
@@ -21,6 +23,21 @@ namespace TownOfUs.Modifiers.RadarMod
             {
                 radar.RadarArrow.DestroyAll();
                 radar.RadarArrow.Clear();
+                return;
+            }
+
+            if (radar.RadarArrow.Count == 0)
+            {
+                var gameObj = new GameObject();
+                var arrow = gameObj.AddComponent<ArrowBehaviour>();
+                gameObj.transform.parent = PlayerControl.LocalPlayer.gameObject.transform;
+                var renderer = gameObj.AddComponent<SpriteRenderer>();
+                renderer.sprite = Sprite;
+                renderer.color = Colors.Radar;
+                arrow.image = renderer;
+                gameObj.layer = 5;
+                arrow.target = PlayerControl.LocalPlayer.transform.position;
+                radar.RadarArrow.Add(arrow);
             }
 
             foreach (var arrow in radar.RadarArrow)

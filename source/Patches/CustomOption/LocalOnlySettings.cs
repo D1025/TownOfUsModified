@@ -18,6 +18,12 @@ namespace TownOfUs.CustomOption
                 Title = "Other Ghosts Visible When Dead",
                 OnClick = () => { return TownOfUs.DeadSeeGhosts.Value = !TownOfUs.DeadSeeGhosts.Value; },
                 DefaultValue = TownOfUs.DeadSeeGhosts.Value
+            },
+            new()
+            {
+                Title = "See Setting Changes In Lobby",
+                OnClick = () => { return TownOfUs.SeeSettingNotifier.Value = !TownOfUs.SeeSettingNotifier.Value; },
+                DefaultValue = TownOfUs.SeeSettingNotifier.Value
             }
         };
 

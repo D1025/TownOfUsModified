@@ -18,6 +18,7 @@ using TownOfUs.CrewmateRoles.VigilanteMod;
 using TownOfUs.Modifiers.AssassinMod;
 using TownOfUs.NeutralRoles.DoomsayerMod;
 using TownOfUs.CrewmateRoles.DeputyMod;
+using System.Collections.Generic;
 
 namespace TownOfUs.CrewmateRoles.JailorMod
 {
@@ -79,10 +80,10 @@ namespace TownOfUs.CrewmateRoles.JailorMod
                 if (PlayerControl.LocalPlayer.Data.IsDead) return;
                 role.ExecuteButton.Destroy();
                 role.UsesText.Destroy();
-                role.JailCell.Destroy();
                 role.Executes -= 1;
-                if (!role.Jailed.Is(RoleEnum.Pestilence))
+                if (!role.Jailed.Is(RoleEnum.Pestilence) && !role.Jailed.IsBlessed())
                 {
+                    role.JailCell.Destroy();
                     if (role.Jailed.Is(Faction.Crewmates))
                     {
                         role.IncorrectKills += 1;
@@ -99,6 +100,14 @@ namespace TownOfUs.CrewmateRoles.JailorMod
                     Utils.Rpc(CustomRPC.Jail, role.Player.PlayerId, (byte)1);
                     role.Jailed = null;
                 }
+                else if (role.Jailed.IsBlessed())
+                {
+                    Coroutines.Start(Utils.FlashCoroutine(Colors.Oracle));
+                    foreach (var oracle in role.Jailed.GetOracle())
+                    {
+                        Utils.Rpc(CustomRPC.Bless, oracle.Player.PlayerId, (byte)2);
+                    }
+                }
             }
 
             return Listener;
@@ -110,7 +119,7 @@ namespace TownOfUs.CrewmateRoles.JailorMod
                 x => x.TargetPlayerId == player.PlayerId
             );
 
-            var hudManager = DestroyableSingleton<HudManager>.Instance;
+            var hudManager = HudManager.Instance;
             if (checkLover)
             {
                 SoundManager.Instance.PlaySound(player.KillSfx, false, 0.8f);
@@ -135,14 +144,14 @@ namespace TownOfUs.CrewmateRoles.JailorMod
                     }
 
                     player.myTasks.Clear();
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostIgnoreTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0)
                     );
                 }
                 else
                 {
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostDoTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0));
                 }
@@ -239,12 +248,13 @@ namespace TownOfUs.CrewmateRoles.JailorMod
                     }
                 }
             }
-            player.Die(DeathReason.Kill, false);
+            player.Data.IsDead = true;
             if (checkLover && player.IsLover() && CustomGameOptions.BothLoversDie)
             {
                 var otherLover = Modifier.GetModifier<Lover>(player).OtherLover.Player;
                 if (!otherLover.Is(RoleEnum.Pestilence)) ExecuteKill(jailor, otherLover, false);
             }
+            player.Die(DeathReason.Kill, false);
 
             var deadPlayer = new DeadPlayer
             {
@@ -269,18 +279,23 @@ namespace TownOfUs.CrewmateRoles.JailorMod
             }
 
             var blackmailers = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Blackmailer && x.Player != null).Cast<Blackmailer>();
+            var blackmailed = new List<PlayerControl>();
             foreach (var role in blackmailers)
             {
-                if (role.Blackmailed != null && voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
+                if (role.Blackmailed != null && !blackmailed.Contains(role.Blackmailed))
                 {
-                    if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                    blackmailed.Add(role.Blackmailed);
+                    if (voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
                     {
-                        voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
-                        voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
-                        voteArea.XMark.transform.localPosition = new Vector3(
-                            voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
-                            voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
-                            voteArea.XMark.transform.localPosition.z);
+                        if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                        {
+                            voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
+                            voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
+                            voteArea.XMark.transform.localPosition = new Vector3(
+                                voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
+                                voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
+                                voteArea.XMark.transform.localPosition.z);
+                        }
                     }
                 }
             }

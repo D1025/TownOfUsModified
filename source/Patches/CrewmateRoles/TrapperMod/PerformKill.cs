@@ -8,7 +8,7 @@ namespace TownOfUs.CrewmateRoles.TrapperMod
     {
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Trapper)) return true;
             if (!PlayerControl.LocalPlayer.CanMove) return false;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
@@ -21,6 +21,7 @@ namespace TownOfUs.CrewmateRoles.TrapperMod
             role.UsesLeft--;
             role.LastTrapped = System.DateTime.UtcNow;
             var pos = PlayerControl.LocalPlayer.transform.position;
+            pos.y -= 0.2727f;
             pos.z += 0.001f;
             role.traps.Add(TrapExtentions.CreateTrap(pos));
 

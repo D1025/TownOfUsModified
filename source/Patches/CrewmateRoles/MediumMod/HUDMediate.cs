@@ -13,10 +13,6 @@ namespace TownOfUs.CrewmateRoles.MediumMod
         [HarmonyPatch(nameof(HudManager.Update))]
         public static void Postfix(HudManager __instance)
         {
-            UpdateButton(__instance);
-        }
-        public static void UpdateButton(HudManager __instance)
-        {
             if (PlayerControl.AllPlayerControls.Count <= 1) return;
             if (PlayerControl.LocalPlayer == null) return;
             if (PlayerControl.LocalPlayer.Data == null) return;
@@ -30,7 +26,6 @@ namespace TownOfUs.CrewmateRoles.MediumMod
                 mediateButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
-                if (data.IsDead) return;
 
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
@@ -60,16 +55,23 @@ namespace TownOfUs.CrewmateRoles.MediumMod
                 {
                     renderer.color = Palette.EnabledColor;
                     renderer.material.SetFloat("_Desat", 0f);
-                    return;
                 }
-
-                renderer.color = Palette.DisabledClear;
-                renderer.material.SetFloat("_Desat", 1f);
+                else
+                {
+                    renderer.color = Palette.DisabledClear;
+                    renderer.material.SetFloat("_Desat", 1f);
+                }
             }
-            else if (CustomGameOptions.ShowMediumToDead && Role.AllRoles.Any(x => x.RoleType == RoleEnum.Medium && ((Medium) x).MediatedPlayers.Keys.Contains(PlayerControl.LocalPlayer.PlayerId)))
+            if (CustomGameOptions.ShowMediumToDead)
             {
-                var role = (Medium) Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Medium && ((Medium) x).MediatedPlayers.Keys.Contains(PlayerControl.LocalPlayer.PlayerId));
-                role.MediatedPlayers.GetValueSafe(PlayerControl.LocalPlayer.PlayerId).target = role.Player.transform.position;
+                foreach (var medRole in Role.GetRoles(RoleEnum.Medium))
+                {
+                    var medium = (Medium)medRole;
+                    if (medium.MediatedPlayers.ContainsKey(PlayerControl.LocalPlayer.PlayerId))
+                    {
+                        medium.MediatedPlayers.GetValueSafe(PlayerControl.LocalPlayer.PlayerId).target = medium.Player.transform.localPosition;
+                    }
+                }
             }
         }
     }

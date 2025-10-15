@@ -23,7 +23,11 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
             if (voteArea.AmDead) return true;
             var player = Utils.PlayerById(voteArea.TargetPlayerId);
             if (player.IsJailed()) return true;
-            if (player == null || player.Data.IsDead || player.Data.Disconnected) return true;
+            if (
+                    player == null ||
+                    player.Data.IsDead ||
+                    player.Data.Disconnected
+                ) return true;
             var role = Role.GetRole(player);
             return role != null && role.Criteria();
         }
@@ -103,8 +107,9 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
             {
                 if (MeetingHud.Instance.state == MeetingHud.VoteStates.Discussion) return;
                 var currentGuess = role.Guesses[voteArea.TargetPlayerId];
-                var guessIndex = currentGuess == "None" ? -1 : role.PossibleGuesses.IndexOf(currentGuess);
-
+                var guessIndex = currentGuess == "None"
+                    ? -1
+                    : role.PossibleGuesses.IndexOf(currentGuess);
                 if (forwardsCycle)
                 {
                     if (++guessIndex >= role.PossibleGuesses.Count)
@@ -117,7 +122,10 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
                 }
 
                 var newGuess = role.Guesses[voteArea.TargetPlayerId] = role.PossibleGuesses[guessIndex];
-                nameText.text = newGuess == "None" ? "Guess" : $"<color=#{role.SortedColorMapping[newGuess].ToHtmlStringRGBA()}>{newGuess}</color>";
+
+                nameText.text = newGuess == "None"
+                    ? "Guess"
+                    : $"<color=#{role.SortedColorMapping[newGuess].ToHtmlStringRGBA()}>{newGuess}</color>";
             }
 
             return Listener;
@@ -127,39 +135,54 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
         {
             void Listener()
             {
-                if (MeetingHud.Instance.state == MeetingHud.VoteStates.Discussion || IsExempt(voteArea) || PlayerControl.LocalPlayer.Data.IsDead) return;
-
+                if (
+                    MeetingHud.Instance.state == MeetingHud.VoteStates.Discussion ||
+                    IsExempt(voteArea) || PlayerControl.LocalPlayer.Data.IsDead
+                ) return;
                 var targetId = voteArea.TargetPlayerId;
                 var currentGuess = role.Guesses[targetId];
-
                 if (currentGuess == "None") return;
+
+                role.NumberOfGuesses++;
+                var playersAlive = PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected && !Role.GetRole(x).Criteria() && !x.IsJailed()).ToList().Count;
 
                 ShowHideButtonsDoom.HideSingle(role, targetId, false);
                 var nameText = Object.Instantiate(voteArea.NameText, voteArea.transform);
                 nameText.transform.localPosition -= new Vector3(0.2f, 0.3f, 0f);
                 nameText.transform.localScale *= 0.6f;
                 nameText.text = $"<color=#{role.SortedColorMapping[currentGuess].ToHtmlStringRGBA()}>{currentGuess}</color>";
-
                 role.RoleGuess[targetId] = nameText;
 
                 var playerRole = Role.GetRole(voteArea);
-
-                if (currentGuess == playerRole.Name)
+                if (currentGuess != playerRole.Name)
                 {
-                    var playerModifier = Modifier.GetModifier(voteArea);
+                    role.IncorrectGuesses++;
+                    if (!CustomGameOptions.DoomsayerGuessAllAtOnce)
+                    {
+                        ShowHideButtonsDoom.HideButtonsDoom(role);
+                        Coroutines.Start(Utils.FlashCoroutine(Color.red));
+                        return;
+                    }
+                }
+                else if (!CustomGameOptions.DoomsayerGuessAllAtOnce) Coroutines.Start(Utils.FlashCoroutine(Color.green));
+
+                if ((role.NumberOfGuesses < 2 && playersAlive < 3) || (role.NumberOfGuesses < 3 && playersAlive > 2)) return;
+
+                ShowHideButtonsDoom.HideButtonsDoom(role);
+                if (role.IncorrectGuesses > 0 && CustomGameOptions.DoomsayerGuessAllAtOnce) Coroutines.Start(Utils.FlashCoroutine(Color.red));
+                else
+                {
+                    ShowHideButtonsDoom.HideTextDoom(role);
                     DoomsayerKill.RpcMurderPlayer(playerRole.Player, PlayerControl.LocalPlayer);
                     if (playerRole.Player.IsLover() && CustomGameOptions.BothLoversDie)
                     {
-                        var lover = ((Lover)playerModifier).OtherLover.Player;
+                        var playerModifier = Modifier.GetModifier<Lover>(voteArea);
+                        var lover = playerModifier.OtherLover.Player;
                         if (!lover.Is(RoleEnum.Pestilence)) ShowHideButtonsDoom.HideSingle(role, lover.PlayerId, false);
                     }
                 }
-                else
-                {
-                    ShowHideButtonsDoom.HideButtonsDoom(role);
-                    Coroutines.Start(Utils.FlashCoroutine(Color.red, 1f));
-                }
             }
+
             return Listener;
         }
 
@@ -180,7 +203,6 @@ namespace TownOfUs.NeutralRoles.DoomsayerMod
             doomsayerRole.NumberOfGuesses = 0;
             doomsayerRole.IncorrectGuesses = 0;
             doomsayerRole.RoleGuess.Clear();
-
             foreach (var voteArea in __instance.playerStates)
             {
                 GenButton(doomsayerRole, voteArea);

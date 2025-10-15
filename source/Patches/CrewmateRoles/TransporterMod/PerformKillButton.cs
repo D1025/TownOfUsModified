@@ -18,7 +18,8 @@ namespace TownOfUs.CrewmateRoles.TransporterMod
             var role = Role.GetRole<Transporter>(PlayerControl.LocalPlayer);
             if (!PlayerControl.LocalPlayer.CanMove) return false;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
-            if (!__instance.enabled) return false;
+            if (!__instance.isActiveAndEnabled || __instance.isCoolingDown) return false;
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (role.TransportTimer() != 0f) return false;
 
             if (role.ButtonUsable)

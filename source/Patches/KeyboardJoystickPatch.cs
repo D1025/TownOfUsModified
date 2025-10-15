@@ -8,8 +8,8 @@ namespace TownOfUs
         [HarmonyPostfix]
         public static void Postfix()
         {
-            if (DestroyableSingleton<HudManager>.Instance != null && DestroyableSingleton<HudManager>.Instance.ImpostorVentButton != null && DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.isActiveAndEnabled && ConsoleJoystick.player.GetButtonDown(50))
-                DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.DoClick();
+            if (HudManager.Instance != null && HudManager.Instance.ImpostorVentButton != null && HudManager.Instance.ImpostorVentButton.isActiveAndEnabled && ConsoleJoystick.player.GetButtonDown(50))
+                HudManager.Instance.ImpostorVentButton.DoClick();
         }
     }
 }

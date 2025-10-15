@@ -32,7 +32,7 @@ namespace TownOfUs
 
             if (player.inVent)
             {
-                if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2 && !player.Is(RoleEnum.Haunter) && !player.Is(RoleEnum.Phantom))
+                if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2)
                 {
                     player.MyPhysics.RpcExitVent(Vent.currentVent.Id);
                     player.MyPhysics.ExitAllVents();
@@ -43,28 +43,21 @@ namespace TownOfUs
             if (playerInfo.IsDead)
                 return false;
 
-            if (PlayerControl.AllPlayerControls.ToArray().Where(x => !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2) return false;
+            if (PlayerControl.AllPlayerControls.ToArray().Where(x => x != null && x.Data != null && !x.Data.IsDead && !x.Data.Disconnected).ToList().Count <= 2) return false;
 
-            if (CustomGameOptions.AllVent)
-                return true;
-
-            if ((player.Is(RoleEnum.Morphling) && !CustomGameOptions.MorphlingVent
+            if (player.Is(RoleEnum.Morphling) && !CustomGameOptions.MorphlingVent
                 || player.Is(RoleEnum.Swooper) && !CustomGameOptions.SwooperVent
                 || player.Is(RoleEnum.Grenadier) && !CustomGameOptions.GrenadierVent
                 || player.Is(RoleEnum.Undertaker) && !CustomGameOptions.UndertakerVent
                 || player.Is(RoleEnum.Escapist) && !CustomGameOptions.EscapistVent
                 || player.Is(RoleEnum.Bomber) && !CustomGameOptions.BomberVent
-                || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody)) 
-                || player.Is(ModifierEnum.Error))
+                || (player.Is(RoleEnum.Undertaker) && Role.GetRole<Undertaker>(player).CurrentlyDragging != null && !CustomGameOptions.UndertakerVentWithBody))
                 return false;
 
-            if (player.Is(RoleEnum.Engineer) ||
-                (player.Is(RoleEnum.Glitch) && CustomGameOptions.GlitchVent) || 
-                (player.Is(RoleEnum.Juggernaut) && CustomGameOptions.JuggVent) ||
-                (player.Is(RoleEnum.Wraith) && !CustomGameOptions.WraithVent) ||
-                (player.Is(RoleEnum.Pestilence) && CustomGameOptions.PestVent) || 
-                (player.Is(RoleEnum.Jester) && CustomGameOptions.JesterVent) ||
-                (player.Is(RoleEnum.Vampire) && CustomGameOptions.VampVent))
+            if (player.Is(RoleEnum.Engineer) || player.Is(RoleEnum.Plumber) || (player.Is(RoleEnum.SoulCollector) && CustomGameOptions.SCVent) ||
+                (player.Is(RoleEnum.Glitch) && CustomGameOptions.GlitchVent) || (player.Is(RoleEnum.Juggernaut) && CustomGameOptions.JuggVent) ||
+                (player.Is(RoleEnum.Pestilence) && CustomGameOptions.PestVent) || (player.Is(RoleEnum.Jester) && CustomGameOptions.JesterVent) ||
+                (player.Is(RoleEnum.Vampire) && CustomGameOptions.VampVent) || (player.Is(RoleEnum.Arsonist) && CustomGameOptions.ArsoVent))
                 return true;
 
             if (player.Is(RoleEnum.Werewolf) && CustomGameOptions.WerewolfVent)
@@ -94,6 +87,20 @@ namespace TownOfUs
             if (ventitaltionSystem != null && ventitaltionSystem.IsVentCurrentlyBeingCleaned(__instance.Id))
             {
                 couldUse = false;
+            }
+
+            foreach (var role in Role.AllRoles.Where(x => x.RoleType == RoleEnum.Plumber))
+            {
+                var plumber = (Plumber)role;
+                if (plumber.VentsBlocked.Contains((byte)__instance.Id))
+                {
+                    couldUse = false;
+                }
+            }
+
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Plumber))
+            {
+                if (SubmergedCompatibility.isSubmerged() && (__instance.Id == 0 || __instance.Id == 14)) couldUse = false;
             }
 
             canUse = couldUse;

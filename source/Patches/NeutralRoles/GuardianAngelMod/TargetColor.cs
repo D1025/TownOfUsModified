@@ -1,5 +1,6 @@
 using HarmonyLib;
 using TownOfUs.Extensions;
+using TownOfUs.NeutralRoles.ExecutionerMod;
 using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace TownOfUs.NeutralRoles.GuardianAngelMod
     {
         Crew,
         Amnesiac,
+        Mercenary,
         Survivor,
         Jester
     }
@@ -52,7 +54,7 @@ namespace TownOfUs.NeutralRoles.GuardianAngelMod
             Utils.Rpc(CustomRPC.GAToSurv, PlayerControl.LocalPlayer.PlayerId);
 
             Object.Destroy(role.UsesText);
-            DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+            HudManager.Instance.KillButton.gameObject.SetActive(false);
 
             GAToSurv(PlayerControl.LocalPlayer);
         }
@@ -73,6 +75,13 @@ namespace TownOfUs.NeutralRoles.GuardianAngelMod
                 var amnesiac = new Amnesiac(player);
                 amnesiac.SpawnedAs = false;
                 amnesiac.RegenTask();
+            }
+            else if (CustomGameOptions.OnTargetDead == OnTargetDead.Mercenary)
+            {
+                var merc = new Mercenary(player);
+                merc.SpawnedAs = false;
+                merc.Gold = CustomGameOptions.GoldToBribe;
+                merc.RegenTask();
             }
             else if (CustomGameOptions.GaOnTargetDeath == BecomeOptions.Survivor)
             {

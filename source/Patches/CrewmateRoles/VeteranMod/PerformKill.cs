@@ -14,7 +14,7 @@ namespace TownOfUs.CrewmateRoles.VeteranMod
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
             var role = Role.GetRole<Veteran>(PlayerControl.LocalPlayer);
             if (!role.ButtonUsable) return false;
-            var alertButton = DestroyableSingleton<HudManager>.Instance.KillButton;
+            var alertButton = HudManager.Instance.KillButton;
             if (__instance == alertButton)
             {
                 if (__instance.isCoolingDown) return false;

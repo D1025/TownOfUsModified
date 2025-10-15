@@ -8,7 +8,7 @@ using TownOfUs.Roles.Modifiers;
 namespace TownOfUs.Modifiers.ShyMod
 {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-    public class HudManagerUpdate
+    public class ShyHudManagerUpdate
     {
         public static void Postfix(HudManager __instance)
         {
@@ -20,101 +20,67 @@ namespace TownOfUs.Modifiers.ShyMod
             {
                 var shy = (Shy)modifier;
                 var player = shy.Player;
-
-                float maxTransparencyPercent = CustomGameOptions.AllSameModifier
-                                               ? 0f 
-                                               : CustomGameOptions.FinalTransparency;
-
-
-                if (!player.Data.IsDead && !player.Data.Disconnected &&
-                    player.GetCustomOutfitType() == CustomPlayerOutfitType.Default &&
-                    player.MyPhysics.body.velocity.magnitude == 0 && shy.Moving)
+                if (!player.Data.IsDead && !player.Data.Disconnected && player.GetCustomOutfitType() == CustomPlayerOutfitType.Default && player.MyPhysics.body.velocity.magnitude == 0 && shy.Moving)
                 {
                     shy.Moving = false;
                     shy.LastMoved = DateTime.UtcNow;
                 }
-
                 if (player.Data.Disconnected || shy.Moving) continue;
-
-
                 if (player.GetCustomOutfitType() == CustomPlayerOutfitType.Swooper)
                 {
                     shy.Opacity = 0f;
-                    if (PlayerControl.LocalPlayer.Data.IsImpostor() && player.Is(RoleEnum.Swooper) &&
-                        !PlayerControl.LocalPlayer.IsHypnotised() ||
-                        PlayerControl.LocalPlayer == player && player.Is(RoleEnum.Swooper))
-                    {
-                        shy.Opacity = 0.1f;
-                    }
-
-                    SetVisiblity(player, shy.Opacity, swooped: true);
+                    if (PlayerControl.LocalPlayer.Data.IsImpostor() && player.Is(RoleEnum.Swooper) && !PlayerControl.LocalPlayer.IsHypnotised() ||
+                        PlayerControl.LocalPlayer == player && player.Is(RoleEnum.Swooper)) shy.Opacity = 0.1f;
+                    SetVisiblity(player, shy.Opacity, true);
                     shy.Moving = true;
                     continue;
                 }
                 else if (player.GetCustomOutfitType() == CustomPlayerOutfitType.Camouflage)
                 {
                     shy.Opacity = 1f;
-                    SetVisiblity(player, shy.Opacity, swooped: true);
+                    SetVisiblity(player, shy.Opacity, true);
                     shy.Moving = true;
                     continue;
                 }
-                else if (player.Data.IsDead ||
-                         player.GetCustomOutfitType() == CustomPlayerOutfitType.Morph ||
-                         player.MyPhysics.body.velocity.magnitude > 0)
+                else if (player.Data.IsDead || player.GetCustomOutfitType() == CustomPlayerOutfitType.Morph || player.MyPhysics.body.velocity.magnitude > 0)
                 {
                     shy.Opacity = 1f;
                     SetVisiblity(player, shy.Opacity);
                     shy.Moving = true;
                     continue;
                 }
-
-
-                var timeSinceLastMove = DateTime.UtcNow - shy.LastMoved;
-
-                if (timeSinceLastMove.TotalSeconds < CustomGameOptions.InvisDelay) continue;
-
-                if (timeSinceLastMove.TotalSeconds <
-                    CustomGameOptions.InvisDelay + CustomGameOptions.TransformInvisDuration)
+                var timeSpan = DateTime.UtcNow - shy.LastMoved;
+                if (timeSpan.TotalMilliseconds / 1000f < CustomGameOptions.InvisDelay) continue;
+                else if (timeSpan.TotalMilliseconds / 1000f < CustomGameOptions.TransformInvisDuration + CustomGameOptions.InvisDelay)
                 {
-                    float fadeElapsed =
-                        (float)(DateTime.UtcNow - shy.LastMoved.AddSeconds(CustomGameOptions.InvisDelay))
-                        .TotalSeconds;
-
-                    shy.Opacity = 1f -
-                                  fadeElapsed / CustomGameOptions.TransformInvisDuration *
-                                  (100f - maxTransparencyPercent) / 100f;
-
+                    timeSpan = DateTime.UtcNow - shy.LastMoved.AddSeconds(CustomGameOptions.InvisDelay);
+                    shy.Opacity = 1f - ((float)timeSpan.TotalMilliseconds / 1000f / CustomGameOptions.TransformInvisDuration * (100f - CustomGameOptions.FinalTransparency) / 100f);
                     SetVisiblity(player, shy.Opacity);
                     continue;
                 }
-
-                shy.Opacity = maxTransparencyPercent / 100f;
-                SetVisiblity(player, shy.Opacity);
+                else
+                {
+                    shy.Opacity = CustomGameOptions.FinalTransparency / 100;
+                    SetVisiblity(player, shy.Opacity);
+                    continue;
+                }
             }
         }
-
 
         public static void SetVisiblity(PlayerControl player, float transparency, bool swooped = false)
         {
             var colour = player.myRend().color;
             var cosmetics = player.cosmetics;
-
             colour.a = transparency;
             player.myRend().color = colour;
-
             if (swooped) transparency = 0f;
-
             cosmetics.nameText.color = cosmetics.nameText.color.SetAlpha(transparency);
-
-            if (DataManager.Settings.Accessibility.ColorBlindMode)
-                cosmetics.colorBlindText.color = cosmetics.colorBlindText.color.SetAlpha(transparency);
-
+            if (DataManager.Settings.Accessibility.ColorBlindMode) cosmetics.colorBlindText.color = cosmetics.colorBlindText.color.SetAlpha(transparency);
             player.SetHatAndVisorAlpha(transparency);
             cosmetics.skin.layer.color = cosmetics.skin.layer.color.SetAlpha(transparency);
-
-            foreach (var rend in cosmetics.currentPet.renderers)
+            foreach (var rend in player.cosmetics.currentPet.renderers)
                 rend.color = rend.color.SetAlpha(transparency);
-            foreach (var shadow in cosmetics.currentPet.shadows)
+            foreach (var shadow in player.cosmetics.currentPet.shadows)
                 shadow.color = shadow.color.SetAlpha(transparency);
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using Il2CppInterop.Runtime.InteropTypes;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace TownOfUs.Extensions
 {
@@ -46,7 +47,7 @@ namespace TownOfUs.Extensions
         {
             if (player.TryGetAppearance(Role.GetRole(player) as IVisualAlteration, out var appearance))
                 return appearance;
-            else if (player.TryGetAppearance(Modifier.GetModifier(player) as IVisualAlteration, out appearance))
+            else if (player.TryGetAppearance(Modifier.GetModifiers(player).FirstOrDefault(x => x is IVisualAlteration) as IVisualAlteration, out appearance))
                 return appearance;
             else
                 return player.GetDefaultAppearance();

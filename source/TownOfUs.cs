@@ -15,7 +15,6 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using UnityEngine;
-using TownOfUs.Patches.ScreenEffects;
 using TownOfUs.CrewmateRoles.DetectiveMod;
 using TownOfUs.NeutralRoles.SoulCollectorMod;
 using System.IO;
@@ -23,19 +22,16 @@ using Reactor.Utilities;
 
 namespace TownOfUs
 {
-    [BepInPlugin(Id, "Town Of Us Modified by Donald", VersionString)]
+    [BepInPlugin(Id, "Town Of Us", VersionString)]
     [BepInDependency(ReactorPlugin.Id)]
     [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [ReactorModFlags(Reactor.Networking.ModFlags.RequireOnAllClients)]
     public class TownOfUs : BasePlugin
     {
         public const string Id = "com.slushiegoose.townofus";
-        public const string VersionString = "5.4.8";
+        public const string VersionString = "5.3.1";
         public static System.Version Version = System.Version.Parse(VersionString);
         public const string VersionTag = "<color=#ff33fc></color>";
-
-        public const int MaxPlayers = 28;
-        public const int MaxImpostors = MaxPlayers / 2;
 
         public static AssetLoader bundledAssets;
 
@@ -89,6 +85,7 @@ namespace TownOfUs
         public static Sprite BiteSprite;
         public static Sprite RevealSprite;
         public static Sprite ConfessSprite;
+        public static Sprite BlessSprite;
         public static Sprite NoAbilitySprite;
         public static Sprite CamouflageSprite;
         public static Sprite CamoSprintSprite;
@@ -104,16 +101,22 @@ namespace TownOfUs
         public static Sprite HysteriaSprite;
         public static Sprite JailSprite;
         public static Sprite InJailSprite;
+        public static Sprite JailCellSprite;
         public static Sprite ExecuteSprite;
-        public static Sprite CollectSprite;
         public static Sprite ReapSprite;
         public static Sprite SoulSprite;
         public static Sprite WatchSprite;
         public static Sprite CampSprite;
         public static Sprite ShootSprite;
-        public static Sprite VultureEat;
-        public static Sprite SpySprite;
-        public static Sprite NoclipSprite;
+        public static Sprite FlushSprite;
+        public static Sprite BlockSprite;
+        public static Sprite BarricadeSprite;
+        public static Sprite BlindSprite;
+        public static Sprite GuardSprite;
+        public static Sprite BribeSprite;
+        public static Sprite BarrierSprite;
+        public static Sprite CleanseSprite;
+        public static Sprite DetectSprite;
 
         public static Sprite ToUBanner;
         public static Sprite UpdateTOUButton;
@@ -131,6 +134,8 @@ namespace TownOfUs
         private Harmony _harmony;
 
         public static ConfigEntry<bool> DeadSeeGhosts { get; set; }
+
+        public static ConfigEntry<bool> SeeSettingNotifier { get; set; }
 
         public static string RuntimeLocation;
 
@@ -196,6 +201,7 @@ namespace TownOfUs
             BiteSprite = CreateSprite("TownOfUs.Resources.Bite.png");
             RevealSprite = CreateSprite("TownOfUs.Resources.Reveal.png");
             ConfessSprite = CreateSprite("TownOfUs.Resources.Confess.png");
+            BlessSprite = CreateSprite("TownOfUs.Resources.Bless.png");
             NoAbilitySprite = CreateSprite("TownOfUs.Resources.NoAbility.png");
             CamouflageSprite = CreateSprite("TownOfUs.Resources.Camouflage.png");
             CamoSprintSprite = CreateSprite("TownOfUs.Resources.CamoSprint.png");
@@ -211,18 +217,24 @@ namespace TownOfUs
             HysteriaSprite = CreateSprite("TownOfUs.Resources.Hysteria.png");
             JailSprite = CreateSprite("TownOfUs.Resources.Jail.png");
             InJailSprite = CreateSprite("TownOfUs.Resources.InJail.png");
+            JailCellSprite = CreateSprite("TownOfUs.Resources.JailCell.png");
             ExecuteSprite = CreateSprite("TownOfUs.Resources.Execute.png");
-            CollectSprite = CreateSprite("TownOfUs.Resources.Collect.png");
             ReapSprite = CreateSprite("TownOfUs.Resources.Reap.png");
             SoulSprite = CreateSprite("TownOfUs.Resources.Soul.png");
             WatchSprite = CreateSprite("TownOfUs.Resources.Watch.png");
             CampSprite = CreateSprite("TownOfUs.Resources.Camp.png");
             ShootSprite = CreateSprite("TownOfUs.Resources.Shoot.png");
-            VultureEat = CreateSprite("TownOfUs.Resources.VultureEat.png");
-            SpySprite = CreateSprite("TownOfUs.Resources.Admin.png");
-            NoclipSprite = CreateSprite("TownOfUs.Resources.Noclip.png");
+            FlushSprite = CreateSprite("TownOfUs.Resources.Flush.png");
+            BlockSprite = CreateSprite("TownOfUs.Resources.Block.png");
+            BarricadeSprite = CreateSprite("TownOfUs.Resources.Barricade.png");
+            BlindSprite = CreateSprite("TownOfUs.Resources.Blind.png");
+            GuardSprite = CreateSprite("TownOfUs.Resources.Guard.png");
+            BribeSprite = CreateSprite("TownOfUs.Resources.Bribe.png");
+            BarrierSprite = CreateSprite("TownOfUs.Resources.Barrier.png");
+            CleanseSprite = CreateSprite("TownOfUs.Resources.Cleanse.png");
+            DetectSprite = CreateSprite("TownOfUs.Resources.Detect.png");
 
-            ToUBanner = CreateSprite("TownOfUs.Resources.TownOfUsBannerByDonald.png");
+            ToUBanner = CreateSprite("TownOfUs.Resources.TownOfUsBanner.png");
             UpdateTOUButton = CreateSprite("TownOfUs.Resources.UpdateToUButton.png");
             UpdateSubmergedButton = CreateSprite("TownOfUs.Resources.UpdateSubmergedButton.png");
 
@@ -236,27 +248,14 @@ namespace TownOfUs
             ClassInjector.RegisterTypeInIl2Cpp<CrimeScene>();
             ClassInjector.RegisterTypeInIl2Cpp<Soul>();
 
-            for (int i = 1; i <= 5; i++)
-            {
-                try
-                {
-                    var filePath = Application.persistentDataPath;
-                    var file = filePath + $"/GameSettings-Slot{i}";
-                    if (File.Exists(file))
-                    {
-                        string newFile = Path.Combine(filePath, $"Saved Settings {i}.txt");
-                        File.Move(file, newFile);
-                    }
-                }
-                catch { }
-            }
-
             // RegisterInIl2CppAttribute.Register();
 
-            DeadSeeGhosts = Config.Bind("Settings", "Dead See Other Ghosts", true, "Whether you see other dead player's ghosts while your dead");
+            DeadSeeGhosts = Config.Bind("Settings", "Dead See Other Ghosts", true, "Whether you see other dead players' ghosts while you're dead");
+            SeeSettingNotifier = Config.Bind("Settings", "See Setting Notifier", true, "Whether you see setting changes in lobby at bottom left");
 
             _harmony.PatchAll();
             SubmergedCompatibility.Initialize();
+            IL2CPPChainloader.Instance.Finished += LevelImpostorCompatibility.Initialize; // LI has a circular dependency on TOU, so we need to wait for LI to finish loading before we can initialize it
 
             ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
         }

@@ -10,7 +10,7 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
         public static bool Prefix(KillButton __instance)
         {
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Undertaker)) return true;
-            return __instance == DestroyableSingleton<HudManager>.Instance.KillButton;
+            return __instance == HudManager.Instance.KillButton;
         }
 
         public static void SetTarget(KillButton __instance, DeadBody target, Undertaker role)

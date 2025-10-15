@@ -4,7 +4,6 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using TownOfUs.Patches;
 using TownOfUs.Roles;
-using TownOfUs.CrewmateRoles.AltruistMod;
 
 namespace TownOfUs.CrewmateRoles.ProsecutorMod
 {
@@ -27,7 +26,6 @@ namespace TownOfUs.CrewmateRoles.ProsecutorMod
                     var exiled = __instance.initData.networkedPlayer?.Object;
                     if (exiled != null && exiled.Is(Faction.Crewmates) && !exiled.IsLover() && CustomGameOptions.ProsDiesOnIncorrectPros)
                     {
-                        KillButtonTarget.DontRevive = pros.Player.PlayerId;
                         pros.Player.Exiled();
                     }
                     pros.ProsecuteThisMeeting = false;

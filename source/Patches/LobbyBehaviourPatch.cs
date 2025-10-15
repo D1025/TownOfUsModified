@@ -7,7 +7,7 @@ namespace TownOfUs.Patches {
         [HarmonyPostfix]
         public static void Postfix() {
             // Fix Grenadier blind in lobby
-            ((Renderer)DestroyableSingleton<HudManager>.Instance.FullScreen).gameObject.active = false;
+            ((Renderer)HudManager.Instance.FullScreen).gameObject.active = false;
         }
     }
 }

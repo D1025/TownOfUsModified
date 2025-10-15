@@ -35,7 +35,7 @@ namespace TownOfUs
                     string info =
                         $"ALERT\nTown of Us {TownOfUs.VersionString} requires {RequiredVersions.Values.Last()}\nyou have {Application.version}\nPlease {action} your among us version"
                         + "\nvisit Github or Discord for any help";
-                    TwitchManager man = DestroyableSingleton<TwitchManager>.Instance;
+                    TwitchManager man = TwitchManager.Instance;
                     ModUpdater.InfoPopup = UnityEngine.Object.Instantiate(man.TwitchPopup);
                     ModUpdater.InfoPopup.TextAreaTMP.fontSize *= 0.68f;
                     ModUpdater.InfoPopup.TextAreaTMP.enableAutoSizing = true;
@@ -97,7 +97,7 @@ namespace TownOfUs
                 })));
 
                 //Set popup stuff
-                TwitchManager man = DestroyableSingleton<TwitchManager>.Instance;
+                TwitchManager man = TwitchManager.Instance;
                 ModUpdater.InfoPopup = UnityEngine.Object.Instantiate(man.TwitchPopup);
                 ModUpdater.InfoPopup.TextAreaTMP.fontSize *= 0.7f;
                 ModUpdater.InfoPopup.TextAreaTMP.enableAutoSizing = false;
@@ -106,7 +106,7 @@ namespace TownOfUs
 
         private static List<ModUpdater.UpdateData> GetVersioning()
         {
-            var text = ModUpdater.Httpclient.GetAsync("https://github.com/D1025/TownOfUsModified/raw/main/source/Versioning.json")
+            var text = ModUpdater.Httpclient.GetAsync("https://github.com/eDonnes124/Town-Of-Us-R/raw/master/source/Versioning.json")
                                  .GetAwaiter().GetResult().Content.ReadAsStringAsync().Result;
             var data = JsonSerializer.Deserialize<List<ModUpdater.UpdateData>>(text, options: new() { ReadCommentHandling = JsonCommentHandling.Skip });
             return data;
@@ -219,7 +219,7 @@ namespace TownOfUs
                 string githubURI = "";
                 if (updateType == "TOU")
                 {
-                    githubURI = "https://api.github.com/repos/D1025/TownOfUsModified/releases/latest";
+                    githubURI = "https://api.github.com/repos/eDonnes124/Town-Of-Us-R/releases/latest";
                 }
                 else if (updateType == "Submerged")
                 {

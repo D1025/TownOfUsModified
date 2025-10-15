@@ -49,7 +49,7 @@ namespace TownOfUs.CustomOption
         }
 
 
-        protected internal void Set(object value, bool SendRpc = true)
+        protected internal void Set(object value, bool SendRpc = true, bool Notify = false)
         {
             System.Console.WriteLine($"{Name} set to {value}");
 
@@ -84,9 +84,10 @@ namespace TownOfUs.CustomOption
             {
             }
 
-            if (HudManager.InstanceExists && Type != CustomOptionType.Header)
+            if (HudManager.InstanceExists && Type != CustomOptionType.Header && Notify && TownOfUs.SeeSettingNotifier.Value)
             {
-                HudManager.Instance.Notifier.AddSettingsChangeMessage(StringName, ToString());
+                HudManager.Instance.Notifier.
+                    AddSettingsChangeMessage(StringName, ToString(), HudManager.Instance.Notifier.lastMessageKey != (int)StringName);
             }
         }
     }

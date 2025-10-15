@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using TMPro;
+using Il2CppSystem.Collections.Generic;
 
 namespace TownOfUs.Roles
 {
@@ -16,6 +17,10 @@ namespace TownOfUs.Roles
         public bool ButtonUsable => UsesLeft != 0;
         public bool SpawnedAs = true;
 
+        public DateTime LastMoved;
+        public TextMeshPro TimerText;
+        public List<Vector3> Locations = new List<Vector3>();
+
 
         public Survivor(PlayerControl player) : base(player)
         {
@@ -29,6 +34,8 @@ namespace TownOfUs.Roles
             AddToRoleHistory(RoleType);
 
             UsesLeft = CustomGameOptions.MaxVests;
+            LastMoved = DateTime.UtcNow;
+            Locations.Add(Player.transform.localPosition);
         }
 
         public bool Vesting => TimeRemaining > 0f;
@@ -58,10 +65,24 @@ namespace TownOfUs.Roles
 
         protected override void IntroPrefix(IntroCutscene._ShowTeam_d__38 __instance)
         {
-            var survTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+            var survTeam = new List<PlayerControl>();
             survTeam.Add(PlayerControl.LocalPlayer);
             __instance.teamToShow = survTeam;
         }
 
+        public float ScatterTimer()
+        {
+            if (MeetingHud.Instance)
+            {
+                LastMoved = DateTime.UtcNow;
+                return CustomGameOptions.SurvScatterTimer;
+            }
+            var utcNow = DateTime.UtcNow;
+            var timeSpan = utcNow - LastMoved;
+            var num = CustomGameOptions.SurvScatterTimer * 1000f;
+            var flag2 = num - (float)timeSpan.TotalMilliseconds < 0f;
+            if (flag2) return 0;
+            return (num - (float)timeSpan.TotalMilliseconds) / 1000f;
+        }
     }
 }

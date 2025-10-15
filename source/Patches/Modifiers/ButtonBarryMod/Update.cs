@@ -21,7 +21,6 @@ namespace TownOfUs.Modifiers.ButtonBarryMod
             if (PlayerControl.LocalPlayer == null) return;
             if (PlayerControl.LocalPlayer.Data == null) return;
             if (!PlayerControl.LocalPlayer.Is(ModifierEnum.ButtonBarry)) return;
-            if (PlayerControl.LocalPlayer.Is(RoleEnum.Glitch)) return;
 
             var role = Modifier.GetModifier<ButtonBarry>(PlayerControl.LocalPlayer);
 

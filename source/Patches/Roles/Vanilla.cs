@@ -5,7 +5,8 @@ namespace TownOfUs.Roles
         public Impostor(PlayerControl player) : base(player)
         {
             Name = "Impostor";
-            Hidden = true;
+            ImpostorText = () => "Kill And Sabotage";
+            TaskText = () => "Kill and sabotage";
             Faction = Faction.Impostors;
             RoleType = RoleEnum.Impostor;
             AddToRoleHistory(RoleType);
@@ -18,7 +19,8 @@ namespace TownOfUs.Roles
         public Crewmate(PlayerControl player) : base(player)
         {
             Name = "Crewmate";
-            Hidden = true;
+            ImpostorText = () => "Do Your Tasks";
+            TaskText = () => "Do your tasks";
             Faction = Faction.Crewmates;
             RoleType = RoleEnum.Crewmate;
             AddToRoleHistory(RoleType);

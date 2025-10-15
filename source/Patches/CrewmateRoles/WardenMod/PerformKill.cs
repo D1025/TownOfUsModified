@@ -8,7 +8,7 @@ namespace TownOfUs.CrewmateRoles.WardenMod
     {
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Warden);
             if (!flag) return true;
             var role = Role.GetRole<Warden>(PlayerControl.LocalPlayer);

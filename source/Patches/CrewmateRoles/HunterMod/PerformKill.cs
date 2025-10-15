@@ -37,17 +37,18 @@ namespace TownOfUs.CrewmateRoles.HunterMod
                 else if (stalkInteract[1] == true)
                 {
                     role.LastStalked = DateTime.UtcNow;
-                    role.LastStalked = role.LastKilled.AddSeconds(-CustomGameOptions.HunterKillCd + CustomGameOptions.ProtectKCReset);
+                    role.LastStalked = role.LastKilled.AddSeconds(-CustomGameOptions.HunterKillCd + CustomGameOptions.TempSaveCdReset);
                 }
                 return false;
             }
 
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (role.ClosestPlayer == null) return false;
             if (!role.CaughtPlayers.Contains(role.ClosestPlayer)) return false;
             if (role.HunterKillTimer() != 0) return false;
             var distBetweenPlayers = Utils.GetDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers <
-                        GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                        LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (!flag3) return false;
             var interact = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestPlayer, true);
             if (interact[0] == true)
@@ -57,12 +58,7 @@ namespace TownOfUs.CrewmateRoles.HunterMod
             else if (interact[1] == true)
             {
                 role.LastKilled = DateTime.UtcNow;
-                role.LastKilled = role.LastKilled.AddSeconds(-CustomGameOptions.HunterKillCd + CustomGameOptions.ProtectKCReset);
-            }
-            else if (interact[2] == true)
-            {
-                role.LastKilled = DateTime.UtcNow;
-                role.LastKilled = role.LastKilled.AddSeconds(-CustomGameOptions.HunterKillCd + CustomGameOptions.VestKCReset);
+                role.LastKilled = role.LastKilled.AddSeconds(-CustomGameOptions.HunterKillCd + CustomGameOptions.TempSaveCdReset);
             }
             return false;
         }

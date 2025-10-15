@@ -19,7 +19,7 @@ namespace TownOfUs.Roles
         {
             Name = "Hypnotist";
             ImpostorText = () => "Hypnotize Crewmates";
-            TaskText = () => "Hypnotize crewmates and drive them insane";
+            TaskText = () => "Hypnotize Crewmates and drive them insane";
             Color = Patches.Colors.Impostor;
             LastHypnotised = DateTime.UtcNow;
             RoleType = RoleEnum.Hypnotist;
@@ -54,6 +54,7 @@ namespace TownOfUs.Roles
             if (PlayerControl.LocalPlayer.Data.IsDead || !HypnotisedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) return;
 
             PlayerControl.LocalPlayer.SetOutfit(CustomPlayerOutfitType.Default);
+            UnHysteria();
 
             foreach (var player in PlayerControl.AllPlayerControls)
             {

@@ -3,6 +3,7 @@ using System;
 using TownOfUs.ImpostorRoles.BomberMod;
 using TownOfUs.CrewmateRoles.MedicMod;
 using TownOfUs.Patches;
+using TownOfUs.CrewmateRoles.ClericMod;
 
 namespace TownOfUs.Roles
 {
@@ -22,7 +23,7 @@ namespace TownOfUs.Roles
         {
             Name = "Bomber";
             ImpostorText = () => "Plant Bombs To Kill Multiple Crewmates At Once";
-            TaskText = () => "Plant bombs to kill crewmates";
+            TaskText = () => "Plant bombs to kill Crewmates";
             Color = Palette.ImpostorRed;
             StartingCooldown = DateTime.UtcNow;
             RoleType = RoleEnum.Bomber;
@@ -69,15 +70,24 @@ namespace TownOfUs.Roles
             while (playersToDie.Count > CustomGameOptions.MaxKillsInDetonation) playersToDie.Remove(playersToDie[playersToDie.Count - 1]);
             foreach (var player in playersToDie)
             {
-                if (!player.Is(RoleEnum.Pestilence) && !player.IsShielded() && !player.IsProtected() && player != ShowRoundOneShield.FirstRoundShielded)
+                if (!player.Is(RoleEnum.Pestilence) && !player.IsShielded() && !player.IsProtected() && !player.IsBarriered() && player != ShowShield.FirstRoundShielded)
                 {
                     Utils.RpcMultiMurderPlayer(Player, player);
                 }
                 else if (player.IsShielded())
                 {
-                    var medic = player.GetMedic().Player.PlayerId;
-                    Utils.Rpc(CustomRPC.AttemptSound, medic, player.PlayerId);
-                    StopKill.BreakShield(medic, player.PlayerId, CustomGameOptions.ShieldBreaks);
+                    foreach (var medic in player.GetMedic())
+                    {
+                        Utils.Rpc(CustomRPC.AttemptSound, medic.Player.PlayerId, player.PlayerId);
+                        StopKill.BreakShield(medic.Player.PlayerId, player.PlayerId, CustomGameOptions.ShieldBreaks);
+                    }
+                }
+                else if (player.IsBarriered())
+                {
+                    foreach (var cleric in player.GetCleric())
+                    {
+                        StopAttack.NotifyCleric(cleric.Player.PlayerId, false);
+                    }
                 }
             }
         }

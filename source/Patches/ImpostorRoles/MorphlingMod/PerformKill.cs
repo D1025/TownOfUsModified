@@ -31,7 +31,7 @@ namespace TownOfUs.ImpostorRoles.MorphlingMod
                     role.SampledPlayer = target;
                     role.MorphButton.graphic.sprite = MorphSprite;
                     role.MorphButton.SetTarget(null);
-                    DestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(null);
+                    HudManager.Instance.KillButton.SetTarget(null);
                     if (role.MorphTimer() < 5f)
                         role.LastMorphed = DateTime.UtcNow.AddSeconds(5 - CustomGameOptions.MorphlingCd);
                 }

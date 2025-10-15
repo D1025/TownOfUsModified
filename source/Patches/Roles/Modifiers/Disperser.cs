@@ -22,7 +22,7 @@ namespace TownOfUs.Roles.Modifiers
         public Disperser(PlayerControl player) : base(player)
         {
             Name = "Disperser";
-            TaskText = () => "Separate the Crew";
+            TaskText = () => "Separate the Crewmates";
             Color = Patches.Colors.Impostor;
             StartingCooldown = DateTime.UtcNow;
             ModifierType = ModifierEnum.Disperser;
@@ -89,13 +89,16 @@ namespace TownOfUs.Roles.Modifiers
                 {
                     position = new Vector2(position.x, position.y - SizePatch.Radius * 0.75f);
                 }
-                player.transform.position = position;
-                if (PlayerControl.LocalPlayer == player) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(position);
+                if (!player.Is(ModifierEnum.Immovable))
+                {
+                    player.transform.position = position;
+                    if (PlayerControl.LocalPlayer == player) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(position);
+                }
                 if (player.Is(ModifierEnum.Shy) && player.GetCustomOutfitType() == CustomPlayerOutfitType.Default)
                 {
                     var shy = GetModifier<Shy>(player);
                     shy.Opacity = 1f;
-                    HudManagerUpdate.SetVisiblity(player, shy.Opacity);
+                    ShyHudManagerUpdate.SetVisiblity(player, shy.Opacity);
                     shy.Moving = true;
                 }
             }

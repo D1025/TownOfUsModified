@@ -11,14 +11,9 @@ namespace TownOfUs.NeutralRoles.PlaguebearerMod
     {
         public static void Postfix(EndGameManager __instance)
         {
-            if (CustomGameOptions.NeutralEvilWinEndsGame)
-            {
-                if (Role.GetRoles(RoleEnum.Jester).Any(x => ((Jester)x).VotedOut)) return;
-                if (Role.GetRoles(RoleEnum.Executioner).Any(x => ((Executioner)x).TargetVotedOut)) return;
-                if (Role.GetRoles(RoleEnum.SoulCollector).Any(x => ((SoulCollector)x).CollectedSouls)) return;
-                if (Role.GetRoles(RoleEnum.Vulture).Any(xCloud => ((Vulture)xCloud).vultureWin)) return;
-            }
-            if (Role.GetRoles(RoleEnum.Doomsayer).Any(x => ((Doomsayer)x).WonByGuessing)) return;
+            if (Role.GetRoles(RoleEnum.Jester).Any(x => ((Jester)x).VotedOut) && CustomGameOptions.JesterWin == ExecutionerMod.WinEndsGame.EndsGame) return;
+            if (Role.GetRoles(RoleEnum.Executioner).Any(x => ((Executioner)x).TargetVotedOut) && CustomGameOptions.ExecutionerWin == ExecutionerMod.WinEndsGame.EndsGame) return;
+            if (Role.GetRoles(RoleEnum.Doomsayer).Any(x => ((Doomsayer)x).WonByGuessing) && CustomGameOptions.DoomsayerWinEndsGame) return;
             var role = Role.AllRoles.FirstOrDefault(x =>
                 x.RoleType == RoleEnum.Plaguebearer && ((Plaguebearer)x).PlaguebearerWins);
             if (role == null) return;

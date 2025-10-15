@@ -13,7 +13,7 @@ namespace TownOfUs.ImpostorRoles.MorphlingMod
                 var morphling = (Morphling) role;
                 if (morphling.Morphed)
                     morphling.Morph();
-                else if (morphling.MorphedPlayer) morphling.Unmorph();
+                else if (morphling.Enabled) morphling.Unmorph();
             }
         }
     }

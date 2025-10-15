@@ -3,6 +3,7 @@ using System;
 using TownOfUs.Extensions;
 using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
+using UnityEngine;
 
 namespace TownOfUs.Patches
 {
@@ -21,8 +22,17 @@ namespace TownOfUs.Patches
                     var venerer = (Venerer)role;
                     if (venerer.Enabled)
                     {
-                        if (venerer.KillsAtStartAbility >= 2 && venerer.Player == PlayerControl.LocalPlayer) __instance.body.velocity *= CustomGameOptions.SprintSpeed;
-                        else if (venerer.KillsAtStartAbility >= 3) __instance.body.velocity *= CustomGameOptions.FreezeSpeed;
+                        if (venerer.Kills >= 2 && venerer.Player == PlayerControl.LocalPlayer) __instance.body.velocity *= CustomGameOptions.SprintSpeed;
+                        else if (venerer.Kills >= 3)
+                        {
+                            float lightRadius = CustomGameOptions.FreezeRadius * ShipStatus.Instance.MaxLightRadius;
+                            Vector2 vector2 = new Vector2(venerer.Player.GetTruePosition().x - __instance.myPlayer.GetTruePosition().x, venerer.Player.GetTruePosition().y - __instance.myPlayer.GetTruePosition().y);
+                            float magnitude = ((Vector2)vector2).magnitude;
+                            if (magnitude < lightRadius)
+                            {
+                                __instance.body.velocity *= Mathf.Lerp(CustomGameOptions.MinFreezeSpeed, 1, magnitude / lightRadius);
+                            }
+                        }
                     }
                 }
                 foreach (var modifier in Modifier.GetModifiers(ModifierEnum.Frosty))
@@ -58,8 +68,17 @@ namespace TownOfUs.Patches
                     var venerer = (Venerer)role;
                     if (venerer.Enabled)
                     {
-                        if (venerer.KillsAtStartAbility >= 2 && venerer.Player == player) __instance.body.velocity *= CustomGameOptions.SprintSpeed;
-                        else if (venerer.KillsAtStartAbility >= 3) __instance.body.velocity *= CustomGameOptions.FreezeSpeed;
+                        if (venerer.Kills >= 2 && venerer.Player == player) __instance.body.velocity *= CustomGameOptions.SprintSpeed;
+                        else if (venerer.Kills >= 3)
+                        {
+                            float lightRadius = CustomGameOptions.FreezeRadius * ShipStatus.Instance.MaxLightRadius;
+                            Vector2 vector2 = new Vector2(venerer.Player.GetTruePosition().x - __instance.myPlayer.GetTruePosition().x, venerer.Player.GetTruePosition().y - __instance.myPlayer.GetTruePosition().y);
+                            float magnitude = ((Vector2)vector2).magnitude;
+                            if (magnitude < lightRadius)
+                            {
+                                __instance.body.velocity *= Mathf.Lerp(CustomGameOptions.MinFreezeSpeed, 1, magnitude / lightRadius);
+                            }
+                        }
                     }
                 }
                 foreach (var modifier in Modifier.GetModifiers(ModifierEnum.Frosty))

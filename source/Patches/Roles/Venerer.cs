@@ -1,5 +1,4 @@
 using System;
-using TownOfUs.Extensions;
 using UnityEngine;
 
 namespace TownOfUs.Roles
@@ -10,7 +9,6 @@ namespace TownOfUs.Roles
         public bool Enabled;
         public DateTime LastCamouflaged;
         public float TimeRemaining;
-        public float KillsAtStartAbility;
 
         public Venerer(PlayerControl player) : base(player)
         {

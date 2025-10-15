@@ -1,5 +1,4 @@
 using HarmonyLib;
-using TownOfUs.CrewmateRoles.AltruistMod;
 using TownOfUs.Roles.Modifiers;
 using TownOfUs.Roles;
 
@@ -19,10 +18,9 @@ namespace TownOfUs.Modifiers.LoversMod
 
             if (reason == DeathReason.Exile)
             {
-                KillButtonTarget.DontRevive = __instance.PlayerId;
                 if (!otherLover.Is(RoleEnum.Pestilence)) otherLover.Exiled();
             }
-            else if (AmongUsClient.Instance.AmHost && !otherLover.Is(RoleEnum.Pestilence)) Utils.RpcMurderPlayer(otherLover, otherLover);
+            else if (!otherLover.Is(RoleEnum.Pestilence)) Utils.MurderPlayer(otherLover, otherLover);
             if (otherLover.Is(RoleEnum.Sheriff))
             {
                 var sheriff = Role.GetRole<Sheriff>(otherLover);

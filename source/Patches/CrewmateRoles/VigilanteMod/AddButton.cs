@@ -8,6 +8,7 @@ using TownOfUs.Roles.Modifiers;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using System.Linq;
 
 namespace TownOfUs.CrewmateRoles.VigilanteMod
 {
@@ -144,30 +145,44 @@ namespace TownOfUs.CrewmateRoles.VigilanteMod
                 if (currentGuess == "None") return;
 
                 var playerRole = Role.GetRole(voteArea);
-                var playerModifier = Modifier.GetModifier(voteArea);
+                var playerModifiers = Modifier.GetModifiers(voteArea);
 
                 var toDie = playerRole.Name == currentGuess ? playerRole.Player : role.Player;
-                if (playerModifier != null)
-                    toDie = (playerRole.Name == currentGuess || playerModifier.Name == currentGuess) ? playerRole.Player : role.Player;
+                if (playerModifiers != null && playerModifiers.Length != 0)
+                    toDie = (playerRole.Name == currentGuess || playerModifiers.Any(x => x.Name == currentGuess)) ? playerRole.Player : role.Player;
 
-                var fortified = toDie.IsFortified() && PlayerControl.LocalPlayer != toDie;
-
-                if (!toDie.Is(RoleEnum.Pestilence) && !fortified)
+                if (PlayerControl.LocalPlayer == toDie && toDie.IsBlessed())
+                {
+                    Coroutines.Start(Utils.FlashCoroutine(Colors.Oracle));
+                    ShowHideButtonsVigi.HideButtonsVigi(role);
+                    foreach (var oracle in toDie.GetOracle())
+                    {
+                        Utils.Rpc(CustomRPC.Bless, oracle.Player.PlayerId, (byte)2);
+                    }
+                }
+                else if (!toDie.Is(RoleEnum.Pestilence) && !toDie.IsBlessed())
                 {
                     VigilanteKill.RpcMurderPlayer(toDie, PlayerControl.LocalPlayer);
                     role.RemainingKills--;
                     ShowHideButtonsVigi.HideSingle(role, targetId, toDie == role.Player);
                     if (toDie.IsLover() && CustomGameOptions.BothLoversDie)
                     {
-                        var lover = ((Lover)playerModifier).OtherLover.Player;
+                        var playerModifier = Modifier.GetModifier<Lover>(voteArea);
+                        var lover = playerModifier.OtherLover.Player;
                         if (!lover.Is(RoleEnum.Pestilence)) ShowHideButtonsVigi.HideSingle(role, lover.PlayerId, false);
                     }
                 }
                 else
                 {
+                    Coroutines.Start(Utils.FlashCoroutine(Colors.Oracle));
                     ShowHideButtonsVigi.HideSingle(role, targetId, toDie == role.Player);
-                    Coroutines.Start(Utils.FlashCoroutine(Colors.Warden));
-                    if (toDie.IsFortified()) Utils.Rpc(CustomRPC.Fortify, (byte)1, toDie.GetWarden().Player.PlayerId);
+                    if (toDie.IsBlessed())
+                    {
+                        foreach (var oracle in toDie.GetOracle())
+                        {
+                            Utils.Rpc(CustomRPC.Bless, oracle.Player.PlayerId, (byte)2);
+                        }
+                    }
                 }
             }
 

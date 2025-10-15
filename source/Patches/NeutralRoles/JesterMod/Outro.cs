@@ -11,7 +11,7 @@ namespace TownOfUs.NeutralRoles.JesterMod
     {
         public static void Postfix(EndGameManager __instance)
         {
-            if (!CustomGameOptions.NeutralEvilWinEndsGame) return;
+            if (CustomGameOptions.JesterWin != ExecutionerMod.WinEndsGame.EndsGame) return;
             var role = Role.AllRoles.FirstOrDefault(x => x.RoleType == RoleEnum.Jester && ((Jester) x).VotedOut);
             if (role == null) return;
             PoolablePlayer[] array = Object.FindObjectsOfType<PoolablePlayer>();

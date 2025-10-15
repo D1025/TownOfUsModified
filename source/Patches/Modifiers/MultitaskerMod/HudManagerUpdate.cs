@@ -1,3 +1,4 @@
+using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace TownOfUs.Modifiers
             if (!PlayerControl.LocalPlayer.Is(ModifierEnum.Multitasker)) return;
             if (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Disconnected) return;
             if (!Minigame.Instance) return;
+            if (IsExemptTask()) return;
             var Base = Minigame.Instance as MonoBehaviour;
             SpriteRenderer[] rends = Base.GetComponentsInChildren<SpriteRenderer>();
             for (int i = 0; i < rends.Length; i++)
@@ -20,6 +22,13 @@ namespace TownOfUs.Modifiers
                 var oldColor3 = rends[i].color[2];
                 rends[i].color = new Color(oldColor1, oldColor2, oldColor3, 0.5f);
             }
+        }
+
+        public static bool IsExemptTask()
+        {
+            return Minigame.Instance.TryCast<VitalsMinigame>() ||
+                   Minigame.Instance.TryCast<CollectShellsMinigame>() ||
+                   Minigame.Instance.TryCast<MushroomDoorSabotageMinigame>();
         }
     }
 }

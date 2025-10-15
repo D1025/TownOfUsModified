@@ -10,8 +10,15 @@ namespace TownOfUs.NeutralRoles.ExecutionerMod
     {
         Crew,
         Amnesiac,
+        Mercenary,
         Survivor,
         Jester
+    }
+    public enum WinEndsGame
+    {
+        EndsGame,
+        Nothing,
+        Kills
     }
 
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -71,6 +78,13 @@ namespace TownOfUs.NeutralRoles.ExecutionerMod
                 var amnesiac = new Amnesiac(player);
                 amnesiac.SpawnedAs = false;
                 amnesiac.RegenTask();
+            }
+            else if (CustomGameOptions.OnTargetDead == OnTargetDead.Mercenary)
+            {
+                var merc = new Mercenary(player);
+                merc.SpawnedAs = false;
+                merc.Gold = CustomGameOptions.GoldToBribe;
+                merc.RegenTask();
             }
             else if (CustomGameOptions.OnTargetDead == OnTargetDead.Survivor)
             {

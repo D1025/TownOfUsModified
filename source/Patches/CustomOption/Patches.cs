@@ -28,10 +28,10 @@ namespace TownOfUs.CustomOption
                         if (commonTasks != null) commonTasks.ValidRange = new FloatRange(0f, 4f);
 
                         var shortTasks = __instance.Children.ToArray().FirstOrDefault(x => x.TryCast<NumberOption>()?.intOptionName == Int32OptionNames.NumShortTasks).Cast<NumberOption>();
-                        if (shortTasks != null) shortTasks.ValidRange = new FloatRange(0f, 26f);
+                        if (shortTasks != null) shortTasks.ValidRange = new FloatRange(0f, 8f);
 
                         var longTasks = __instance.Children.ToArray().FirstOrDefault(x => x.TryCast<NumberOption>()?.intOptionName == Int32OptionNames.NumLongTasks).Cast<NumberOption>();
-                        if (longTasks != null) longTasks.ValidRange = new FloatRange(0f, 15f);
+                        if (longTasks != null) longTasks.ValidRange = new FloatRange(0f, 4f);
                     }
                     catch
                     {
@@ -615,8 +615,7 @@ namespace TownOfUs.CustomOption
                             panel.transform.localPosition = new Vector3(-9f, num, -2f);
                         }
                         settingsThisHeader += 1;
-                        panel.SetInfo(StringNames.ImpostorsCategory, option.ToString(), 61);
-                        panel.titleText.text = option.Name;
+                        panel.SetInfo(option.StringName, option.ToString(), 61);
                         __instance.settingsInfo.Add(panel.gameObject);
                     }
                 }
@@ -655,6 +654,25 @@ namespace TownOfUs.CustomOption
                 if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek || __instance.boolOptionName == BoolOptionNames.VisualTasks ||
                     __instance.boolOptionName == BoolOptionNames.AnonymousVotes || __instance.boolOptionName == BoolOptionNames.ConfirmImpostor) return true;
                 return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(NumberOption), nameof(NumberOption.Initialize))]
+        private class NumberOptionInitialise
+        {
+            public static bool Prefix(NumberOption __instance)
+            {
+                var option =
+                    CustomOption.AllOptions.FirstOrDefault(option =>
+                        option.Setting == __instance);
+                if (option is CustomNumberOption number)
+                {
+                    __instance.MinusBtn.isInteractable = true;
+                    __instance.PlusBtn.isInteractable = true;
+                    return false;
+                }
+
+                return true;
             }
         }
 

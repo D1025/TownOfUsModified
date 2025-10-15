@@ -55,12 +55,8 @@ namespace TownOfUs.NeutralRoles.ArsonistMod
             role.IgniteButton.gameObject.SetActive((__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled)
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
-            if (!role.LastKiller || !CustomGameOptions.IgniteCdRemoved) role.IgniteButton.SetCoolDown(role.DouseTimer(), CustomGameOptions.DouseCd);
-            else role.IgniteButton.SetCoolDown(0f, CustomGameOptions.DouseCd);
-            if (role.DousedAlive < CustomGameOptions.MaxDoused)
-            {
-                __instance.KillButton.SetCoolDown(role.DouseTimer(), CustomGameOptions.DouseCd);
-            }
+            __instance.KillButton.SetCoolDown(role.DouseTimer(), CustomGameOptions.DouseCd);
+            role.IgniteButton.SetCoolDown(role.DouseTimer(), CustomGameOptions.DouseCd);
 
             var notDoused = PlayerControl.AllPlayerControls.ToArray().Where(
                 player => !role.DousedPlayers.Contains(player.PlayerId)
@@ -69,21 +65,40 @@ namespace TownOfUs.NeutralRoles.ArsonistMod
                 player => role.DousedPlayers.Contains(player.PlayerId)
             ).ToList();
 
-            if (role.DousedAlive < CustomGameOptions.MaxDoused)
-            {
-                if ((CamouflageUnCamouflage.IsCamoed && CustomGameOptions.CamoCommsKillAnyone) || PlayerControl.LocalPlayer.IsHypnotised()) Utils.SetTarget(ref role.ClosestPlayerDouse, __instance.KillButton, float.NaN, notDoused);
-                else if (role.Player.IsLover()) Utils.SetTarget(ref role.ClosestPlayerDouse, __instance.KillButton, float.NaN, PlayerControl.AllPlayerControls.ToArray().Where(x => !x.IsLover() && !role.DousedPlayers.Contains(x.PlayerId)).ToList());
-                else Utils.SetTarget(ref role.ClosestPlayerDouse, __instance.KillButton, float.NaN, notDoused);
-            }
-            else __instance.KillButton.SetTarget(null);
+            if ((CamouflageUnCamouflage.IsCamoed && CustomGameOptions.CamoCommsKillAnyone) || PlayerControl.LocalPlayer.IsHypnotised()) Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton, float.NaN, notDoused);
+            else if (role.Player.IsLover()) Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton, float.NaN, PlayerControl.AllPlayerControls.ToArray().Where(x => !x.IsLover() && !role.DousedPlayers.Contains(x.PlayerId)).ToList());
+            else Utils.SetTarget(ref role.ClosestPlayer, __instance.KillButton, float.NaN, notDoused);
 
-            if (role.DousedAlive > 0)
+            var closestDoused = Utils.GetClosestPlayer(PlayerControl.LocalPlayer, doused, true);
+            if (closestDoused != null)
             {
-                if ((CamouflageUnCamouflage.IsCamoed && CustomGameOptions.CamoCommsKillAnyone) || PlayerControl.LocalPlayer.IsHypnotised()) Utils.SetTarget(ref role.ClosestPlayerIgnite, role.IgniteButton, float.NaN, doused);
-                else if (role.Player.IsLover()) Utils.SetTarget(ref role.ClosestPlayerIgnite, role.IgniteButton, float.NaN, PlayerControl.AllPlayerControls.ToArray().Where(x => !x.IsLover() && role.DousedPlayers.Contains(x.PlayerId)).ToList());
-                else Utils.SetTarget(ref role.ClosestPlayerIgnite, role.IgniteButton, float.NaN, doused);
+                Vector2 distance = closestDoused.transform.localPosition - PlayerControl.LocalPlayer.transform.localPosition;
+                if (distance.magnitude <= CustomGameOptions.IgniteRadius * ShipStatus.Instance.MaxLightRadius) role.CanIgnite = true;
+                else role.CanIgnite = false;
             }
-            else role.IgniteButton.SetTarget(null);
+            else role.CanIgnite = false;
+
+            var renderer = role.IgniteButton.graphic;
+            if (role.CanIgnite && PlayerControl.LocalPlayer.moveable && !PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                renderer.color = Palette.EnabledColor;
+                renderer.material.SetFloat("_Desat", 0f);
+                var pos = PlayerControl.LocalPlayer.transform.position;
+                pos.y -= 0.2727f;
+                pos.z += 0.001f;
+                if (role.igniteRadius == null) role.igniteRadius = IgniteExtentions.CreateIgnite(pos);
+                else role.igniteRadius.transform.localPosition = pos;
+            }
+            else
+            {
+                renderer.color = Palette.DisabledClear;
+                renderer.material.SetFloat("_Desat", 1f);
+                if (role.igniteRadius != null)
+                {
+                    IgniteExtentions.ClearIgnite(role.igniteRadius);
+                    role.igniteRadius = null;
+                }
+            }
 
             return;
         }

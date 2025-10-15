@@ -1,8 +1,6 @@
 ﻿using System;
 using HarmonyLib;
 using TownOfUs.Roles;
-using UnityEngine;
-using AmongUs.GameOptions;
 
 namespace TownOfUs.CrewmateRoles.OracleMod
 {
@@ -11,18 +9,31 @@ namespace TownOfUs.CrewmateRoles.OracleMod
     {
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Oracle);
             if (!flag) return true;
             var role = Role.GetRole<Oracle>(PlayerControl.LocalPlayer);
-            if (!PlayerControl.LocalPlayer.CanMove || role.ClosestPlayer == null) return false;
+            if (!PlayerControl.LocalPlayer.CanMove) return false;
+            if (!__instance.enabled) return false;
+            if (__instance == role.BlessButton)
+            {
+                if (!__instance.isActiveAndEnabled || role.ClosestBlessedPlayer == null) return false;
+                if (__instance.isCoolingDown) return false;
+                if (role.BlessTimer() != 0) return false;
+
+                var interact2 = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestBlessedPlayer);
+                if (interact2[4] == true)
+                {
+                    role.Blessed = role.ClosestBlessedPlayer;
+                    Utils.Rpc(CustomRPC.Bless, PlayerControl.LocalPlayer.PlayerId, (byte)1, role.Blessed.PlayerId);
+                    role.LastBlessed = DateTime.UtcNow;
+                    role.LastBlessed = role.LastBlessed.AddSeconds(1f - CustomGameOptions.BlessCd);
+                }
+                return false;
+            }
+            if (role.ClosestPlayer == null) return false;
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag2 = role.ConfessTimer() == 0f;
             if (!flag2) return false;
-            if (!__instance.enabled) return false;
-            var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
-            if (Vector2.Distance(role.ClosestPlayer.GetTruePosition(),
-                PlayerControl.LocalPlayer.GetTruePosition()) > maxDistance) return false;
-            if (role.ClosestPlayer == null) return false;
 
             var interact = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestPlayer);
             if (interact[4] == true)
@@ -62,7 +73,7 @@ namespace TownOfUs.CrewmateRoles.OracleMod
             else if (interact[1] == true)
             {
                 role.LastConfessed = DateTime.UtcNow;
-                role.LastConfessed = role.LastConfessed.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.ConfessCd);
+                role.LastConfessed = role.LastConfessed.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.ConfessCd);
                 return false;
             }
             else if (interact[3] == true) return false;

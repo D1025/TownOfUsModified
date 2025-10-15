@@ -21,7 +21,7 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                     && !MeetingHud.Instance && !PlayerControl.LocalPlayer.Data.IsDead
                     && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started);
             protectButton.SetCoolDown(role.StartTimer(), 10f);
-            if (role.UsedAbility) return;
+            if (role.ShieldedPlayer != null) return;
             Utils.SetTarget(ref role.ClosestPlayer, protectButton);
         }
     }

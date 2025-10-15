@@ -35,7 +35,7 @@ namespace TownOfUs.ImpostorRoles.HypnotistMod
                 else if (interact[1] == true)
                 {
                     role.LastHypnotised = DateTime.UtcNow;
-                    role.LastHypnotised.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.HypnotiseCd);
+                    role.LastHypnotised.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.HypnotiseCd);
                     return false;
                 }
                 else if (interact[3] == true) return false;

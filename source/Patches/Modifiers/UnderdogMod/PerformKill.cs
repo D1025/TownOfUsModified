@@ -10,9 +10,9 @@ namespace TownOfUs.Modifiers.UnderdogMod
     {
         public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            var modifier = Modifier.GetModifier(__instance);
-            if (modifier?.ModifierType == ModifierEnum.Underdog)
-                ((Underdog)modifier).SetKillTimer();
+            if (!__instance.Is(ModifierEnum.Underdog)) return;
+            var modifier = Modifier.GetModifier<Underdog>(__instance);
+            modifier.SetKillTimer();
         }
 
         internal static bool LastImp()

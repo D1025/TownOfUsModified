@@ -18,8 +18,8 @@ namespace TownOfUs.CrewmateRoles.LookoutMod
                 var name = Utils.PlayerById(key).Data.PlayerName;
                 if (value.Count == 0)
                 {
-                    if (DestroyableSingleton<HudManager>.Instance)
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"No players interacted with {name}");
+                    if (HudManager.Instance)
+                        HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"No players interacted with {name}");
                 }
                 else
                 {
@@ -29,8 +29,8 @@ namespace TownOfUs.CrewmateRoles.LookoutMod
                         message += $" {role},";
                     }
                     message = message.Remove(message.Length - 1, 1);
-                    if (DestroyableSingleton<HudManager>.Instance)
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
+                    if (HudManager.Instance)
+                        HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
                 }
             }
         }

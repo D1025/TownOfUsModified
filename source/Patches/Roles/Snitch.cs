@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TownOfUs.Extensions;
 using UnityEngine;
 using System.Linq;
+using TownOfUs.CrewmateRoles.ImitatorMod;
 
 namespace TownOfUs.Roles
 {
@@ -14,7 +15,7 @@ namespace TownOfUs.Roles
         public Snitch(PlayerControl player) : base(player)
         {
             Name = "Snitch";
-            ImpostorText = () => "Complete All Your Tasks To Discover The Impostors";
+            ImpostorText = () => "Complete All Your Tasks To Discover The <color=#FF0000FF>Impostors</color>";
             TaskText = () =>
                 TasksDone
                     ? "Find the arrows pointing to the Impostors!"
@@ -36,13 +37,9 @@ namespace TownOfUs.Roles
         internal override bool RoleCriteria()
         {
             var localPlayer = PlayerControl.LocalPlayer;
-            if (localPlayer.Data.IsImpostor() && !Player.Data.IsDead)
+            if ((localPlayer.Data.IsImpostor() || GetRole(localPlayer).Faction == Faction.NeutralKilling) && !Player.Data.IsDead)
             {
-                return Revealed || base.RoleCriteria();
-            }
-            else if (GetRole(localPlayer).Faction == Faction.NeutralKilling && !Player.Data.IsDead)
-            {
-                return Revealed && CustomGameOptions.SnitchSeesNeutrals || base.RoleCriteria();
+                return (Revealed && !StartImitate.ImitatingPlayers.Contains(Player.PlayerId)) || base.RoleCriteria();
             }
             return false || base.RoleCriteria();
         }

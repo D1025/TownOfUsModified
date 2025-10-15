@@ -1,4 +1,3 @@
-
 namespace TownOfUs.CrewmateRoles.MediumMod
 {
     public enum DeadRevealed

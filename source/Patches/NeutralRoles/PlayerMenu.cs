@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace TownOfUs.Patches.NeutralRoles
 {
@@ -71,51 +70,25 @@ namespace TownOfUs.Patches.NeutralRoles
             {
                 var menu = PlayerMenu.singleton;
 
-                if (menu == null)
+                if (menu == null || PlayerControl.LocalPlayer.Is(RoleEnum.Traitor))
                     return true;
 
                 __instance.potentialVictims = new();
                 var list2 = new Il2CppSystem.Collections.Generic.List<UiElement>();
 
-                var numPlayers = menu.Targets.Count;
-
-                for (var i = 0; i < numPlayers; i++)
+                for (var i = 0; i < menu.Targets.Count; i++)
                 {
                     var player = menu.Targets[i];
                     bool isDead = player.Data.IsDead;
                     player.Data.IsDead = false;
-                    if (numPlayers > 15)
-                    {
-                        var num = i % 4;
-                        var num2 = i / 4;
-                        var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
-                        var buttonTransform = panel.transform;
-                        buttonTransform.localScale = new UnityEngine.Vector3(
-                            0.75f,
-                            0.75f,
-                            0.75f
-                        );
-                        panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset) * 0.75f - 0.4f, __instance.YStart + (num2 * __instance.YOffset) * 0.75f + 0.15f, -1f);
-                        panel.SetPlayer(i, player.Data, (Action)(() => menu.Clicked(player)));
-                        __instance.potentialVictims.Add(panel);
-                        list2.Add(panel.Button);
-                        player.Data.IsDead = isDead;
-                    }
-                    else
-                    {
-                        var num = i % 3;
-                        var num2 = i / 3;
-                        var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
-                        panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset), __instance.YStart + (num2 * __instance.YOffset), -1f);
-                        panel.SetPlayer(i, player.Data, (Action)(() => menu.Clicked(player)));
-                        __instance.potentialVictims.Add(panel);
-                        list2.Add(panel.Button);
-                        player.Data.IsDead = isDead;
-                    }
-                    //var num = i % 3;
-                    //var num2 = i / 3;
-                    //var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
-                    //panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset), __instance.YStart + (num2 * __instance.YOffset), -1f);
+                    var num = i % 3;
+                    var num2 = i / 3;
+                    var panel = GameObject.Instantiate(__instance.PanelPrefab, __instance.transform);
+                    panel.transform.localPosition = new(__instance.XStart + (num * __instance.XOffset), __instance.YStart + (num2 * __instance.YOffset), -1f);
+                    panel.SetPlayer(i, player.Data, (Action)(() => menu.Clicked(player)));
+                    __instance.potentialVictims.Add(panel);
+                    list2.Add(panel.Button);
+                    player.Data.IsDead = isDead;
                 }
 
                 ControllerManager.Instance.OpenOverlayMenu(__instance.name, __instance.BackButton, __instance.DefaultButtonSelected, list2);

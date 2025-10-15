@@ -11,7 +11,7 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
             foreach (var revived in Coroutine.Revived)
             {
                 if (LobbyBehaviour.Instance || MeetingHud.Instance || PlayerControl.LocalPlayer.Data.IsDead ||
-                    revived.Key.Data.IsDead)
+                    revived.Key.Data.IsDead || revived.Key.Data.Disconnected)
                 {
                     revived.Value.gameObject.Destroy();
                     Coroutine.Revived.Remove(revived.Key);

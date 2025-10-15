@@ -4,32 +4,34 @@ using System.Linq;
 using TownOfUs.CrewmateRoles.MedicMod;
 using TownOfUs.Extensions;
 using TownOfUs.Patches;
+using UnityEngine;
+using TownOfUs.NeutralRoles.ArsonistMod;
+using TownOfUs.CrewmateRoles.ClericMod;
 
 namespace TownOfUs.Roles
 {
     public class Arsonist : Role
     {
+        public static Material igniteMaterial = TownOfUs.bundledAssets.Get<Material>("ArsonistTrap");
+        public IgniteMaterial igniteRadius = null;
+
         private KillButton _igniteButton;
         public bool ArsonistWins;
-        public PlayerControl ClosestPlayerDouse;
-        public PlayerControl ClosestPlayerIgnite;
+        public PlayerControl ClosestPlayer;
         public List<byte> DousedPlayers = new List<byte>();
         public DateTime LastDoused;
-        public bool LastKiller = false;
-
-        public int DousedAlive => DousedPlayers.Count(x => Utils.PlayerById(x) != null && Utils.PlayerById(x).Data != null && !Utils.PlayerById(x).Data.IsDead && !Utils.PlayerById(x).Data.Disconnected);
-
+        public bool CanIgnite = false;
 
         public Arsonist(PlayerControl player) : base(player)
         {
             Name = "Arsonist";
             ImpostorText = () => "Douse Players And Ignite The Light";
-            TaskText = () => "Douse players and ignite to kill all douses\nFake Tasks:";
-            Color = Patches.Colors.Impostor;
+            TaskText = () => "Douse players and ignite to kill nearby douses\nFake Tasks:";
+            Color = Patches.Colors.Arsonist;
             LastDoused = DateTime.UtcNow;
             RoleType = RoleEnum.Arsonist;
             AddToRoleHistory(RoleType);
-            Faction = Faction.Impostors;
+            Faction = Faction.NeutralKilling;
         }
 
         public KillButton IgniteButton
@@ -46,10 +48,11 @@ namespace TownOfUs.Roles
         internal override bool GameEnd(LogicGameFlowNormal __instance)
         {
             if (Player.Data.IsDead || Player.Data.Disconnected) return true;
+            if (PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected && x.IsLover()) == 2) return false;
+            if (PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected && (x.Data.IsImpostor() || x.Is(Faction.NeutralKilling) || x.IsCrewKiller())) > 1) return false;
 
-            if (PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected) <= 2 &&
-                    PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected &&
-                    (x.Data.IsImpostor() || x.Is(Faction.NeutralKilling) || x.IsCrewKiller())) == 1)
+            if (PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected && (x.Data.IsImpostor() || x.Is(Faction.NeutralKilling) || x.Is(Faction.Crewmates))) == 1 ||
+                PlayerControl.AllPlayerControls.ToArray().Count(x => !x.Data.IsDead && !x.Data.Disconnected) <= 2)
             {
                 Utils.Rpc(CustomRPC.ArsonistWin, Player.PlayerId);
                 Wins();
@@ -85,21 +88,31 @@ namespace TownOfUs.Roles
 
         public void Ignite()
         {
+            var ignitedPlayers = Utils.GetClosestPlayers(Player.GetTruePosition(), CustomGameOptions.IgniteRadius, false);
             foreach (var playerId in DousedPlayers)
             {
                 var player = Utils.PlayerById(playerId);
-                if (!player.Is(RoleEnum.Pestilence) && !player.IsShielded() && !player.IsProtected() && player != ShowRoundOneShield.FirstRoundShielded)
+                if (!ignitedPlayers.Contains(player)) continue;
+                if (!player.Is(RoleEnum.Pestilence) && !player.IsShielded() && !player.IsProtected() && !player.IsBarriered() && player != ShowShield.FirstRoundShielded)
                 {
                     Utils.RpcMultiMurderPlayer(Player, player);
                 }
                 else if (player.IsShielded())
                 {
-                    var medic = player.GetMedic().Player.PlayerId;
-                    Utils.Rpc(CustomRPC.AttemptSound, medic, player.PlayerId);
-                    StopKill.BreakShield(medic, player.PlayerId, CustomGameOptions.ShieldBreaks);
+                    foreach (var medic in player.GetMedic())
+                    {
+                        Utils.Rpc(CustomRPC.AttemptSound, medic.Player.PlayerId, player.PlayerId);
+                        StopKill.BreakShield(medic.Player.PlayerId, player.PlayerId, CustomGameOptions.ShieldBreaks);
+                    }
+                }
+                else if (player.IsBarriered())
+                {
+                    foreach (var cleric in player.GetCleric())
+                    {
+                        StopAttack.NotifyCleric(cleric.Player.PlayerId, false);
+                    }
                 }
             }
-            DousedPlayers.Clear();
         }
     }
 }

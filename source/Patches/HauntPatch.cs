@@ -16,10 +16,19 @@ namespace TownOfUs
         {
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek) return true;
             var role = Role.GetRole(__instance.HauntTarget);
-            var modifier = Modifier.GetModifier(__instance.HauntTarget);
-
-            __instance.FilterText.text = modifier != null ? $"{role.Name} - {modifier.Name}"
-                                                          : $"{role.Name}";
+            var modifiers = Modifier.GetModifiers(__instance.HauntTarget);
+            if (modifiers.Length == 0) __instance.FilterText.text = role.Name;
+            else
+            {
+                string modifierText = " (";
+                foreach (var modifier in modifiers)
+                {
+                    if (modifierText != " (") modifierText += ", ";
+                    modifierText += modifier.Name;
+                }
+                modifierText += ")";
+                __instance.FilterText.text = role.Name + modifierText;
+            }
             return false;
         }
     }

@@ -9,7 +9,6 @@ namespace TownOfUs.Modifiers.ButtonBarryMod
         public static bool Prefix(KillButton __instance)
         {
             if (!PlayerControl.LocalPlayer.Is(ModifierEnum.ButtonBarry)) return true;
-            if (PlayerControl.LocalPlayer.Is(RoleEnum.Glitch)) return true;
 
             var role = Modifier.GetModifier<ButtonBarry>(PlayerControl.LocalPlayer);
             if (__instance != role.ButtonButton) return true;
@@ -31,7 +30,7 @@ namespace TownOfUs.Modifiers.ButtonBarryMod
                 AmongUsClient.Instance.DisconnectHandlers.AddUnique(
                     MeetingRoomManager.Instance.Cast<IDisconnectHandler>());
                 if (GameManager.Instance.CheckTaskCompletion()) return false;
-                DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(PlayerControl.LocalPlayer);
+                HudManager.Instance.OpenMeetingRoom(PlayerControl.LocalPlayer);
                 PlayerControl.LocalPlayer.RpcStartMeeting(null);
             }
 

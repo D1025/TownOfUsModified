@@ -26,8 +26,7 @@ namespace TownOfUs
                             playerInfo._object.Is(RoleEnum.Plaguebearer) || playerInfo._object.Is(RoleEnum.Pestilence) ||
                             playerInfo._object.Is(RoleEnum.Werewolf) || playerInfo._object.Is(RoleEnum.Doomsayer) ||
                             playerInfo._object.Is(RoleEnum.Vampire) || playerInfo._object.Is(RoleEnum.SoulCollector) ||
-                            playerInfo._object.Is(RoleEnum.Phantom) || playerInfo._object.Is(RoleEnum.Haunter) || 
-                            playerInfo._object.Is(RoleEnum.Vulture) ||
+                            playerInfo._object.Is(RoleEnum.Mercenary) || playerInfo._object.IsGhostRole() ||
                             (playerInfo._object.Is(ModifierEnum.Lover) && !Modifier.GetModifier<Lover>(playerInfo._object).OtherLover.Player.Is(Faction.Crewmates))
                         ))
                     {
@@ -38,6 +37,8 @@ namespace TownOfUs
                         }
                     }
                 }
+
+                if (__instance.TotalTasks == 0) __instance.TotalTasks = 1; // This results in avoiding unfair task wins by essentially defaulting to 0/1 which can never lead to a win
 
                 return false;
             }
@@ -60,8 +61,7 @@ namespace TownOfUs
                            || playerControl.Is(RoleEnum.Werewolf)
                            || playerControl.Is(RoleEnum.Doomsayer)
                            || playerControl.Is(RoleEnum.Vampire)
-                           || playerControl.Is(RoleEnum.SoulCollector)
-                           || playerControl.Is(RoleEnum.Vulture);
+                           || playerControl.Is(RoleEnum.SoulCollector);
 
                 // If the console is not a sabotage repair console
                 if (flag && !__instance.AllowImpostor)
@@ -81,7 +81,8 @@ namespace TownOfUs
         {
             public static void Postfix(PlayerControl __instance)
             {
-                if (__instance.Is(RoleEnum.Haunter) || !__instance.Is(Faction.Crewmates)) GameData.Instance.CompletedTasks--;
+                if (__instance.Is(RoleEnum.Haunter) || !__instance.Is(Faction.Crewmates) ||
+                    (__instance.Is(ModifierEnum.Lover) && !Modifier.GetModifier<Lover>(__instance).OtherLover.Player.Is(Faction.Crewmates))) GameData.Instance.CompletedTasks--;
             }
         }
     }

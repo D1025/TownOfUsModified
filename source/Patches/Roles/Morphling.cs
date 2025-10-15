@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TownOfUs.Extensions;
 using TownOfUs.Roles.Modifiers;
 using UnityEngine;
@@ -15,12 +16,13 @@ namespace TownOfUs.Roles
 
         public PlayerControl SampledPlayer;
         public float TimeRemaining;
+        public bool Enabled;
 
         public Morphling(PlayerControl player) : base(player)
         {
             Name = "Morphling";
             ImpostorText = () => "Transform Into Crewmates";
-            TaskText = () => "Morph into crewmates to be disguised";
+            TaskText = () => "Morph into Crewmates to disguise yourself";
             Color = Patches.Colors.Impostor;
             LastMorphed = DateTime.UtcNow;
             RoleType = RoleEnum.Morphling;
@@ -43,6 +45,7 @@ namespace TownOfUs.Roles
 
         public void Morph()
         {
+            Enabled = true;
             TimeRemaining -= Time.deltaTime;
             Utils.Morph(Player, MorphedPlayer);
             if (Player.Data.IsDead)
@@ -53,6 +56,7 @@ namespace TownOfUs.Roles
 
         public void Unmorph()
         {
+            Enabled = false;
             MorphedPlayer = null;
             Utils.Unmorph(Player);
             LastMorphed = DateTime.UtcNow;
@@ -73,7 +77,8 @@ namespace TownOfUs.Roles
             if (Morphed)
             {
                 appearance = MorphedPlayer.GetDefaultAppearance();
-                var modifier = Modifier.GetModifier(MorphedPlayer);
+                var modifiers = Modifier.GetModifiers(MorphedPlayer);
+                var modifier = modifiers.FirstOrDefault(x => x is IVisualAlteration);
                 if (modifier is IVisualAlteration alteration)
                     alteration.TryGetModifiedAppearance(out appearance);
                 return true;

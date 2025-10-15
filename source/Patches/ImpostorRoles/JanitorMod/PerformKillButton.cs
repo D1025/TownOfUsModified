@@ -24,7 +24,7 @@ namespace TownOfUs.ImpostorRoles.JanitorMod
                 if (flag2) return false;
                 if (!__instance.enabled) return false;
                 if (role.Player.inVent) return false;
-                var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                var maxDistance = LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
                 if (Vector2.Distance(role.CurrentTarget.TruePosition,
                     PlayerControl.LocalPlayer.GetTruePosition()) > maxDistance) return false;
                 var playerId = role.CurrentTarget.ParentId;
@@ -37,6 +37,7 @@ namespace TownOfUs.ImpostorRoles.JanitorMod
                 }
 
                 Utils.Rpc(CustomRPC.JanitorClean, PlayerControl.LocalPlayer.PlayerId, playerId);
+
                 Coroutines.Start(Coroutine.CleanCoroutine(role.CurrentTarget, role));
                 return false;
             }

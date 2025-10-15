@@ -119,7 +119,9 @@ namespace TownOfUs.Roles.Modifiers
 
         public void Win()
         {
-            if (CustomGameOptions.NeutralEvilWinEndsGame && Role.AllRoles.Where(x => x.RoleType == RoleEnum.Jester).Any(x => ((Jester) x).VotedOut)) return;
+            if (CustomGameOptions.JesterWin == NeutralRoles.ExecutionerMod.WinEndsGame.EndsGame && Role.AllRoles.Where(x => x.RoleType == RoleEnum.Jester).Any(x => ((Jester) x).VotedOut)) return;
+            if (CustomGameOptions.ExecutionerWin == NeutralRoles.ExecutionerMod.WinEndsGame.EndsGame && Role.AllRoles.Where(x => x.RoleType == RoleEnum.Executioner).Any(x => ((Executioner)x).TargetVotedOut)) return;
+            if (CustomGameOptions.DoomsayerWinEndsGame && Role.AllRoles.Where(x => x.RoleType == RoleEnum.Doomsayer).Any(x => ((Doomsayer)x).WonByGuessing)) return;
             LoveCoupleWins = true;
             OtherLover.LoveCoupleWins = true;
         }

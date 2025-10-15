@@ -4,7 +4,6 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using TownOfUs.Patches;
 using TownOfUs.Roles;
-using TownOfUs.CrewmateRoles.AltruistMod;
 
 namespace TownOfUs.NeutralRoles.ExecutionerMod
 {
@@ -24,9 +23,8 @@ namespace TownOfUs.NeutralRoles.ExecutionerMod
             var player = exiled.Object;
 
             foreach (var role in Role.GetRoles(RoleEnum.Executioner))
-                if (player.PlayerId == ((Executioner)role).target.PlayerId && !CustomGameOptions.NeutralEvilWinEndsGame)
+                if (player.PlayerId == ((Executioner)role).target.PlayerId && CustomGameOptions.ExecutionerWin != WinEndsGame.EndsGame)
                 {
-                    KillButtonTarget.DontRevive = role.Player.PlayerId;
                     role.Player.Exiled();
                 }
         }

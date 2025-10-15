@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using TownOfUs.Roles;
 using UnityEngine;
+using System;
 
 namespace TownOfUs.ImpostorRoles.UndertakerMod
 {
@@ -13,6 +14,41 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
             var role = Role.GetRole<Undertaker>(__instance);
             var body = role.CurrentlyDragging;
             if (body == null) return;
+            if (__instance == PlayerControl.LocalPlayer)
+            {
+                foreach (var diener in Role.GetRoles(RoleEnum.Undertaker))
+                {
+                    if (diener.Player == __instance) continue;
+                    var dienerRole = (Undertaker)diener;
+                    if (body == dienerRole.CurrentlyDragging)
+                    {
+                        Vector3 position = PlayerControl.LocalPlayer.transform.position;
+
+                        if (Patches.SubmergedCompatibility.isSubmerged())
+                        {
+                            if (position.y > -7f)
+                            {
+                                position.z = 0.0208f;
+                            }
+                            else
+                            {
+                                position.z = -0.0273f;
+                            }
+                        }
+
+                        position.y -= 0.3636f;
+
+                        Utils.Rpc(CustomRPC.Drop, PlayerControl.LocalPlayer.PlayerId, position, position.z);
+
+                        foreach (var body2 in role.CurrentlyDragging.bodyRenderers) body2.material.SetFloat("_Outline", 0f);
+                        role.CurrentlyDragging = null;
+                        role.DragDropButton.graphic.sprite = TownOfUs.DragSprite;
+                        role.LastDragged = DateTime.UtcNow;
+
+                        body.transform.position = position;
+                    }
+                }
+            }
             if (__instance.Data.IsDead)
             {
                 role.CurrentlyDragging = null;
@@ -30,7 +66,8 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
                 if (newPos.y > -7f)
                 {
                     newPos.z = 0.0208f;
-                } else
+                }
+                else
                 {
                     newPos.z = -0.0273f;
                 }

@@ -10,6 +10,7 @@ namespace TownOfUs.NeutralRoles.JuggernautMod
     {
         public static bool Prefix(KillButton __instance)
         {
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Juggernaut);
             if (!flag) return true;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
@@ -22,7 +23,7 @@ namespace TownOfUs.NeutralRoles.JuggernautMod
             if (role.ClosestPlayer == null) return false;
             var distBetweenPlayers = Utils.GetDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers <
-                        GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                        LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (!flag3) return false;
             var interact = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestPlayer, true);
             if (interact[4] == true) return false;
@@ -34,13 +35,7 @@ namespace TownOfUs.NeutralRoles.JuggernautMod
             else if (interact[1] == true)
             {
                 role.LastKill = DateTime.UtcNow;
-                role.LastKill = role.LastKill.AddSeconds(-(CustomGameOptions.JuggKCd - CustomGameOptions.ReducedKCdPerKill * role.JuggKills) + CustomGameOptions.ProtectKCReset);
-                return false;
-            }
-            else if (interact[2] == true)
-            {
-                role.LastKill = DateTime.UtcNow;
-                role.LastKill = role.LastKill.AddSeconds(-(CustomGameOptions.JuggKCd - CustomGameOptions.ReducedKCdPerKill * role.JuggKills) + CustomGameOptions.VestKCReset);
+                role.LastKill = role.LastKill.AddSeconds(-(CustomGameOptions.JuggKCd - CustomGameOptions.ReducedKCdPerKill * role.JuggKills) + CustomGameOptions.TempSaveCdReset);
                 return false;
             }
             else if (interact[3] == true) return false;

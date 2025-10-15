@@ -31,12 +31,12 @@ namespace TownOfUs.NeutralRoles.WerewolfMod
 
             if (role.KillTimer() != 0) return false;
             if (!role.Rampaged) return false;
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (!__instance.isActiveAndEnabled || __instance.isCoolingDown) return false;
             if (role.ClosestPlayer == null) return false;
             var distBetweenPlayers = Utils.GetDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers <
-                        GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                        LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (!flag3) return false;
 
             var interact = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestPlayer, true);
@@ -49,13 +49,7 @@ namespace TownOfUs.NeutralRoles.WerewolfMod
             else if (interact[1] == true)
             {
                 role.LastKilled = DateTime.UtcNow;
-                role.LastKilled = role.LastKilled.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.RampageKillCd);
-                return false;
-            }
-            else if (interact[2] == true)
-            {
-                role.LastKilled = DateTime.UtcNow;
-                role.LastKilled = role.LastKilled.AddSeconds(CustomGameOptions.VestKCReset - CustomGameOptions.RampageKillCd);
+                role.LastKilled = role.LastKilled.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.RampageKillCd);
                 return false;
             }
             else if (interact[3] == true) return false;

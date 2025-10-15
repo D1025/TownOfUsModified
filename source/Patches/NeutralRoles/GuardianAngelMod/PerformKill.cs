@@ -14,7 +14,7 @@ namespace TownOfUs.NeutralRoles.GuardianAngelMod
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
             var role = Role.GetRole<GuardianAngel>(PlayerControl.LocalPlayer);
             if (!role.ButtonUsable) return false;
-            var protectButton = DestroyableSingleton<HudManager>.Instance.KillButton;
+            var protectButton = HudManager.Instance.KillButton;
             if (__instance == protectButton)
             {
                 if (__instance.isCoolingDown) return false;

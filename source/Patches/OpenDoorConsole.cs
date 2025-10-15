@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using TownOfUs.Patches;
 using TownOfUs.Roles;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -17,7 +18,7 @@ namespace TownOfUs
             __state = false;
 
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -55,7 +56,7 @@ namespace TownOfUs
             __state = false;
 
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -103,7 +104,7 @@ namespace TownOfUs
         {
             __state = false;
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -141,7 +142,7 @@ namespace TownOfUs
         {
             __state = false;
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -174,7 +175,7 @@ namespace TownOfUs
         public static void Prefix(MovingPlatformBehaviour __instance, PlayerControl player, ref bool __state)
         {
             __state = false;
-            if (((player.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(player).Caught) || (player.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(player).Caught)) && player.Data.IsDead)
+            if (player.IsGhostRole() && !GhostRole.GetGhostRole(player).Caught && player.Data.IsDead)
             {
                 player.Data.IsDead = false;
                 __state = true;
@@ -199,7 +200,7 @@ namespace TownOfUs
         {
             __state = false;
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -232,7 +233,7 @@ namespace TownOfUs
         {
             var targetData = target.CachedPlayerData;
             __state = false;
-            if (((target.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(target).Caught) || (target.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(target).Caught)) && targetData.IsDead)
+            if (target.IsGhostRole() && !GhostRole.GetGhostRole(target).Caught && target.Data.IsDead)
             {
                 targetData.IsDead = false;
                 __state = true;
@@ -253,7 +254,7 @@ namespace TownOfUs
         public static void Prefix(ZiplineBehaviour __instance, PlayerControl player, ref bool __state)
         {
             __state = false;
-            if (((player.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(player).Caught) || (player.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(player).Caught)) && player.Data.IsDead)
+            if (player.IsGhostRole() && !GhostRole.GetGhostRole(player).Caught && player.Data.IsDead)
             {
                 player.Data.IsDead = false;
                 __state = true;
@@ -271,6 +272,7 @@ namespace TownOfUs
     [HarmonyPatch(typeof(DeconControl), nameof(DeconControl.CanUse))]
     public class DeconControlUse
     {
+        [HarmonyBefore(LevelImpostorCompatibility.LiGuid)]
         public static void Prefix(DeconControl __instance,
             [HarmonyArgument(0)] NetworkedPlayerInfo playerInfo,
             ref bool __state)
@@ -278,13 +280,14 @@ namespace TownOfUs
             __state = false;
 
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
             }
         }
 
+        [HarmonyAfter(LevelImpostorCompatibility.LiGuid)]
         public static void Postfix([HarmonyArgument(0)] NetworkedPlayerInfo playerInfo, ref bool __state)
         {
             if (__state)
@@ -304,7 +307,7 @@ namespace TownOfUs
             __state = false;
 
             var playerControl = playerInfo.Object;
-            if (((playerControl.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(playerControl).Caught) || (playerControl.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(playerControl).Caught)) && playerInfo.IsDead)
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
             {
                 playerInfo.IsDead = false;
                 __state = true;
@@ -342,4 +345,15 @@ namespace TownOfUs
     }
     #endregion
 
+    #region global::PetPos
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetPetPosition))]
+    public class PetPos
+    {
+        public static bool Prefix(PlayerControl __instance)
+        {
+            if (__instance.IsGhostRole() && !GhostRole.GetGhostRole(__instance).Caught) return false;
+            return true;
+        }
+    }
+    #endregion
 }

@@ -16,9 +16,10 @@ namespace TownOfUs
             if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null || PlayerControl.LocalPlayer.Data.Tasks == null) return;
             var taskinfos = __instance.Data.Tasks.ToArray();
             var tasksLeft = taskinfos.Count(x => !x.Complete);
+            var nearghost = !PhysicsHelpers.AnythingBetween(PlayerControl.LocalPlayer.GetTruePosition(), __instance.GetTruePosition(), Constants.ShipAndObjectsMask, false);
             if (__instance.Is(RoleEnum.Phantom))
             {
-                if (tasksLeft <= CustomGameOptions.PhantomTasksRemaining)
+                if (tasksLeft <= CustomGameOptions.PhantomTasksRemaining && nearghost)
                 {
                     var role = Role.GetRole<Phantom>(__instance);
                     role.Caught = true;
@@ -30,7 +31,7 @@ namespace TownOfUs
             {
                 if (CustomGameOptions.HaunterCanBeClickedBy == HaunterCanBeClickedBy.ImpsOnly && !PlayerControl.LocalPlayer.Data.IsImpostor()) return;
                 if (CustomGameOptions.HaunterCanBeClickedBy == HaunterCanBeClickedBy.NonCrew && !(PlayerControl.LocalPlayer.Data.IsImpostor() || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling))) return;
-                if (tasksLeft <= CustomGameOptions.HaunterTasksRemainingClicked)
+                if (tasksLeft <= CustomGameOptions.HaunterTasksRemainingClicked && nearghost)
                 {
                     var role = Role.GetRole<Haunter>(__instance);
                     role.Caught = true;
@@ -38,7 +39,6 @@ namespace TownOfUs
                     Utils.Rpc(CustomRPC.CatchHaunter, role.Player.PlayerId);
                 }
             }
-            return;
         }
     }
 }

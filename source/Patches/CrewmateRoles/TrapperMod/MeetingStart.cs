@@ -15,27 +15,22 @@ namespace TownOfUs.CrewmateRoles.TrapperMod
             var trapperRole = Role.GetRole<Trapper>(PlayerControl.LocalPlayer);
             if (trapperRole.trappedPlayers.Count == 0)
             {
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "No players entered any of your traps");
+                HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "No players entered any of your traps");
             }
             else if (trapperRole.trappedPlayers.Count < CustomGameOptions.MinAmountOfPlayersInTrap)
             {
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Not enough players triggered your traps");
+                HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Not enough players triggered your traps");
             }
             else
             {
                 string message = "Roles caught in your trap:\n";
                 foreach (RoleEnum role in trapperRole.trappedPlayers.OrderBy(x => Guid.NewGuid()))
                 {
-                    if (trapperRole.TrappedError && role == trapperRole.TrappedErrorRole)
-                    {
-                        message += $" Error,";
-                        continue;
-                    }
                     message += $" {role},";
                 }
                 message = message.Remove(message.Length - 1, 1);
-                if (DestroyableSingleton<HudManager>.Instance)
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
+                if (HudManager.Instance)
+                    HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
             }
         }
     }

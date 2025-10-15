@@ -14,7 +14,7 @@ namespace TownOfUs.NeutralRoles.SurvivorMod
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
             var role = Role.GetRole<Survivor>(PlayerControl.LocalPlayer);
             if (!role.ButtonUsable) return false;
-            var vestButton = DestroyableSingleton<HudManager>.Instance.KillButton;
+            var vestButton = HudManager.Instance.KillButton;
             if (__instance == vestButton)
             {
                 if (__instance.isCoolingDown) return false;

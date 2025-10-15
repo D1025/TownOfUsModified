@@ -1,6 +1,5 @@
 using HarmonyLib;
 using Hazel;
-using Reactor.Utilities;
 using TownOfUs.Roles;
 
 namespace TownOfUs.ImpostorRoles.GrenadierMod

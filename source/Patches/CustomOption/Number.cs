@@ -11,11 +11,13 @@ namespace TownOfUs.CustomOption
             Min = min;
             Max = max;
             Increment = increment;
+            IntSafe = Min % 1 == 0 && Max % 1 == 0 && Increment % 1 == 0;
         }
 
         protected float Min { get; set; }
         protected float Max { get; set; }
         protected float Increment { get; set; }
+        public bool IntSafe { get; private set; }
 
         protected internal float Get()
         {

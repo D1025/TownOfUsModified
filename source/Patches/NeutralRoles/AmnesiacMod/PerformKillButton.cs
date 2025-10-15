@@ -10,6 +10,7 @@ using TownOfUs.CrewmateRoles.ImitatorMod;
 using AmongUs.GameOptions;
 using TownOfUs.Roles.Modifiers;
 using TownOfUs.ImpostorRoles.BomberMod;
+using TownOfUs.Patches;
 
 namespace TownOfUs.NeutralRoles.AmnesiacMod
 {
@@ -19,7 +20,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
         public static Sprite Sprite => TownOfUs.Arrow;
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Amnesiac);
             if (!flag) return true;
             if (!PlayerControl.LocalPlayer.CanMove) return false;
@@ -29,7 +30,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             var flag2 = __instance.isCoolingDown;
             if (flag2) return false;
             if (!__instance.enabled) return false;
-            var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+            var maxDistance = LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (role == null)
                 return false;
             if (role.CurrentTarget == null)
@@ -120,6 +121,8 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 case RoleEnum.Jailor:
                 case RoleEnum.Lookout:
                 case RoleEnum.Deputy:
+                case RoleEnum.Plumber:
+                case RoleEnum.Cleric:
 
                     rememberImp = false;
                     rememberNeut = false;
@@ -140,7 +143,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 case RoleEnum.Doomsayer:
                 case RoleEnum.Vampire:
                 case RoleEnum.SoulCollector:
-                case RoleEnum.Vulture:
+                case RoleEnum.Mercenary:
 
                     rememberImp = false;
 
@@ -156,6 +159,15 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 HudManager.Instance.KillButton.buttonLabelText.gameObject.SetActive(false);
             }
 
+            if ((role == RoleEnum.Arsonist || role == RoleEnum.Plaguebearer || role == RoleEnum.Pestilence
+                 || role == RoleEnum.Grenadier || role == RoleEnum.Eclipsal) && PlayerControl.LocalPlayer == other)
+            {
+                foreach (var visor in PlayerControl.AllPlayerControls)
+                {
+                    ShowShield.ClearVisor(visor);
+                }
+            }
+
             if (role == RoleEnum.Investigator) Footprint.DestroyAll(Role.GetRole<Investigator>(other));
 
             if (role == RoleEnum.Snitch) CompleteTask.Postfix(amnesiac);
@@ -166,15 +178,6 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 foreach (GameObject scene in detecRole.CrimeScenes)
                 {
                     UnityEngine.Object.Destroy(scene);
-                }
-            }
-
-            if (role == RoleEnum.SoulCollector && PlayerControl.LocalPlayer == other)
-            {
-                var scRole = Role.GetRole<SoulCollector>(other);
-                foreach (GameObject soul in scRole.Souls)
-                {
-                    UnityEngine.Object.Destroy(soul);
                 }
             }
 
@@ -191,11 +194,12 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             Role.RoleDictionary.Remove(other.PlayerId);
             Role.RoleDictionary.Add(amnesiac.PlayerId, newRole);
 
-            if (!(amnesiac.Is(RoleEnum.Crewmate) || amnesiac.Is(RoleEnum.Impostor))) newRole.RegenTask();
+            newRole.RegenTask();
 
-            if (other == StartImitate.ImitatingPlayer)
+            if (StartImitate.ImitatingPlayers.Contains(other.PlayerId))
             {
-                StartImitate.ImitatingPlayer = amneRole.Player;
+                StartImitate.ImitatingPlayers.Remove(other.PlayerId);
+                StartImitate.ImitatingPlayers.Add(amneRole.Player.PlayerId);
                 newRole.AddToRoleHistory(RoleEnum.Imitator);
             }
             else newRole.AddToRoleHistory(newRole.RoleType);
@@ -208,23 +212,22 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 }
                 else
                 {
-                    // If role is not Vampire, turn dead player into Survivor
-                    if (role != RoleEnum.Vampire)
+                    if (role == RoleEnum.Amnesiac || role == RoleEnum.GuardianAngel || role == RoleEnum.Mercenary || role == RoleEnum.Survivor)
                     {
                         var survivor = new Survivor(other);
                         survivor.RegenTask();
                     }
-                    // If role is Vampire, keep dead player as Vampire
-                    if (role == RoleEnum.Vampire)
+                    else if (role == RoleEnum.Doomsayer || role == RoleEnum.Executioner || role == RoleEnum.Jester || role == RoleEnum.SoulCollector)
                     {
-                        var vampire = new Vampire(other);
-                        vampire.RegenTask();
+                        var jester = new Jester(other);
+                        jester.RegenTask();
                     }
-
-                    if (role == RoleEnum.Arsonist || role == RoleEnum.Glitch || role == RoleEnum.Plaguebearer ||
-                            role == RoleEnum.Pestilence || role == RoleEnum.Werewolf || role == RoleEnum.Juggernaut
-                             || role == RoleEnum.Vampire)
+                    else
                     {
+                        var mercenary = new Mercenary(other);
+                        mercenary.Bribed.Add(amnesiac.PlayerId);
+                        if (PlayerControl.LocalPlayer == amnesiac) mercenary.Alert = true;
+                        mercenary.RegenTask();
                         if (CustomGameOptions.AmneTurnNeutAssassin) new Assassin(amnesiac);
                         if (other.Is(AbilityEnum.Assassin)) Ability.AbilityDictionary.Remove(other.PlayerId);
                     }
@@ -256,7 +259,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 if (other.AmOwner)
                     foreach (var player in PlayerControl.AllPlayerControls)
                         player.nameText().color = Color.white;
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Sheriff)
@@ -274,8 +277,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             else if (role == RoleEnum.Medic)
             {
                 var medicRole = Role.GetRole<Medic>(amnesiac);
-                if (amnesiac != StartImitate.ImitatingPlayer) medicRole.UsedAbility = false;
-                else medicRole.UsedAbility = true;
+                medicRole.ShieldedPlayer = null;
                 medicRole.StartingCooldown = medicRole.StartingCooldown.AddSeconds(-10f);
             }
 
@@ -283,7 +285,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var mayorRole = Role.GetRole<Mayor>(amnesiac);
                 mayorRole.Revealed = false;
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Politician)
@@ -297,14 +299,14 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var prosRole = Role.GetRole<Prosecutor>(amnesiac);
                 prosRole.Prosecuted = false;
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Vigilante)
             {
                 var vigiRole = Role.GetRole<Vigilante>(amnesiac);
                 vigiRole.RemainingKills = CustomGameOptions.VigilanteKills;
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Veteran)
@@ -314,12 +316,26 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 vetRole.LastAlerted = DateTime.UtcNow;
             }
 
+            else if (role == RoleEnum.Altruist)
+            {
+                var altruistRole = Role.GetRole<Altruist>(amnesiac);
+                altruistRole.UsesLeft = CustomGameOptions.ReviveUses;
+                altruistRole.CurrentlyReviving = false;
+                altruistRole.UsedThisRound = false;
+            }
+
             else if (role == RoleEnum.Hunter)
             {
                 var hunterRole = Role.GetRole<Hunter>(amnesiac);
                 hunterRole.UsesLeft = CustomGameOptions.HunterStalkUses;
                 hunterRole.LastStalked = DateTime.UtcNow;
                 hunterRole.LastKilled = DateTime.UtcNow;
+            }
+
+            else if (role == RoleEnum.Cleric)
+            {
+                var clericRole = Role.GetRole<Cleric>(amnesiac);
+                clericRole.LastBarriered = DateTime.UtcNow;
             }
 
             else if (role == RoleEnum.Tracker)
@@ -339,12 +355,20 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 loRole.LastWatched = DateTime.UtcNow;
             }
 
+            else if (role == RoleEnum.Plumber)
+            {
+                var plumberRole = Role.GetRole<Plumber>(amnesiac);
+                plumberRole.UsesLeft = CustomGameOptions.MaxBarricades;
+                plumberRole.FutureBlocks.Clear();
+                plumberRole.LastFlushed = DateTime.UtcNow;
+            }
+
             else if (role == RoleEnum.Aurial)
             {
                 var aurialRole = Role.GetRole<Aurial>(amnesiac);
                 aurialRole.SenseArrows.Values.DestroyAll();
                 aurialRole.SenseArrows.Clear();
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                if (PlayerControl.LocalPlayer == aurialRole.Player) HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Warden)
@@ -374,8 +398,6 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var scRole = Role.GetRole<SoulCollector>(amnesiac);
                 scRole.LastReaped = DateTime.UtcNow;
-                scRole.SoulsCollected = 1;
-                scRole.CollectedSouls = false;
             }
 
             else if (role == RoleEnum.Mystic)
@@ -383,7 +405,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 var mysticRole = Role.GetRole<Mystic>(amnesiac);
                 mysticRole.BodyArrows.Values.DestroyAll();
                 mysticRole.BodyArrows.Clear();
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
             else if (role == RoleEnum.Transporter)
@@ -423,7 +445,9 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var oracleRole = Role.GetRole<Oracle>(amnesiac);
                 oracleRole.Confessor = null;
+                oracleRole.Blessed = null;
                 oracleRole.LastConfessed = DateTime.UtcNow;
+                oracleRole.LastBlessed = DateTime.UtcNow;
             }
 
             else if (role == RoleEnum.Arsonist)
@@ -438,6 +462,25 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 var survRole = Role.GetRole<Survivor>(amnesiac);
                 survRole.LastVested = DateTime.UtcNow;
                 survRole.UsesLeft = CustomGameOptions.MaxVests;
+                survRole.LastMoved = DateTime.UtcNow;
+                survRole.Locations.Clear();
+            }
+
+            else if (role == RoleEnum.Jester)
+            {
+                var jestRole = Role.GetRole<Jester>(amnesiac);
+                jestRole.LastMoved = DateTime.UtcNow;
+                jestRole.Locations.Clear();
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
+            }
+
+            else if (role == RoleEnum.Mercenary)
+            {
+                var mercRole = Role.GetRole<Mercenary>(amnesiac);
+                mercRole.LastGuarded = DateTime.UtcNow;
+                mercRole.Guarded.Clear();
+                mercRole.Bribed.Clear();
+                mercRole.Alert = false;
             }
 
             else if (role == RoleEnum.GuardianAngel)
@@ -481,23 +524,22 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 escapistRole.LastEscape = DateTime.UtcNow;
             }
 
+            else if (role == RoleEnum.Eclipsal)
+            {
+                var eclipsalRole = Role.GetRole<Eclipsal>(amnesiac);
+                eclipsalRole.LastBlind = DateTime.UtcNow;
+            }
+
             else if (role == RoleEnum.Swooper)
             {
                 var swooperRole = Role.GetRole<Swooper>(amnesiac);
                 swooperRole.LastSwooped = DateTime.UtcNow;
             }
 
-            else if (role == RoleEnum.Wraith)
-            {
-                var wraithRole = Role.GetRole<Wraith>(amnesiac);
-                wraithRole.LastNoclip = DateTime.UtcNow;
-            }
-
             else if (role == RoleEnum.Venerer)
             {
                 var venererRole = Role.GetRole<Venerer>(amnesiac);
                 venererRole.LastCamouflaged = DateTime.UtcNow;
-                venererRole.KillsAtStartAbility = 0;
             }
 
             else if (role == RoleEnum.Blackmailer)
@@ -538,7 +580,7 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
             {
                 var doomRole = Role.GetRole<Doomsayer>(amnesiac);
                 doomRole.LastObserved = DateTime.UtcNow;
-                doomRole.LastObservedPlayers.Clear();
+                doomRole.LastObservedPlayer = null;
             }
 
             else if (role == RoleEnum.Plaguebearer)
@@ -576,35 +618,25 @@ namespace TownOfUs.NeutralRoles.AmnesiacMod
                 bomberRole.Bomb.ClearBomb();
             }
 
-            else if (role == RoleEnum.Vulture)
+            else if (!(amnesiac.Is(RoleEnum.Amnesiac) || amnesiac.Is(Faction.Impostors)))
             {
-                var vultureRole = Role.GetRole<Vulture>(amnesiac);
-                vultureRole.LastEaten = DateTime.UtcNow;
-                vultureRole.CurrentTarget = null;
-                vultureRole.eatenBodies = 0;
+                HudManager.Instance.KillButton.gameObject.SetActive(false);
             }
 
-            else if (!(amnesiac.Is(RoleEnum.Altruist) || amnesiac.Is(RoleEnum.Amnesiac) || amnesiac.Is(Faction.Impostors)))
-            {
-                DestroyableSingleton<HudManager>.Instance.KillButton.gameObject.SetActive(false);
-            }
-
-            var killsList = (newRole.Kills, newRole.CorrectKills, newRole.IncorrectKills, newRole.CorrectAssassinKills, newRole.IncorrectAssassinKills, newRole.HiddenBodies);
+            var killsList = (newRole.Kills, newRole.CorrectKills, newRole.IncorrectKills, newRole.CorrectAssassinKills, newRole.IncorrectAssassinKills);
             var otherRole = Role.GetRole(other);
             newRole.Kills = otherRole.Kills;
             newRole.CorrectKills = otherRole.CorrectKills;
             newRole.IncorrectKills = otherRole.IncorrectKills;
             newRole.CorrectAssassinKills = otherRole.CorrectAssassinKills;
             newRole.IncorrectAssassinKills = otherRole.IncorrectAssassinKills;
-            newRole.HiddenBodies = otherRole.HiddenBodies;
             otherRole.Kills = killsList.Kills;
             otherRole.CorrectKills = killsList.CorrectKills;
             otherRole.IncorrectKills = killsList.IncorrectKills;
             otherRole.CorrectAssassinKills = killsList.CorrectAssassinKills;
             otherRole.IncorrectAssassinKills = killsList.IncorrectAssassinKills;
-            otherRole.HiddenBodies = killsList.HiddenBodies;
 
-            if (amnesiac.Is(Faction.Impostors) && (!amnesiac.Is(RoleEnum.Traitor) || CustomGameOptions.SnitchSeesTraitor))
+            if (amnesiac.Is(Faction.Impostors) && (Role.GetRole(amnesiac).formerRole == RoleEnum.None || CustomGameOptions.SnitchSeesTraitor))
             {
                 foreach (var snitch in Role.GetRoles(RoleEnum.Snitch))
                 {

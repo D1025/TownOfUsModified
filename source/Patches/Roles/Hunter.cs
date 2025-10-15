@@ -13,8 +13,8 @@ namespace TownOfUs.Roles
         public Hunter(PlayerControl player) : base(player)
         {
             Name = "Hunter";
-            ImpostorText = () => "Stalk The <color=#FF0000FF>Impostor</color>";
-            TaskText = () => "Stalk and kill impostors, but not crewmates";
+            ImpostorText = () => "Stalk The <color=#FF0000FF>Impostors</color>";
+            TaskText = () => "Stalk and kill Impostors, but not Crewmates";
             Color = Patches.Colors.Hunter;
             LastStalked = DateTime.UtcNow;
             LastKilled = DateTime.UtcNow;

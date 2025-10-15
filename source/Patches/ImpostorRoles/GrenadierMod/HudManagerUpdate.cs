@@ -24,18 +24,23 @@ namespace TownOfUs.ImpostorRoles.GrenadierMod
                 role.FlashButton.gameObject.SetActive(false);
             }
 
-            if (CustomGameOptions.GrenadierIndicators) {
+            if (!PlayerControl.LocalPlayer.IsHypnotised())
+            {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player != PlayerControl.LocalPlayer && !player.Data.IsImpostor()) {
+                    if (player != PlayerControl.LocalPlayer && !player.Data.IsImpostor())
+                    {
                         var tempColour = player.nameText().color;
                         var data = player?.Data;
-                        if (data == null || data.Disconnected || data.IsDead || PlayerControl.LocalPlayer.Data.IsDead)
+                        if (data == null || data.Disconnected || data.IsDead)
                             continue;
-                        if (role.flashedPlayers.Contains(player)) {
-                            player.myRend().material.SetColor("_VisorColor", Color.black);
-                            player.nameText().color = Color.black;
-                        } else {
+                        if (role.flashedPlayers.Contains(player))
+                        {
+                            player.myRend().material.SetColor("_VisorColor", Color.grey);
+                            player.nameText().color = Color.grey;
+                        }
+                        else
+                        {
                             player.myRend().material.SetColor("_VisorColor", Palette.VisorColor);
                             player.nameText().color = tempColour;
                         }

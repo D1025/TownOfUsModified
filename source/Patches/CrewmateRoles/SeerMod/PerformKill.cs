@@ -11,7 +11,7 @@ namespace TownOfUs.CrewmateRoles.SeerMod
     {
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Seer);
             if (!flag) return true;
             var role = Role.GetRole<Seer>(PlayerControl.LocalPlayer);
@@ -19,7 +19,7 @@ namespace TownOfUs.CrewmateRoles.SeerMod
             var flag2 = role.SeerTimer() == 0f;
             if (!flag2) return false;
             if (!__instance.enabled) return false;
-            var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+            var maxDistance = LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (Vector2.Distance(role.ClosestPlayer.GetTruePosition(),
                 PlayerControl.LocalPlayer.GetTruePosition()) > maxDistance) return false;
             if (role.ClosestPlayer == null) return false;
@@ -37,7 +37,7 @@ namespace TownOfUs.CrewmateRoles.SeerMod
             else if (interact[1] == true)
             {
                 role.LastInvestigated = DateTime.UtcNow;
-                role.LastInvestigated = role.LastInvestigated.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.SeerCd);
+                role.LastInvestigated = role.LastInvestigated.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.SeerCd);
                 return false;
             }
             else if (interact[3] == true) return false;

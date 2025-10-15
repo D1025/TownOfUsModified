@@ -35,14 +35,9 @@ namespace TownOfUs.Patches
             if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
             if (SubmergedCompatibility.isSubmerged())
             {
-                if (PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Is(RoleEnum.Haunter))
+                if (PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.IsGhostRole())
                 {
-                    if (!Role.GetRole<Haunter>(PlayerControl.LocalPlayer).Caught) __instance.MapButton.transform.parent.Find(__instance.MapButton.name + "(Clone)").gameObject?.SetActive(false);
-                    else __instance.MapButton.transform.parent.Find(__instance.MapButton.name + "(Clone)").gameObject?.SetActive(true);
-                }
-                if (PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Is(RoleEnum.Phantom))
-                {
-                    if (!Role.GetRole<Phantom>(PlayerControl.LocalPlayer).Caught) __instance.MapButton.transform.parent.Find(__instance.MapButton.name + "(Clone)").gameObject?.SetActive(false);
+                    if (!GhostRole.GetGhostRole(PlayerControl.LocalPlayer).Caught) __instance.MapButton.transform.parent.Find(__instance.MapButton.name + "(Clone)").gameObject?.SetActive(false);
                     else __instance.MapButton.transform.parent.Find(__instance.MapButton.name + "(Clone)").gameObject?.SetActive(true);
                 }
             }
@@ -147,7 +142,7 @@ namespace TownOfUs.Patches
         private static MethodInfo CanUse;
 
         private static Type SubmarineElevatorSystem;
-        private static FieldInfo UpperDeckIsTargetFloor; 
+        private static FieldInfo UpperDeckIsTargetFloor;
 
         private static FieldInfo SubmergedInstance;
         private static FieldInfo SubmergedElevators;
@@ -217,7 +212,7 @@ namespace TownOfUs.Patches
             if (!elevator.Item1) return;
             bool CurrentFloor = (bool)UpperDeckIsTargetFloor.GetValue(getSubElevatorSystem.GetValue(elevator.Item2)); //true is top, false is bottom
             bool PlayerFloor = player.transform.position.y > -7f; //true is top, false is bottom
-            
+
             if (CurrentFloor != PlayerFloor)
             {
                 ChangeFloor(CurrentFloor);
@@ -266,7 +261,7 @@ namespace TownOfUs.Patches
         {
             var player = PlayerControl.LocalPlayer;
             var targetData = player.CachedPlayerData;
-            if (((player.Is(RoleEnum.Phantom) && !Role.GetRole<Phantom>(player).Caught) || (player.Is(RoleEnum.Haunter) && !Role.GetRole<Haunter>(player).Caught)) && targetData.IsDead)
+            if (player.IsGhostRole() && !GhostRole.GetGhostRole(player).Caught && targetData.IsDead)
             {
                 targetData.IsDead = false;
             }
@@ -276,7 +271,7 @@ namespace TownOfUs.Patches
         {
             var player = PlayerControl.LocalPlayer;
             var targetData = player.CachedPlayerData;
-            if ((player.Is(RoleEnum.Phantom) || player.Is(RoleEnum.Haunter)) && !targetData.IsDead) targetData.IsDead = true;
+            if (player.IsGhostRole() && !targetData.IsDead) targetData.IsDead = true;
         }
 
         public static IEnumerator waitMeeting(Action next)
@@ -286,10 +281,10 @@ namespace TownOfUs.Patches
                 yield return null;
             }
             yield return new WaitForSeconds(0.5f);
-            while (DestroyableSingleton<HudManager>.Instance.PlayerCam.transform.Find("SpawnInMinigame(Clone)") != null)
+            while (HudManager.Instance.PlayerCam.transform.Find("SpawnInMinigame(Clone)") != null)
             {
                 yield return null;
-            }       
+            }
             next();
         }
 
@@ -302,9 +297,9 @@ namespace TownOfUs.Patches
         public static void GhostRoleBegin()
         {
             if (!PlayerControl.LocalPlayer.Data.IsDead) return;
-            if (PlayerControl.LocalPlayer.Is(RoleEnum.Haunter))
+            if (PlayerControl.LocalPlayer.IsGhostRole())
             {
-                if (!Role.GetRole<Haunter>(PlayerControl.LocalPlayer).Caught)
+                if (!GhostRole.GetGhostRole(PlayerControl.LocalPlayer).Caught)
                 {
                     var startingVent =
                         ShipStatus.Instance.AllVents[UnityEngine.Random.RandomRangeInt(0, ShipStatus.Instance.AllVents.Count)];
@@ -318,26 +313,6 @@ namespace TownOfUs.Patches
                     Utils.Rpc(CustomRPC.SetPos, PlayerControl.LocalPlayer.PlayerId, startingVent.transform.position.x, startingVent.transform.position.y + 0.3636f);
 
                     PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(startingVent.transform.position.x, startingVent.transform.position.y + 0.3636f));
-                    PlayerControl.LocalPlayer.MyPhysics.RpcEnterVent(startingVent.Id);
-                }
-            }
-            if (PlayerControl.LocalPlayer.Is(RoleEnum.Phantom))
-            {
-                if (!Role.GetRole<Phantom>(PlayerControl.LocalPlayer).Caught)
-                {
-                    var startingVent =
-                        ShipStatus.Instance.AllVents[UnityEngine.Random.RandomRangeInt(0, ShipStatus.Instance.AllVents.Count)];
-                    while (startingVent == ShipStatus.Instance.AllVents[0] || startingVent == ShipStatus.Instance.AllVents[14])
-                    {
-                        startingVent =
-                            ShipStatus.Instance.AllVents[UnityEngine.Random.RandomRangeInt(0, ShipStatus.Instance.AllVents.Count)];
-                    }
-                    ChangeFloor(startingVent.transform.position.y > -7f);
-
-                    Utils.Rpc(CustomRPC.SetPos, PlayerControl.LocalPlayer.PlayerId, startingVent.transform.position.x, startingVent.transform.position.y + 0.3636f);
-
-                    PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(startingVent.transform.position.x, startingVent.transform.position.y + 0.3636f));
-                    PlayerControl.LocalPlayer.MyPhysics.RpcEnterVent(startingVent.Id);
                 }
             }
         }
@@ -347,10 +322,10 @@ namespace TownOfUs.Patches
             if (Loaded && __instance.myPlayer.Data != null && __instance.myPlayer.Data.IsDead)
             {
                 PlayerControl player = __instance.myPlayer;
-                if (player.Is(RoleEnum.Phantom))
+                if (player.IsGhostRole())
                 {
 
-                    if (!Role.GetRole<Phantom>(player).Caught)
+                    if (!GhostRole.GetGhostRole(player).Caught)
                     {
 
                         if (player.AmOwner) MoveDeadPlayerElevator(player);
@@ -358,21 +333,6 @@ namespace TownOfUs.Patches
                         Transform transform = __instance.transform;
                         Vector3 position = transform.position;
                         position.z = position.y/1000;
-
-                        transform.position = position;
-                        __instance.myPlayer.gameObject.layer = 8;
-                    }
-                }
-                if (player.Is(RoleEnum.Haunter))
-                {
-                    if (!Role.GetRole<Haunter>(player).Caught)
-                    {
-
-                        if (player.AmOwner) MoveDeadPlayerElevator(player);
-                        else player.Collider.enabled = false;
-                        Transform transform = __instance.transform;
-                        Vector3 position = transform.position;
-                        position.z = position.y / 1000;
 
                         transform.position = position;
                         __instance.myPlayer.gameObject.layer = 8;
@@ -417,7 +377,7 @@ namespace TownOfUs.Patches
             }
             catch (System.NullReferenceException)
             {
-                
+
             }
 
         }
@@ -425,6 +385,51 @@ namespace TownOfUs.Patches
         public static bool isSubmerged()
         {
             return Loaded && ShipStatus.Instance && ShipStatus.Instance.Type == SUBMERGED_MAP_TYPE;
+        }
+    }
+
+    public static class LevelImpostorCompatibility
+    {
+        public const string LiGuid = "com.DigiWorm.LevelImposter";
+
+        public static bool Loaded { get; private set; }
+        public static BasePlugin Plugin { get; private set; }
+        public static Assembly Assembly { get; private set; }
+        private static Dictionary<string, Type> Types { get; set; }
+
+        public static void Initialize()
+        {
+            Loaded = IL2CPPChainloader.Instance.Plugins.TryGetValue(LiGuid, out PluginInfo liPlugin);
+            if (!Loaded) return;
+
+            Plugin = liPlugin.Instance as BasePlugin;
+
+            Assembly = Plugin!.GetType().Assembly;
+            Types = AccessTools.GetTypesFromAssembly(Assembly).TryToDictionary(x => x.Name, x => x);
+
+            var canUseMethod = AccessTools.Method(Types["TriggerConsole"], "CanUse");
+
+            var compatType = typeof(LevelImpostorCompatibility);
+
+            var _harmony = new Harmony("tou.levelimpostor.patch");
+            _harmony.Patch(canUseMethod, new(AccessTools.Method(compatType, nameof(TriggerPrefix))), new(AccessTools.Method(compatType, nameof(TriggerPostfix))));
+        }
+
+        public static void TriggerPrefix(NetworkedPlayerInfo playerInfo, ref bool __state)
+        {
+            var playerControl = playerInfo.Object;
+
+            if (playerControl.IsGhostRole() && !GhostRole.GetGhostRole(playerControl).Caught && playerInfo.IsDead)
+                return;
+
+            playerInfo.IsDead = false;
+            __state = true;
+        }
+
+        public static void TriggerPostfix(NetworkedPlayerInfo playerInfo, ref bool __state)
+        {
+            if (__state)
+                playerInfo.IsDead = true;
         }
     }
 

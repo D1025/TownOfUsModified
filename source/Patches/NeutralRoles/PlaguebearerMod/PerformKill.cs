@@ -10,6 +10,7 @@ namespace TownOfUs.NeutralRoles.PlaguebearerMod
     {
         public static bool Prefix(KillButton __instance)
         {
+            if (__instance != HudManager.Instance.KillButton) return true;
             var flag = PlayerControl.LocalPlayer.Is(RoleEnum.Plaguebearer);
             if (!flag) return true;
             if (PlayerControl.LocalPlayer.Data.IsDead) return false;
@@ -21,7 +22,7 @@ namespace TownOfUs.NeutralRoles.PlaguebearerMod
             if (role.InfectedPlayers.Contains(role.ClosestPlayer.PlayerId)) return false;
             var distBetweenPlayers = Utils.GetDistBetweenPlayers(PlayerControl.LocalPlayer, role.ClosestPlayer);
             var flag3 = distBetweenPlayers <
-                        GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                        LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (!flag3) return false;
             var interact = Utils.Interact(PlayerControl.LocalPlayer, role.ClosestPlayer);
             if (interact[0] == true)
@@ -32,7 +33,7 @@ namespace TownOfUs.NeutralRoles.PlaguebearerMod
             else if (interact[1] == true)
             {
                 role.LastInfected = DateTime.UtcNow;
-                role.LastInfected.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.InfectCd);
+                role.LastInfected.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.InfectCd);
                 return false;
             }
             else if (interact[3] == true) return false;

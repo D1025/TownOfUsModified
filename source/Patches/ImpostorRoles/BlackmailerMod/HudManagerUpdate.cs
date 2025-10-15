@@ -3,7 +3,6 @@ using TownOfUs.Roles;
 using UnityEngine;
 using System.Linq;
 using TownOfUs.Extensions;
-using AmongUs.GameOptions;
 using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs.ImpostorRoles.BlackmailerMod

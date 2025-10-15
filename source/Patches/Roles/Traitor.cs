@@ -1,8 +1,10 @@
+using System.Collections.Generic;
+
 namespace TownOfUs.Roles
 {
     public class Traitor : Role
     {
-        public RoleEnum formerRole = new RoleEnum();
+        public List<RoleEnum> CanBeRoles = new List<RoleEnum>();
         public Traitor(PlayerControl player) : base(player)
         {
             Name = "Traitor";

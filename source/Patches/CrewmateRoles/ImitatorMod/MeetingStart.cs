@@ -18,27 +18,22 @@ namespace TownOfUs.CrewmateRoles.ImitatorMod
             {
                 if (imitatorRole.trappedPlayers.Count == 0)
                 {
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "No players entered any of your traps");
+                    HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "No players entered any of your traps");
                 }
                 else if (imitatorRole.trappedPlayers.Count < CustomGameOptions.MinAmountOfPlayersInTrap)
                 {
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Not enough players triggered your traps");
+                    HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Not enough players triggered your traps");
                 }
                 else
                 {
                     string message = "Roles caught in your trap:\n";
                     foreach (RoleEnum role in imitatorRole.trappedPlayers.OrderBy(x => Guid.NewGuid()))
                     {
-                        if (imitatorRole.TrappedError && role == imitatorRole.TrappedErrorRole)
-                        {
-                            message += $" Error,";
-                            continue;
-                        }
                         message += $" {role},";
                     }
                     message = message.Remove(message.Length - 1, 1);
-                    if (DestroyableSingleton<HudManager>.Instance)
-                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
+                    if (HudManager.Instance)
+                        HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
                 }
                 imitatorRole.trappedPlayers.Clear();
             }
@@ -46,7 +41,7 @@ namespace TownOfUs.CrewmateRoles.ImitatorMod
             {
                 var playerResults = MeetingStartOracle.PlayerReportFeedback(imitatorRole.confessingPlayer);
 
-                if (!string.IsNullOrWhiteSpace(playerResults)) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, playerResults);
+                if (!string.IsNullOrWhiteSpace(playerResults)) HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, playerResults);
             }
             else if (imitatorRole.watchedPlayers != null)
             {
@@ -55,8 +50,8 @@ namespace TownOfUs.CrewmateRoles.ImitatorMod
                     var name = Utils.PlayerById(key).Data.PlayerName;
                     if (value.Count == 0)
                     {
-                        if (DestroyableSingleton<HudManager>.Instance)
-                            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"No players interacted with {name}");
+                        if (HudManager.Instance)
+                            HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"No players interacted with {name}");
                     }
                     else
                     {
@@ -66,8 +61,8 @@ namespace TownOfUs.CrewmateRoles.ImitatorMod
                             message += $" {role},";
                         }
                         message = message.Remove(message.Length - 1, 1);
-                        if (DestroyableSingleton<HudManager>.Instance)
-                            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
+                        if (HudManager.Instance)
+                            HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, message);
                     }
                 }
             }

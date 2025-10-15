@@ -5,7 +5,7 @@ namespace TownOfUs.Patches
     class Colors {
 
         // Crew Colors
-        public readonly static Color Crewmate = Color.white;
+        public readonly static Color Crewmate = Palette.CrewmateBlue;
         public readonly static Color Mayor = new Color(0.44f, 0.31f, 0.66f, 1f);
         public readonly static Color Sheriff = Color.yellow;
         public readonly static Color Engineer = new Color(1f, 0.65f, 0.04f, 1f);
@@ -35,12 +35,14 @@ namespace TownOfUs.Patches
         public readonly static Color Jailor = new Color(0.65f, 0.65f, 0.65f, 1f);
         public readonly static Color Lookout = new Color(0.2f, 1f, 0.4f, 1f);
         public readonly static Color Deputy = new Color(1f, 0.8f, 0f, 1f);
+        public readonly static Color Plumber = new Color(0.8f, 0.4f, 0f, 1f);
+        public readonly static Color Cleric = new Color(0f, 1f, 0.7f, 1f);
 
         // Neutral Colors
         public readonly static Color Jester = new Color(1f, 0.75f, 0.8f, 1f);
         public readonly static Color Executioner = new Color(0.55f, 0.25f, 0.02f, 1f);
         public readonly static Color Glitch = Color.green;
-        public readonly static Color Wraith = new Color(1f, 0.3f, 0f);
+        public readonly static Color Arsonist = new Color(1f, 0.3f, 0f);
         public readonly static Color Phantom = new Color(0.4f, 0.16f, 0.38f, 1f);
         public readonly static Color Amnesiac = new Color(0.5f, 0.7f, 1f, 1f);
         public readonly static Color Juggernaut = new Color(0.55f, 0f, 0.3f, 1f);
@@ -52,7 +54,7 @@ namespace TownOfUs.Patches
         public readonly static Color Doomsayer = new Color(0f, 1f, 0.5f, 1f);
         public readonly static Color Vampire = new Color(0.15f, 0.15f, 0.15f, 1f);
         public readonly static Color SoulCollector = new Color(0.6f, 1f, 0.8f, 1f);
-        public readonly static Color Vulture = new Color(1f, 0.4f, 0.16f, 1f);
+        public readonly static Color Mercenary = new Color(0.55f, 0.4f, 0.6f, 1f);
 
         //Imposter Colors
         public readonly static Color Impostor = Palette.ImpostorRed;
@@ -74,8 +76,9 @@ namespace TownOfUs.Patches
         public readonly static Color SixthSense = new Color(0.85f, 1f, 0.55f, 1f);
         public readonly static Color Shy = new Color(1f, 0.7f, 0.8f, 1f);
         public readonly static Color Mini = new Color(0.8f, 1f, 0.9f, 1f);
-        public readonly static Color Drunk = new Color(0.46f, 0.5f, 0f, 1f);
-        public readonly static Color Error = new Color(0.46f, 0.5f, 0f, 1f);
-
+        public readonly static Color Celebrity = new Color(1f, 0.6f, 0.6f, 1f);
+        public readonly static Color Taskmaster = new Color(0.4f, 0.6f, 0.4f, 1f);
+        public readonly static Color Immovable = new Color(0.9f, 0.9f, 0.8f, 1f);
+        public readonly static Color Satellite = new Color(0f, 0.6f, 0.8f, 1f);
     }
 }

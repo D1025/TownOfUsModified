@@ -1,4 +1,5 @@
 using HarmonyLib;
+using TownOfUs.CrewmateRoles.ImitatorMod;
 using TownOfUs.Extensions;
 using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
@@ -10,15 +11,16 @@ namespace TownOfUs.CrewmateRoles.SnitchMod
     {
         private static void UpdateMeeting(MeetingHud __instance)
         {
+            if (StartImitate.ImitatingPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) return;
             foreach (var player in PlayerControl.AllPlayerControls)
             {
                 foreach (var state in __instance.playerStates)
                 {
                     if (player.PlayerId != state.TargetPlayerId) continue;
                     var role = Role.GetRole(player);
-                    if (player.Is(Faction.Impostors) && !player.Is(RoleEnum.Traitor))
+                    if (player.Is(Faction.Impostors) && Role.GetRole(player).formerRole == RoleEnum.None)
                         state.NameText.color = Palette.ImpostorRed;
-                    else if (player.Is(RoleEnum.Traitor) && CustomGameOptions.SnitchSeesTraitor)
+                    else if (player.Is(Faction.Impostors) && Role.GetRole(player).formerRole != RoleEnum.None && CustomGameOptions.SnitchSeesTraitor)
                         state.NameText.color = Palette.ImpostorRed;
                     if (player.Is(Faction.NeutralKilling) && CustomGameOptions.SnitchSeesNeutrals)
                         state.NameText.color = role.Color;
@@ -37,13 +39,13 @@ namespace TownOfUs.CrewmateRoles.SnitchMod
             {
                 foreach (var player in PlayerControl.AllPlayerControls)
                 {
-                    if (player.Data.IsImpostor() && !player.Is(RoleEnum.Traitor))
+                    if (player.Data.IsImpostor() && Role.GetRole(player).formerRole == RoleEnum.None)
                     {
                         var colour = Palette.ImpostorRed;
                         if (player.Is(ModifierEnum.Shy)) colour.a = Modifier.GetModifier<Shy>(player).Opacity;
                         player.nameText().color = colour;
                     }
-                    else if (player.Is(RoleEnum.Traitor) && CustomGameOptions.SnitchSeesTraitor)
+                    else if (player.Is(Faction.Impostors) && Role.GetRole(player).formerRole != RoleEnum.None && CustomGameOptions.SnitchSeesTraitor)
                     {
                         var colour = Palette.ImpostorRed;
                         if (player.Is(ModifierEnum.Shy)) colour.a = Modifier.GetModifier<Shy>(player).Opacity;

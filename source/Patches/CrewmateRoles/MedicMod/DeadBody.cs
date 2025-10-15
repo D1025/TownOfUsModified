@@ -30,47 +30,43 @@ namespace TownOfUs.CrewmateRoles.MedicMod
                 return
                     $"Body Report: The kill appears to have been a suicide! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
 
-            if (br.KillAge < CustomGameOptions.MedicReportNameDuration * 1000)
-                return
-                    $"Body Report: The killer appears to be {br.Killer.Data.PlayerName}! (Killed {Math.Round(br.KillAge / 1000)}s ago)";
-
             var colors = new Dictionary<int, string>
             {
-                {0, "darker"},// red
-                {1, "darker"},// blue
-                {2, "darker"},// green
-                {3, "lighter"},// pink
-                {4, "lighter"},// orange
-                {5, "lighter"},// yellow
-                {6, "darker"},// black
-                {7, "lighter"},// white
-                {8, "darker"},// purple
-                {9, "darker"},// brown
-                {10, "lighter"},// cyan
-                {11, "lighter"},// lime
-                {12, "darker"},// maroon
-                {13, "lighter"},// rose
-                {14, "lighter"},// banana
-                {15, "darker"},// gray
-                {16, "darker"},// tan
-                {17, "lighter"},// coral
-                {18, "darker"},// watermelon
-                {19, "darker"},// chocolate
-                {20, "lighter"},// sky blue
-                {21, "lighter"},// beige
-                {22, "darker"},// magenta
-                {23, "lighter"},// turquoise
-                {24, "lighter"},// lilac
-                {25, "darker"},// olive
-                {26, "lighter"},// azure
-                {27, "darker"},// plum
-                {28, "darker"},// jungle
-                {29, "lighter"},// mint
-                {30, "lighter"},// chartreuse
-                {31, "darker"},// macau
-                {32, "darker"},// tawny
-                {33, "lighter"},// gold
-                {34, "lighter"},// rainbow
+                {10, "darker"}, // Red
+                {20, "darker"}, // Blue
+                {17, "darker"}, // Green
+                {6, "lighter"}, // Pink
+                {12, "lighter"}, // Orange
+                {31, "lighter"}, // Yellow
+                {25, "darker"}, // Black
+                {3, "lighter"}, // White
+                {1, "darker"}, // Purple
+                {19, "darker"}, // Brown
+                {23, "lighter"}, // Cyan
+                {33, "lighter"}, // Lime
+                {9, "darker"}, // Maroon
+                {30, "lighter"}, // Rose
+                {29, "lighter"}, // Banana
+                {4, "darker"}, // Grey
+                {27, "darker"}, // Tan
+                {7, "lighter"}, // Coral
+                {8, "darker"}, // Melon
+                {26, "darker"}, // Cocoa
+                {21, "lighter"}, // Sky Blue
+                {28, "lighter"}, // Biege
+                {5, "darker"}, // Magenta
+                {24, "lighter"}, // Aqua
+                {2, "lighter"}, // Lilac
+                {18, "darker"}, // Olive
+                {22, "lighter"}, // Azure
+                {0, "darker"}, // Plum
+                {16, "darker"}, // Jungle
+                {32, "lighter"}, // Mint
+                {14, "lighter"}, // Lemon
+                {15, "darker"}, // Macau
+                {11, "darker"}, // Tawny
+                {13, "lighter"}, // Gold
+                {34, "lighter"}, // Rainbow
             };
             var typeOfColor = colors[br.Killer.GetDefaultOutfit().ColorId];
             return

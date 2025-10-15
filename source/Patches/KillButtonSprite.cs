@@ -40,11 +40,12 @@ namespace TownOfUs
         private static Sprite Campaign => TownOfUs.CampaignSprite;
         private static Sprite Fortify => TownOfUs.FortifySprite;
         private static Sprite Jail => TownOfUs.JailSprite;
-        private static Sprite Collect => TownOfUs.CollectSprite;
+        private static Sprite Reap => TownOfUs.ReapSprite;
         private static Sprite Watch => TownOfUs.WatchSprite;
         private static Sprite Camp => TownOfUs.CampSprite;
-
-        private static Sprite Spy => TownOfUs.SpySprite;
+        private static Sprite Block => TownOfUs.BlockSprite;
+        private static Sprite Bribe => TownOfUs.BribeSprite;
+        private static Sprite Barrier => TownOfUs.BarrierSprite;
 
         private static Sprite Kill;
 
@@ -163,7 +164,7 @@ namespace TownOfUs
             }
             else if (PlayerControl.LocalPlayer.Is(RoleEnum.SoulCollector))
             {
-                __instance.KillButton.graphic.sprite = Collect;
+                __instance.KillButton.graphic.sprite = Reap;
                 flag = true;
             }
             else if (PlayerControl.LocalPlayer.Is(RoleEnum.Lookout))
@@ -176,9 +177,19 @@ namespace TownOfUs
                 __instance.KillButton.graphic.sprite = Camp;
                 flag = true;
             }
-            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Spy))
+            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Plumber))
             {
-                __instance.KillButton.graphic.sprite = Spy;
+                __instance.KillButton.graphic.sprite = Block;
+                flag = true;
+            }
+            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Mercenary))
+            {
+                __instance.KillButton.graphic.sprite = Bribe;
+                flag = true;
+            }
+            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Cleric))
+            {
+                __instance.KillButton.graphic.sprite = Barrier;
                 flag = true;
             }
             else
@@ -196,11 +207,11 @@ namespace TownOfUs
             }
             if (PlayerControl.LocalPlayer.Is(RoleEnum.Engineer) || PlayerControl.LocalPlayer.Is(RoleEnum.Glitch)
                  || PlayerControl.LocalPlayer.Is(RoleEnum.Pestilence) || PlayerControl.LocalPlayer.Is(RoleEnum.Juggernaut)
-                 || PlayerControl.LocalPlayer.Is(RoleEnum.Vampire))
+                 || PlayerControl.LocalPlayer.Is(RoleEnum.Vampire) || PlayerControl.LocalPlayer.Is(RoleEnum.SoulCollector))
             {
                 __instance.ImpostorVentButton.transform.localPosition = new Vector3(-2f, 0f, 0f);
             }
-            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Werewolf))
+            else if (PlayerControl.LocalPlayer.Is(RoleEnum.Werewolf) || PlayerControl.LocalPlayer.Is(RoleEnum.Arsonist))
             {
                 __instance.ImpostorVentButton.transform.localPosition = new Vector3(-1f, 1f, 0f);
             }
@@ -212,20 +223,31 @@ namespace TownOfUs
 
             var role = Role.GetRole(PlayerControl.LocalPlayer);
             bool AbilityKey = Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU imp/nk");
-            if (role?.ExtraButtons != null && AbilityKey && !PlayerControl.LocalPlayer.Data.IsDead)
+            var controller2 = ConsoleJoystick.player.GetButtonDown(49); // they use this for vanilla role ability button normally
+            if (role?.ExtraButtons != null && (AbilityKey || controller2) && !PlayerControl.LocalPlayer.Data.IsDead)
                 role?.ExtraButtons[0]?.DoClick();
 
+            var controllerRBLB = ConsoleJoystick.player.GetButtonDown(20) || ConsoleJoystick.player.GetButtonDown(22);
             if (Modifier.GetModifier<ButtonBarry>(PlayerControl.LocalPlayer)?.ButtonUsed == false &&
-                Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU bb/disperse/mimic") &&
+                (Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU bb/disperse/mimic") ||
+                controllerRBLB) &&
                 !PlayerControl.LocalPlayer.Data.IsDead)
             {
                 Modifier.GetModifier<ButtonBarry>(PlayerControl.LocalPlayer).ButtonButton.DoClick();
             }
             else if (Modifier.GetModifier<Disperser>(PlayerControl.LocalPlayer)?.ButtonUsed == false &&
-                     Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU bb/disperse/mimic") &&
+                     (Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU bb/disperse/mimic") ||
+                     controllerRBLB) &&
                      !PlayerControl.LocalPlayer.Data.IsDead)
             {
                 Modifier.GetModifier<Disperser>(PlayerControl.LocalPlayer).DisperseButton.DoClick();
+            }
+            else if (Modifier.GetModifier<Satellite>(PlayerControl.LocalPlayer)?.DetectUsed == false &&
+                     (Rewired.ReInput.players.GetPlayer(0).GetButtonDown("ToU bb/disperse/mimic") ||
+                     controllerRBLB) &&
+                     !PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                Modifier.GetModifier<Satellite>(PlayerControl.LocalPlayer).DetectButton.DoClick();
             }
         }
 
@@ -245,15 +267,10 @@ namespace TownOfUs
                     return;
                 }
                 var ghostRole = false;
-                if (PlayerControl.LocalPlayer.Is(RoleEnum.Haunter))
+                if (PlayerControl.LocalPlayer.IsGhostRole())
                 {
-                    var haunter = Role.GetRole<Haunter>(PlayerControl.LocalPlayer);
-                    if (!haunter.Caught) ghostRole = true;
-                }
-                else if (PlayerControl.LocalPlayer.Is(RoleEnum.Phantom))
-                {
-                    var phantom = Role.GetRole<Phantom>(PlayerControl.LocalPlayer);
-                    if (!phantom.Caught) ghostRole = true;
+                    var ghost = GhostRole.GetGhostRole(PlayerControl.LocalPlayer);
+                    if (!ghost.Caught) ghostRole = true;
                 }
                 HudManager.Instance.AbilityButton.gameObject.SetActive(!ghostRole && Utils.ShowDeadBodies && !MeetingHud.Instance);
             }

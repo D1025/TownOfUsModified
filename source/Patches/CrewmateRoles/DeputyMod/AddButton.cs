@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Reactor.Utilities;
 using Reactor.Utilities.Extensions;
 using TownOfUs.CrewmateRoles.ImitatorMod;
 using TownOfUs.CrewmateRoles.MedicMod;
@@ -74,13 +76,21 @@ namespace TownOfUs.CrewmateRoles.DeputyMod
             void Listener()
             {
                 var target = Utils.PlayerById(voteArea.TargetPlayerId);
-                if (target == role.Killer && !target.Is(RoleEnum.Pestilence))
+                if (target == role.Killer && !target.Is(RoleEnum.Pestilence) && !target.IsBlessed())
                 {
                     Shoot(role, target);
                     if (target.Is(Faction.Crewmates)) role.IncorrectKills += 1;
                     else role.CorrectKills += 1;
                 }
-                else DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You missed your shot! They are either not the killer or are invincible (Pestilence).");
+                else if (target == role.Killer && target.IsBlessed())
+                {
+                    Coroutines.Start(Utils.FlashCoroutine(Colors.Oracle));
+                    foreach (var oracle in target.GetOracle())
+                    {
+                        Utils.Rpc(CustomRPC.Bless, oracle.Player.PlayerId, (byte)2);
+                    }
+                }
+                else HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You missed your shot! They are either not the killer or are invincible (Pestilence).");
                 Utils.Rpc(CustomRPC.Camp, role.Player.PlayerId, (byte)2, target.PlayerId);
                 role.Killer = null;
                 RemoveButtons.HideButtons(role);
@@ -95,7 +105,7 @@ namespace TownOfUs.CrewmateRoles.DeputyMod
                 x => x.TargetPlayerId == player.PlayerId
             );
 
-            var hudManager = DestroyableSingleton<HudManager>.Instance;
+            var hudManager = HudManager.Instance;
             if (checkLover)
             {
                 SoundManager.Instance.PlaySound(player.KillSfx, false, 0.8f);
@@ -120,14 +130,14 @@ namespace TownOfUs.CrewmateRoles.DeputyMod
                     }
 
                     player.myTasks.Clear();
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostIgnoreTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0)
                     );
                 }
                 else
                 {
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostDoTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0));
                 }
@@ -220,12 +230,13 @@ namespace TownOfUs.CrewmateRoles.DeputyMod
                     hypnotist.HysteriaButton.Destroy();
                 }
             }
-            player.Die(DeathReason.Kill, false);
+            player.Data.IsDead = true;
             if (checkLover && player.IsLover() && CustomGameOptions.BothLoversDie)
             {
                 var otherLover = Modifier.GetModifier<Lover>(player).OtherLover.Player;
                 if (!otherLover.Is(RoleEnum.Pestilence)) Shoot(deputy, otherLover, false);
             }
+            player.Die(DeathReason.Kill, false);
 
             var deadPlayer = new DeadPlayer
             {
@@ -250,20 +261,43 @@ namespace TownOfUs.CrewmateRoles.DeputyMod
             }
 
             var blackmailers = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Blackmailer && x.Player != null).Cast<Blackmailer>();
+            var blackmailed = new List<PlayerControl>();
             foreach (var role in blackmailers)
             {
-                if (role.Blackmailed != null && voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
+                if (role.Blackmailed != null && !blackmailed.Contains(role.Blackmailed))
                 {
-                    if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                    blackmailed.Add(role.Blackmailed);
+                    if (voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
                     {
-                        voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
-                        voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
-                        voteArea.XMark.transform.localPosition = new Vector3(
-                            voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
-                            voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
-                            voteArea.XMark.transform.localPosition.z);
+                        if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                        {
+                            voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
+                            voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
+                            voteArea.XMark.transform.localPosition = new Vector3(
+                                voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
+                                voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
+                                voteArea.XMark.transform.localPosition.z);
+                        }
                     }
                 }
+            }
+            var jailors = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Jailor && x.Player != null).Cast<Jailor>();
+            foreach (var role in jailors)
+            {
+                if (role.Jailed == player)
+                {
+                    role.JailCell.Destroy();
+                    if (PlayerControl.LocalPlayer == role.Player)
+                    {
+                        role.ExecuteButton.Destroy();
+                        role.UsesText.Destroy();
+                    }
+                }
+            }
+            var imitators = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Imitator && x.Player != null).Cast<Imitator>();
+            foreach (var role in imitators)
+            {
+                if (role.jailedPlayer == player) role.JailCell.Destroy();
             }
 
             if (PlayerControl.LocalPlayer.Is(RoleEnum.Vigilante) && !PlayerControl.LocalPlayer.Data.IsDead)

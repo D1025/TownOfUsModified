@@ -17,10 +17,19 @@ namespace TownOfUs.Patches
 
                 var maxvalue = time > GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown ? time + 1f : GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
                 __instance.killTimer = Mathf.Clamp(time, 0, maxvalue);
-                DestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(__instance.killTimer, maxvalue);
+                HudManager.Instance.KillButton.SetCoolDown(__instance.killTimer, maxvalue);
             }
 
             return false;
+        } 
+    }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.IsKillTimerEnabled), MethodType.Getter)]
+    public static class SpawnMinigameKillTimer
+    {
+        public static void Postfix(ref bool __result)
+        {
+            __result = __result || (Minigame.Instance && Minigame.Instance.TryCast<SpawnInMinigame>() != null);
         } 
     }
 }

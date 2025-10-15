@@ -22,6 +22,7 @@ namespace TownOfUs.Roles
             RoleType = RoleEnum.Politician;
             AddToRoleHistory(RoleType);
             CanCampaign = true;
+            LastCampaigned = DateTime.UtcNow;
         }
         public GameObject RevealButton = new GameObject();
 

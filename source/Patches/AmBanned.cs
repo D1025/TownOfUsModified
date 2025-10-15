@@ -1,8 +1,9 @@
+using AmongUs.Data.Player;
 using HarmonyLib;
 
 namespace TownOfUs
 {
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
+    [HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
     public class AmBanned
     {
         public static void Postfix(out bool __result)

@@ -8,9 +8,13 @@ using TownOfUs.Extensions;
 using TownOfUs.Roles;
 using TownOfUs.Patches;
 using UnityEngine;
-using TownOfUs.Roles.Modifiers;
 using AmongUs.GameOptions;
 using Reactor.Utilities;
+using Hazel;
+using Reactor.Networking.Extensions;
+using TownOfUs.CrewmateRoles.HaunterMod;
+using TownOfUs.NeutralRoles.PhantomMod;
+using TownOfUs.Roles.Modifiers;
 
 namespace TownOfUs.CrewmateRoles.AltruistMod
 {
@@ -19,101 +23,143 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
         public static Dictionary<PlayerControl, ArrowBehaviour> Revived = new();
         public static Sprite Sprite => TownOfUs.Arrow;
 
-        public static IEnumerator AltruistRevive(DeadBody target, Altruist role)
+        public static IEnumerator AltruistRevive(Altruist role)
         {
-            if (PlayerControl.LocalPlayer.Is(RoleEnum.Lookout))
-            {
-                var lookout = Role.GetRole<Lookout>(PlayerControl.LocalPlayer);
-                if (lookout.Watching.ContainsKey(target.ParentId))
-                {
-                    if (!lookout.Watching[target.ParentId].Contains(RoleEnum.Altruist)) lookout.Watching[target.ParentId].Add(RoleEnum.Altruist);
-                }
-            }
-
-            var parent = Utils.PlayerById(target.ParentId);
-            var position = target.TruePosition;
             var altruist = role.Player;
-
-            if (AmongUsClient.Instance.AmHost) Utils.RpcMurderPlayer(role.Player, role.Player);
-
-            if (CustomGameOptions.AltruistTargetBody)
-                if (target != null)
-                {
-                    foreach (DeadBody deadBody in GameObject.FindObjectsOfType<DeadBody>())
-                    {
-                        if (deadBody.ParentId == target.ParentId) deadBody.gameObject.Destroy();
-                    }
-                }
+            if (PlayerControl.LocalPlayer == altruist) Coroutines.Start(Utils.FlashCoroutine(role.Color, CustomGameOptions.ReviveDuration));
+            altruist.RemainingEmergencies = 0;
+            role.UsesLeft--;
+            role.UsedThisRound = true;
+            role.CurrentlyReviving = true;
 
             var startTime = DateTime.UtcNow;
+
+            if ((PlayerControl.LocalPlayer.Is(Faction.Impostors) || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling))
+                && !PlayerControl.LocalPlayer.Data.IsDead) {
+                Coroutines.Start(Utils.FlashCoroutine(role.Color));
+                var gameObj = new GameObject();
+                var arrow = gameObj.AddComponent<ArrowBehaviour>();
+                gameObj.transform.parent = altruist.transform;
+                var renderer = gameObj.AddComponent<SpriteRenderer>();
+                renderer.sprite = Sprite;
+                arrow.image = renderer;
+                gameObj.layer = 5;
+                role.Arrows.Add(arrow);
+            }
+
             while (true)
             {
+                foreach (var arrow in role.Arrows) arrow.target = altruist.transform.position;
+
+                if (MeetingHud.Instance || !altruist.Is(RoleEnum.Altruist) || altruist.Data.IsDead || altruist.Data.Disconnected)
+                {
+                    altruist.moveable = true;
+                    role.CurrentlyReviving = false;
+                    role.Arrows.DestroyAll();
+                    role.Arrows.Clear();
+                    yield break;
+                }
+
+                altruist.MyPhysics.body.velocity = new Vector2 (0f, 0f);
+                altruist.moveable = false;
                 var now = DateTime.UtcNow;
                 var seconds = (now - startTime).TotalSeconds;
-                if (seconds < CustomGameOptions.ReviveDuration)
-                    yield return null;
+                role.TimeRemaining = ((float)seconds - CustomGameOptions.ReviveDuration) * -1;
+                if (role.TimeRemaining < 0) role.TimeRemaining = 0;
+                if (seconds < CustomGameOptions.ReviveDuration && (AmongUsClient.Instance.AmHost || PlayerControl.LocalPlayer != altruist)) yield return null;
+                else if (seconds < CustomGameOptions.ReviveDuration - 0.1f) yield return null;
                 else break;
-
-                if (MeetingHud.Instance) yield break;
             }
 
-            if (!AmongUsClient.Instance.AmHost || parent.Data.Disconnected) yield break;
+            altruist.moveable = true;
+            role.CurrentlyReviving = false;
+            role.Arrows.DestroyAll();
+            role.Arrows.Clear();
 
-            AltruistReviveEnd(altruist, parent, position.x, position.y + 0.3636f);
-            Utils.Rpc(CustomRPC.AltruistRevive, altruist.PlayerId, (byte)1, parent.PlayerId, position.x, position.y + 0.3636f);
+            if (altruist != PlayerControl.LocalPlayer || altruist.Data.IsDead || altruist.Data.Disconnected) yield break;
+
+            var revives = GetRevivals(altruist.GetTruePosition());
+
+            ReviveRPC(altruist, revives);
         }
 
-        public static void AltruistReviveEnd(PlayerControl altruist, PlayerControl player, float x, float y)
+        private static Dictionary<byte, Vector2> GetRevivals(Vector2 refPosition)
         {
+            var deadBodies = GameObject.FindObjectsOfType<DeadBody>();
+            Dictionary<byte, Vector2> revives = new Dictionary<byte, Vector2>(deadBodies.Count);
+            foreach (var body in deadBodies)
+            {
+                Vector2 playerPosition = body.transform.localPosition;
+                var canRevive = Vector2.Distance(refPosition, playerPosition) <= CustomGameOptions.ReviveRadius * ShipStatus.Instance.MaxLightRadius;
+                if (!canRevive) continue;
+                revives.Add(body.ParentId, new Vector2(body.TruePosition.x, body.TruePosition.y));
+            }
+            return revives;
+        }
+
+        public static void ReviveRPC(PlayerControl altruist, Dictionary<byte, Vector2> revives)
+        {
+            byte isHost = AmongUsClient.Instance.AmHost ? (byte)1 : (byte)2;
+
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.AltruistRevive,
+                SendOption.Reliable,
+                -1);
+            writer.Write(altruist.PlayerId);
+            writer.Write(isHost);
+            writer.Write((byte)revives.Count);
+            foreach ((byte key, Vector2 value) in revives)
+            {
+                writer.Write(key);
+                writer.Write(value);
+            }
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+            if (AmongUsClient.Instance.AmHost) AltruistReviveEnd(altruist, revives);
+        }
+
+        public static void AltruistReviveEnd(PlayerControl altruist, Dictionary<byte, Vector2> revives)
+        {
+            if ((PlayerControl.LocalPlayer.Is(Faction.Impostors) || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling))
+                && !PlayerControl.LocalPlayer.Data.IsDead) Coroutines.Start(Utils.FlashCoroutine(Colors.Altruist));
+
             var revived = new List<PlayerControl>();
 
-            foreach (DeadBody deadBody in GameObject.FindObjectsOfType<DeadBody>())
+            foreach ((byte key, Vector2 value) in revives)
             {
-                if (deadBody.ParentId == altruist.PlayerId) deadBody.gameObject.Destroy();
-            }
-
-            player.Revive();
-            if (player.Is(Faction.Impostors)) RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
-            else RoleManager.Instance.SetRole(player, RoleTypes.Crewmate);
-            Murder.KilledPlayers.Remove(
-                Murder.KilledPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId));
-            revived.Add(player);
-            player.transform.position = new Vector2(x, y);
-            if (PlayerControl.LocalPlayer == player) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(x, y));
-
-            if (Patches.SubmergedCompatibility.isSubmerged() && PlayerControl.LocalPlayer.PlayerId == player.PlayerId)
-            {
-                Patches.SubmergedCompatibility.ChangeFloor(player.transform.position.y > -7);
-            }
-            foreach (DeadBody deadBody in GameObject.FindObjectsOfType<DeadBody>())
-            {
-                if (deadBody.ParentId == player.PlayerId) deadBody.gameObject.Destroy();
-            }
-
-            if (player.IsLover() && CustomGameOptions.BothLoversDie)
-            {
-                var lover = Modifier.GetModifier<Lover>(player).OtherLover.Player;
-
-                lover.Revive();
-                if (lover.Is(Faction.Impostors)) RoleManager.Instance.SetRole(lover, RoleTypes.Impostor);
-                else RoleManager.Instance.SetRole(lover, RoleTypes.Crewmate);
-                Murder.KilledPlayers.Remove(
-                    Murder.KilledPlayers.FirstOrDefault(x => x.PlayerId == lover.PlayerId));
-                revived.Add(lover);
-
                 foreach (DeadBody deadBody in GameObject.FindObjectsOfType<DeadBody>())
                 {
-                    if (deadBody.ParentId == lover.PlayerId)
-                    {
-                        lover.transform.position = new Vector2(deadBody.TruePosition.x, deadBody.TruePosition.y + 0.3636f);
-                        if (PlayerControl.LocalPlayer == lover) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(deadBody.TruePosition.x, deadBody.TruePosition.y + 0.3636f));
+                    if (deadBody.ParentId == key) deadBody.gameObject.Destroy();
+                }
 
-                        if (Patches.SubmergedCompatibility.isSubmerged() && PlayerControl.LocalPlayer.PlayerId == lover.PlayerId)
-                        {
-                            Patches.SubmergedCompatibility.ChangeFloor(lover.transform.position.y > -7);
-                        }
-                        deadBody.gameObject.Destroy();
-                    }
+                var player = Utils.PlayerById(key);
+
+                if (PlayerControl.LocalPlayer == player) Coroutines.Start(Utils.FlashCoroutine(Colors.Altruist));
+                player.Revive();
+                if (player.Is(Faction.Impostors)) RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
+                else RoleManager.Instance.SetRole(player, RoleTypes.Crewmate);
+                Murder.KilledPlayers.Remove(
+                    Murder.KilledPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId));
+                revived.Add(player);
+                var position = new Vector2(value.x, value.y + 0.3636f);
+                player.transform.position = new Vector2(position.x, position.y);
+                if (PlayerControl.LocalPlayer == player) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(position.x, position.y));
+
+                if (Patches.SubmergedCompatibility.isSubmerged() && PlayerControl.LocalPlayer.PlayerId == player.PlayerId)
+                {
+                    Patches.SubmergedCompatibility.ChangeFloor(player.transform.position.y > -7);
+                }
+
+                if (PlayerControl.LocalPlayer.Data.IsImpostor() || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling))
+                {
+                    var gameObj = new GameObject();
+                    var Arrow = gameObj.AddComponent<ArrowBehaviour>();
+                    gameObj.transform.parent = PlayerControl.LocalPlayer.gameObject.transform;
+                    var renderer = gameObj.AddComponent<SpriteRenderer>();
+                    renderer.sprite = Sprite;
+                    Arrow.image = renderer;
+                    gameObj.layer = 5;
+                    Revived.Add(player, Arrow);
                 }
             }
 
@@ -127,21 +173,91 @@ namespace TownOfUs.CrewmateRoles.AltruistMod
                 {
                 }
 
-            if ((PlayerControl.LocalPlayer.Data.IsImpostor() || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling)) && !revived.Contains(PlayerControl.LocalPlayer))
+            foreach (var revive in revived)
             {
-                var gameObj = new GameObject();
-                var Arrow = gameObj.AddComponent<ArrowBehaviour>();
-                gameObj.transform.parent = PlayerControl.LocalPlayer.gameObject.transform;
-                var renderer = gameObj.AddComponent<SpriteRenderer>();
-                renderer.sprite = Sprite;
-                Arrow.image = renderer;
-                gameObj.layer = 5;
-                Revived.Add(player, Arrow);
-                //Target = player;
-                Coroutines.Start(Utils.FlashCoroutine(Colors.Altruist, 1f, 0.5f));
-            }
+                if (revive.IsLover() && CustomGameOptions.BothLoversDie)
+                {
+                    var lover = Modifier.GetModifier<Lover>(revive).OtherLover.Player;
 
-            foreach (var revive in revived) Utils.Unmorph(revive);
+                    if (lover.Data.IsDead)
+                    {
+                        lover.Revive();
+                        if (lover.Is(Faction.Impostors)) RoleManager.Instance.SetRole(lover, RoleTypes.Impostor);
+                        else RoleManager.Instance.SetRole(lover, RoleTypes.Crewmate);
+                        Murder.KilledPlayers.Remove(
+                            Murder.KilledPlayers.FirstOrDefault(x => x.PlayerId == lover.PlayerId));
+
+                        Utils.Unmorph(lover);
+                        lover.RemainingEmergencies = 0;
+                        if (lover == SetHaunter.WillBeHaunter && AmongUsClient.Instance.AmHost)
+                        {
+                            SetHaunter.WillBeHaunter = null;
+                            Utils.Rpc(CustomRPC.SetHaunter, byte.MaxValue);
+                        }
+                        if (lover == SetPhantom.WillBePhantom && AmongUsClient.Instance.AmHost)
+                        {
+                            SetPhantom.WillBePhantom = null;
+                            Utils.Rpc(CustomRPC.SetPhantom, byte.MaxValue);
+                        }
+
+                        foreach (DeadBody deadBody in GameObject.FindObjectsOfType<DeadBody>())
+                        {
+                            if (deadBody.ParentId == lover.PlayerId)
+                            {
+                                deadBody.gameObject.Destroy();
+                            }
+                        }
+
+                        lover.transform.position = new Vector2(revive.transform.localPosition.x, revive.transform.localPosition.y);
+                        if (PlayerControl.LocalPlayer == lover) PlayerControl.LocalPlayer.NetTransform.RpcSnapTo(new Vector2(revive.transform.localPosition.x, revive.transform.localPosition.y));
+
+                        if (Patches.SubmergedCompatibility.isSubmerged() && PlayerControl.LocalPlayer.PlayerId == lover.PlayerId)
+                        {
+                            Patches.SubmergedCompatibility.ChangeFloor(lover.transform.position.y > -7);
+                        }
+
+                        if (PlayerControl.LocalPlayer.Data.IsImpostor() || PlayerControl.LocalPlayer.Is(Faction.NeutralKilling))
+                        {
+                            var gameObj = new GameObject();
+                            var Arrow = gameObj.AddComponent<ArrowBehaviour>();
+                            gameObj.transform.parent = PlayerControl.LocalPlayer.gameObject.transform;
+                            var renderer = gameObj.AddComponent<SpriteRenderer>();
+                            renderer.sprite = Sprite;
+                            Arrow.image = renderer;
+                            gameObj.layer = 5;
+                            Revived.Add(lover, Arrow);
+                        }
+                    }
+                }
+
+                Utils.Unmorph(revive);
+                revive.RemainingEmergencies = 0;
+                if (revive == SetHaunter.WillBeHaunter && AmongUsClient.Instance.AmHost)
+                {
+                    SetHaunter.WillBeHaunter = null;
+                    Utils.Rpc(CustomRPC.SetHaunter, byte.MaxValue);
+                }
+                if (revive == SetPhantom.WillBePhantom && AmongUsClient.Instance.AmHost)
+                {
+                    SetPhantom.WillBePhantom = null;
+                    Utils.Rpc(CustomRPC.SetPhantom, byte.MaxValue);
+                }
+                if (revive.Is(RoleEnum.Jester))
+                {
+                    var jest = Role.GetRole<Jester>(revive);
+                    jest.LastMoved = DateTime.UtcNow;
+                }
+                if (revive.Is(RoleEnum.Survivor))
+                {
+                    var surv = Role.GetRole<Survivor>(revive);
+                    surv.LastMoved = DateTime.UtcNow;
+                }
+                if (revive.Is(ModifierEnum.Celebrity))
+                {
+                    var celeb = Modifier.GetModifier<Celebrity>(revive);
+                    celeb.JustDied = false;
+                }
+            }
         }
     }
 }

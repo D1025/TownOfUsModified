@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Reactor.Utilities;
 using System.Linq;
+using TownOfUs.NeutralRoles.ExecutionerMod;
 using TownOfUs.Patches.NeutralRoles;
 using TownOfUs.Roles;
 
@@ -20,9 +21,8 @@ namespace TownOfUs.NeutralRoles.JesterMod
             if (role.RoleType == RoleEnum.Jester)
             {
                 ((Jester)role).Wins();
-                
 
-                if (CustomGameOptions.NeutralEvilWinEndsGame || !CustomGameOptions.JesterHaunt) return;
+                if (CustomGameOptions.JesterWin != WinEndsGame.Kills) return;
                 if (PlayerControl.LocalPlayer != player) return;
                 role.PauseEndCrit = true;
 

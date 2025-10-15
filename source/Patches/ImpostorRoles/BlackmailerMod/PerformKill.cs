@@ -2,6 +2,7 @@ using HarmonyLib;
 using TownOfUs.Roles;
 using TownOfUs.Extensions;
 using UnityEngine;
+using System;
 
 namespace TownOfUs.ImpostorRoles.BlackmailerMod
 {
@@ -26,18 +27,24 @@ namespace TownOfUs.ImpostorRoles.BlackmailerMod
                 var interact = Utils.Interact(PlayerControl.LocalPlayer, target);
                 if (interact[4] == true)
                 {
-                    role.Blackmailed?.myRend().material.SetFloat("_Outline", 0f);
-                    if (role.Blackmailed != null && role.Blackmailed.Data.IsImpostor())
+                    if (AmongUsClient.Instance.AmHost)
                     {
-                        if (role.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Camouflage &&
-                            role.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Swooper)
-                            role.Blackmailed.nameText().color = Patches.Colors.Impostor;
-                        else role.Blackmailed.nameText().color = Color.clear;
+                        role.Blackmailed?.myRend().material.SetFloat("_Outline", 0f);
+                        if (role.Blackmailed != null && role.Blackmailed.Data.IsImpostor())
+                        {
+                            if (role.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Camouflage &&
+                                role.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Swooper)
+                                role.Blackmailed.nameText().color = Patches.Colors.Impostor;
+                            else role.Blackmailed.nameText().color = Color.clear;
+                        }
+                        role.Blackmailed = target;
+                        Utils.Rpc(CustomRPC.Blackmail, PlayerControl.LocalPlayer.PlayerId, target.PlayerId, (byte)1);
                     }
-                    role.Blackmailed = target;
-                    Utils.Rpc(CustomRPC.Blackmail, PlayerControl.LocalPlayer.PlayerId, target.PlayerId);
+                    else Utils.Rpc(CustomRPC.Blackmail, PlayerControl.LocalPlayer.PlayerId, target.PlayerId, (byte)0);
                 }
-                role.BlackmailButton.SetCoolDown(0.01f, 1f);
+                role.BlackmailButton.SetCoolDown(1f, 10f);
+                role.LastBlackmailed = DateTime.UtcNow;
+                role.LastBlackmailed = role.LastBlackmailed.AddSeconds(1f - CustomGameOptions.BlackmailCd);
                 return false;
             }
             return true;

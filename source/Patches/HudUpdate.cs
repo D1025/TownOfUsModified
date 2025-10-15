@@ -31,15 +31,10 @@ namespace TownOfUs.Patches
             var dead = false;
             if (Utils.ShowDeadBodies)
             {
-                if (PlayerControl.LocalPlayer.Is(RoleEnum.Haunter))
+                if (PlayerControl.LocalPlayer.IsGhostRole())
                 {
-                    var haunter = Role.GetRole<Haunter>(PlayerControl.LocalPlayer);
-                    if (haunter.Caught) dead = true;
-                }
-                else if (PlayerControl.LocalPlayer.Is(RoleEnum.Phantom))
-                {
-                    var phantom = Role.GetRole<Phantom>(PlayerControl.LocalPlayer);
-                    if (phantom.Caught) dead = true;
+                    var ghost = GhostRole.GetGhostRole(PlayerControl.LocalPlayer);
+                    if (ghost.Caught) dead = true;
                 }
                 else if (PlayerControl.LocalPlayer == SetHaunter.WillBeHaunter || PlayerControl.LocalPlayer == SetPhantom.WillBePhantom) dead = false;
                 // this works because if they are already haunter/phantom the code before it will run

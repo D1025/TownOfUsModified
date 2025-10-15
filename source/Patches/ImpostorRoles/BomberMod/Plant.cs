@@ -31,6 +31,7 @@ namespace TownOfUs.ImpostorRoles.BomberMod
                     if (!abilityUsed) return false;
                     role.Detonated = false;
                     var pos = PlayerControl.LocalPlayer.transform.position;
+                    pos.y -= 0.2727f;
                     pos.z += 0.001f;
                     role.DetonatePoint = pos;
                     role.PlantButton.graphic.sprite = DetonateSprite;
@@ -43,8 +44,8 @@ namespace TownOfUs.ImpostorRoles.BomberMod
                         var upperKC = GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + CustomGameOptions.UnderdogKillBonus + CustomGameOptions.DetonateDelay;
                         PlayerControl.LocalPlayer.SetKillTimer(PerformKill.LastImp() ? lowerKC : (PerformKill.IncreasedKC() ? normalKC : upperKC));
                     }
-                    else PlayerControl.LocalPlayer.SetKillTimer((CustomGameOptions.SheriffBomberMode ? 10 : GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown) + CustomGameOptions.DetonateDelay);
-                    DestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(null);
+                    else PlayerControl.LocalPlayer.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + CustomGameOptions.DetonateDelay);
+                    HudManager.Instance.KillButton.SetTarget(null);
                     role.Bomb = BombExtentions.CreateBomb(pos);
                     if (CustomGameOptions.AllImpsSeeBomb) Utils.Rpc(CustomRPC.Plant, pos.x, pos.y, pos.z);
                     return false;

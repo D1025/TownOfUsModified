@@ -1,9 +1,7 @@
 using HarmonyLib;
 using System.Linq;
 using UnityEngine;
-using TownOfUs.ImpostorRoles.TraitorMod;
 using TownOfUs.Roles;
-using TownOfUs.NeutralRoles.SoulCollectorMod;
 using TownOfUs.CrewmateRoles.ImitatorMod;
 using TownOfUs.CrewmateRoles.SwapperMod;
 using TownOfUs.CrewmateRoles.VigilanteMod;
@@ -13,6 +11,10 @@ using TownOfUs.Roles.Modifiers;
 using UnityEngine.UI;
 using TownOfUs.ImpostorRoles.BlackmailerMod;
 using Reactor.Utilities.Extensions;
+using TownOfUs.CrewmateRoles.HaunterMod;
+using TownOfUs.NeutralRoles.PhantomMod;
+using TownOfUs.ImpostorRoles.TraitorMod;
+using System.Collections.Generic;
 
 namespace TownOfUs.Patches
 {
@@ -23,30 +25,38 @@ namespace TownOfUs.Patches
         [HarmonyPatch(nameof(GameData.HandleDisconnect), typeof(PlayerControl), typeof(DisconnectReasons))]
         public static void Prefix([HarmonyArgument(0)] PlayerControl player)
         {
-            if (AmongUsClient.Instance.AmHost)
+            if (player == SetPhantom.WillBePhantom) SetPhantom.PhantomOn = false;
+            if (player == SetHaunter.WillBeHaunter) SetHaunter.HaunterOn = false;
+            if (player == SetTraitor.WillBeTraitor) SetTraitor.TraitorOn = false;
+            if (player.Is(RoleEnum.Cleric))
             {
-                if (player == SetTraitor.WillBeTraitor)
-                {
-                    var toChooseFrom = PlayerControl.AllPlayerControls.ToArray().Where(x => x.Is(Faction.Crewmates) &&
-                        !x.Is(ModifierEnum.Lover) && !x.Data.IsDead && !x.Data.Disconnected && !x.Is(RoleEnum.Mayor) && !x.Is(RoleEnum.Politician) && !x.IsExeTarget()).ToList();
-                    if (toChooseFrom.Count == 0) return;
-                    var rand = Random.RandomRangeInt(0, toChooseFrom.Count);
-                    var pc = toChooseFrom[rand];
-
-                    SetTraitor.WillBeTraitor = pc;
-
-                    Utils.Rpc(CustomRPC.SetTraitor, pc.PlayerId);
-                }
+                var cler = Role.GetRole<Cleric>(player);
+                if (cler.Barriered != null) cler.UnBarrier();
+            }
+            if (player.Is(RoleEnum.GuardianAngel))
+            {
+                var ga = Role.GetRole<GuardianAngel>(player);
+                if (ga.Protecting) ga.UnProtect();
             }
             if (player.Is(RoleEnum.Hypnotist))
             {
                 var hypno = Role.GetRole<Hypnotist>(player);
-                if (hypno.HysteriaActive && hypno.HypnotisedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId)) hypno.UnHysteria();
-            }
-            if (player.Is(RoleEnum.SoulCollector))
-            {
-                var sc = Role.GetRole<SoulCollector>(player);
-                SoulExtensions.ClearSouls(sc.Souls);
+                if (hypno.HysteriaActive && hypno.HypnotisedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId))
+                {
+                    var removeHypno = true;
+                    foreach (var role in Role.GetRoles(RoleEnum.Hypnotist))
+                    {
+                        if (role.Player == hypno.Player) continue;
+                        var hypnoRole = (Hypnotist)role;
+                        if (hypnoRole.HysteriaActive && hypno.HypnotisedPlayers.Contains(PlayerControl.LocalPlayer.PlayerId))
+                        {
+                            removeHypno = false;
+                            break;
+                        }
+                    }
+                    if (removeHypno) hypno.UnHysteria();
+                }
+                hypno.HysteriaActive = false;
             }
             if (player.Is(ModifierEnum.Lover))
             {
@@ -75,20 +85,44 @@ namespace TownOfUs.Patches
                 }
 
                 var blackmailers = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Blackmailer && x.Player != null).Cast<Blackmailer>();
+                var blackmailed = new List<PlayerControl>();
                 foreach (var role in blackmailers)
                 {
-                    if (role.Blackmailed != null && voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
+                    if (role.Blackmailed != null && !blackmailed.Contains(role.Blackmailed))
                     {
-                        if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                        blackmailed.Add(role.Blackmailed);
+                        if (voteArea.TargetPlayerId == role.Blackmailed.PlayerId)
                         {
-                            voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
-                            voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
-                            voteArea.XMark.transform.localPosition = new Vector3(
-                                voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
-                                voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
-                                voteArea.XMark.transform.localPosition.z);
+                            if (BlackmailMeetingUpdate.PrevXMark != null && BlackmailMeetingUpdate.PrevOverlay != null)
+                            {
+                                voteArea.XMark.sprite = BlackmailMeetingUpdate.PrevXMark;
+                                voteArea.Overlay.sprite = BlackmailMeetingUpdate.PrevOverlay;
+                                voteArea.XMark.transform.localPosition = new Vector3(
+                                    voteArea.XMark.transform.localPosition.x - BlackmailMeetingUpdate.LetterXOffset,
+                                    voteArea.XMark.transform.localPosition.y - BlackmailMeetingUpdate.LetterYOffset,
+                                    voteArea.XMark.transform.localPosition.z);
+                            }
                         }
                     }
+                }
+
+                var jailors = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Jailor && x.Player != null).Cast<Jailor>();
+                foreach (var role in jailors)
+                {
+                    if (role.Jailed == player)
+                    {
+                        role.JailCell.Destroy();
+                        if (PlayerControl.LocalPlayer == role.Player)
+                        {
+                            role.ExecuteButton.Destroy();
+                            role.UsesText.Destroy();
+                        }
+                    }
+                }
+                var imitators = Role.AllRoles.Where(x => x.RoleType == RoleEnum.Imitator && x.Player != null).Cast<Imitator>();
+                foreach (var role in imitators)
+                {
+                    if (role.jailedPlayer == player) role.JailCell.Destroy();
                 }
 
                 if (PlayerControl.LocalPlayer.Is(RoleEnum.Deputy) && !PlayerControl.LocalPlayer.Data.IsDead)
@@ -117,16 +151,6 @@ namespace TownOfUs.Patches
                 {
                     var doom = Role.GetRole<Doomsayer>(PlayerControl.LocalPlayer);
                     ShowHideButtonsDoom.HideTarget(doom, voteArea.TargetPlayerId);
-                }
-
-                if (PlayerControl.LocalPlayer.Is(RoleEnum.Jailor) && !PlayerControl.LocalPlayer.Data.IsDead)
-                {
-                    var jailor = Role.GetRole<Jailor>(PlayerControl.LocalPlayer);
-                    if (jailor.Jailed == player)
-                    {
-                        jailor.ExecuteButton.Destroy();
-                        jailor.UsesText.Destroy();
-                    }
                 }
 
                 if (PlayerControl.LocalPlayer.Is(RoleEnum.Swapper) && !PlayerControl.LocalPlayer.Data.IsDead)

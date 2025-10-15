@@ -40,7 +40,7 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
                 var data = PlayerControl.LocalPlayer.Data;
                 var isDead = data.IsDead;
                 var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
-                var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+                var maxDistance = LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
                 var flag = (GameOptionsManager.Instance.currentNormalGameOptions.GhostsDoTasks || !data.IsDead) &&
                            (!AmongUsClient.Instance || !AmongUsClient.Instance.IsGameOver) &&
                            PlayerControl.LocalPlayer.CanMove;
@@ -59,6 +59,18 @@ namespace TownOfUs.ImpostorRoles.UndertakerMod
 
                     var distance = Vector2.Distance(truePosition, component.TruePosition);
                     if (!(distance < closestDistance)) continue;
+                    bool someoneDragging = false;
+                    foreach (var diener in Role.GetRoles(RoleEnum.Undertaker))
+                    {
+                        if (diener.Player == PlayerControl.LocalPlayer) continue;
+                        var dienerRole = (Undertaker)diener;
+                        if (dienerRole.CurrentlyDragging == component)
+                        {
+                            someoneDragging = true;
+                            continue;
+                        }
+                    }
+                    if (someoneDragging) continue;
                     closestBody = component;
                     closestDistance = distance;
                 }

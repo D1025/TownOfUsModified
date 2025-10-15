@@ -1,5 +1,3 @@
-using System;
-
 namespace TownOfUs.CustomOption
 {
     public class CustomToggleOption : CustomOption

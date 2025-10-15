@@ -49,7 +49,7 @@ namespace TownOfUs.CrewmateRoles.PoliticianMod
                 else
                 {
                     role.CanCampaign = false;
-                    DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You need to campaign more Crewmates! However, you may not campaign next round");
+                    HudManager.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "You need to campaign more Crewmates! However, you may not campaign next round");
                 }
             }
 

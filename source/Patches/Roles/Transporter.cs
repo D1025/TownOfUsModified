@@ -12,6 +12,7 @@ using TownOfUs.Patches.NeutralRoles;
 using TownOfUs.Roles.Modifiers;
 using TownOfUs.Modifiers.ShyMod;
 using TownOfUs.Extensions;
+using TownOfUs.CrewmateRoles.ClericMod;
 
 namespace TownOfUs.Roles
 {
@@ -68,6 +69,18 @@ namespace TownOfUs.Roles
                     if (!lookout.Watching[player2].Contains(RoleEnum.Transporter)) lookout.Watching[player2].Add(RoleEnum.Transporter);
                 }
             }
+            if (PlayerControl.LocalPlayer.Is(RoleEnum.Mercenary))
+            {
+                var merc = Role.GetRole<Mercenary>(PlayerControl.LocalPlayer);
+                if (merc.Guarded.Contains(player1))
+                {
+                    merc.Gold += 1;
+                }
+                if (merc.Guarded.Contains(player2))
+                {
+                    merc.Gold += 1;
+                }
+            }
 
             var TP1 = Utils.PlayerById(player1);
             var TP2 = Utils.PlayerById(player2);
@@ -84,18 +97,18 @@ namespace TownOfUs.Roles
                 foreach (var body in deadBodies) if (body.ParentId == TP2.PlayerId) Player2Body = body;
                 if (Player2Body == null) yield break;
             }
-            if (TP1.Is(ModifierEnum.Shy) && TP1.GetCustomOutfitType() == CustomPlayerOutfitType.Default)
+            if (TP1.Is(ModifierEnum.Shy) && !TP1.Data.IsDead && !TP1.Data.Disconnected && TP1.GetCustomOutfitType() == CustomPlayerOutfitType.Default)
             {
                 var shy = Modifier.GetModifier<Shy>(TP1);
                 shy.Opacity = 1f;
-                HudManagerUpdate.SetVisiblity(TP1, shy.Opacity);
+                ShyHudManagerUpdate.SetVisiblity(TP1, shy.Opacity);
                 shy.Moving = true;
             }
-            if (TP2.Is(ModifierEnum.Shy) && TP2.GetCustomOutfitType() == CustomPlayerOutfitType.Default)
+            if (TP2.Is(ModifierEnum.Shy) && !TP2.Data.IsDead && !TP2.Data.Disconnected && TP2.GetCustomOutfitType() == CustomPlayerOutfitType.Default)
             {
                 var shy = Modifier.GetModifier<Shy>(TP2);
                 shy.Opacity = 1f;
-                HudManagerUpdate.SetVisiblity(TP2, shy.Opacity);
+                ShyHudManagerUpdate.SetVisiblity(TP2, shy.Opacity);
                 shy.Moving = true;
             }
 
@@ -134,13 +147,19 @@ namespace TownOfUs.Roles
                     TP1Position = new Vector2(TP1Position.x, TP1Position.y - SizePatch.Radius * 0.75f);
                     TP2Position = new Vector2(TP2Position.x, TP2Position.y + SizePatch.Radius * 0.75f);
                 }
-                TP1.transform.position = TP2Position;
-                TP1.NetTransform.SnapTo(TP2Position);
+                if (!TP1.Is(ModifierEnum.Immovable))
+                {
+                    TP1.transform.position = TP2Position;
+                    TP1.NetTransform.SnapTo(TP2Position);
+                }
                 if (die) Utils.MurderPlayer(TP1, TP2, true);
                 else
                 {
-                    TP2.transform.position = TP1Position;
-                    TP2.NetTransform.SnapTo(TP1Position);
+                    if (!TP2.Is(ModifierEnum.Immovable))
+                    {
+                        TP2.transform.position = TP1Position;
+                        TP2.NetTransform.SnapTo(TP1Position);
+                    }
                 }
 
                 if (SubmergedCompatibility.isSubmerged())
@@ -171,9 +190,12 @@ namespace TownOfUs.Roles
                     TP1Position = new Vector2(TP1Position.x, TP1Position.y - SizePatch.Radius * 0.75f);
                     TP2Position = new Vector2(TP2Position.x, TP2Position.y + SizePatch.Radius * 0.75f);
                 }
-                Player1Body.transform.position = TP2Position;
-                TP2.transform.position = TP1Position;
-                TP2.NetTransform.SnapTo(TP1Position);
+                if (!TP1.Is(ModifierEnum.Immovable)) Player1Body.transform.position = TP2Position;
+                if (!TP2.Is(ModifierEnum.Immovable))
+                {
+                    TP2.transform.position = TP1Position;
+                    TP2.NetTransform.SnapTo(TP1Position);
+                }
 
                 if (SubmergedCompatibility.isSubmerged())
                 {
@@ -197,9 +219,12 @@ namespace TownOfUs.Roles
                     TP1Position = new Vector2(TP1Position.x, TP1Position.y + SizePatch.Radius * 0.75f);
                     TP2Position = new Vector2(TP2Position.x, TP2Position.y - SizePatch.Radius * 0.75f);
                 }
-                Player2Body.transform.position = TP1Position;
-                TP1.transform.position = TP2Position;
-                TP1.NetTransform.SnapTo(TP2Position);
+                if (!TP2.Is(ModifierEnum.Immovable)) Player2Body.transform.position = TP1Position;
+                if (!TP1.Is(ModifierEnum.Immovable))
+                {
+                    TP1.transform.position = TP2Position;
+                    TP1.NetTransform.SnapTo(TP2Position);
+                }
 
                 if (SubmergedCompatibility.isSubmerged())
                 {
@@ -215,8 +240,8 @@ namespace TownOfUs.Roles
                 StopDragging(Player1Body.ParentId);
                 StopDragging(Player2Body.ParentId);
                 var TempPosition = Player1Body.TruePosition;
-                Player1Body.transform.position = Player2Body.TruePosition;
-                Player2Body.transform.position = TempPosition;
+                if (!TP1.Is(ModifierEnum.Immovable)) Player1Body.transform.position = Player2Body.TruePosition;
+                if (!TP2.Is(ModifierEnum.Immovable)) Player2Body.transform.position = TempPosition;
             }
 
             if (PlayerControl.LocalPlayer.PlayerId == TP1.PlayerId ||
@@ -249,13 +274,19 @@ namespace TownOfUs.Roles
             if (TransportPlayer1.IsFortified())
             {
                 Coroutines.Start(Utils.FlashCoroutine(Colors.Warden));
-                Utils.Rpc(CustomRPC.Fortify, (byte)1, TransportPlayer1.GetWarden().Player.PlayerId);
+                foreach (var warden in TransportPlayer1.GetWarden())
+                {
+                    Utils.Rpc(CustomRPC.Fortify, (byte)1, warden.Player.PlayerId);
+                }
                 return;
             }
             else if (TransportPlayer2.IsFortified())
             {
                 Coroutines.Start(Utils.FlashCoroutine(Colors.Warden));
-                Utils.Rpc(CustomRPC.Fortify, (byte)1, TransportPlayer2.GetWarden().Player.PlayerId);
+                foreach (var warden in TransportPlayer2.GetWarden())
+                {
+                    Utils.Rpc(CustomRPC.Fortify, (byte)1, warden.Player.PlayerId);
+                }
                 return;
             }
             if (!UntransportablePlayers.ContainsKey(TransportPlayer1.PlayerId) && !UntransportablePlayers.ContainsKey(TransportPlayer2.PlayerId))
@@ -274,44 +305,66 @@ namespace TownOfUs.Roles
                 {
                     if (Player.IsShielded())
                     {
-                        Utils.Rpc(CustomRPC.AttemptSound, Player.GetMedic().Player.PlayerId, Player.PlayerId);
+                        foreach (var medic in Player.GetMedic())
+                        {
+                            Utils.Rpc(CustomRPC.AttemptSound, medic.Player.PlayerId, Player.PlayerId);
+                            StopKill.BreakShield(medic.Player.PlayerId, Player.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
-                        System.Console.WriteLine(CustomGameOptions.ShieldBreaks + "- shield break");
                         if (CustomGameOptions.ShieldBreaks)
                             transRole.LastTransported = DateTime.UtcNow;
-                        StopKill.BreakShield(Player.GetMedic().Player.PlayerId, Player.PlayerId, CustomGameOptions.ShieldBreaks);
                         return;
                     }
-                    else if (!Player.IsProtected())
+                    else if (!Player.IsProtected() && !Player.IsBarriered())
                     {
                         Coroutines.Start(TransportPlayers(TransportPlayer1.PlayerId, Player.PlayerId, true));
 
                         Utils.Rpc(CustomRPC.Transport, TransportPlayer1.PlayerId, Player.PlayerId, true);
+                        transRole.LastTransported = DateTime.UtcNow;
                         return;
                     }
+                    else if (Player.IsBarriered())
+                    {
+                        foreach (var cleric in Player.GetCleric())
+                        {
+                            StopAttack.NotifyCleric(cleric.Player.PlayerId, false);
+                        }
+                    }
                     transRole.LastTransported = DateTime.UtcNow;
+                    transRole.LastTransported = transRole.LastTransported.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.TransportCooldown);
                     return;
                 }
                 else if (TransportPlayer2.Is(RoleEnum.Pestilence) || TransportPlayer2.IsOnAlert())
                 {
                     if (Player.IsShielded())
                     {
-                        Utils.Rpc(CustomRPC.AttemptSound, Player.GetMedic().Player.PlayerId, Player.PlayerId);
+                        foreach (var medic in Player.GetMedic())
+                        {
+                            Utils.Rpc(CustomRPC.AttemptSound, medic.Player.PlayerId, Player.PlayerId);
+                            StopKill.BreakShield(medic.Player.PlayerId, Player.PlayerId, CustomGameOptions.ShieldBreaks);
+                        }
 
-                        System.Console.WriteLine(CustomGameOptions.ShieldBreaks + "- shield break");
                         if (CustomGameOptions.ShieldBreaks)
                             transRole.LastTransported = DateTime.UtcNow;
-                        StopKill.BreakShield(Player.GetMedic().Player.PlayerId, Player.PlayerId, CustomGameOptions.ShieldBreaks);
                         return;
                     }
-                    else if (!Player.IsProtected())
+                    else if (!Player.IsProtected() && !Player.IsBarriered())
                     {
                         Coroutines.Start(TransportPlayers(TransportPlayer2.PlayerId, Player.PlayerId, true));
 
                         Utils.Rpc(CustomRPC.Transport, TransportPlayer2.PlayerId, Player.PlayerId, true);
+                        transRole.LastTransported = DateTime.UtcNow;
                         return;
                     }
+                    else if (Player.IsBarriered())
+                    {
+                        foreach (var cleric in Player.GetCleric())
+                        {
+                            StopAttack.NotifyCleric(cleric.Player.PlayerId, false);
+                        }
+                    }
                     transRole.LastTransported = DateTime.UtcNow;
+                    transRole.LastTransported = transRole.LastTransported.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.TransportCooldown);
                     return;
                 }
                 LastTransported = DateTime.UtcNow;

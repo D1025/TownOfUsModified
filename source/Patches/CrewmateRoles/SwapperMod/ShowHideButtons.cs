@@ -23,11 +23,11 @@ namespace TownOfUs.CrewmateRoles.SwapperMod
             foreach (var oracle in Role.GetRoles(RoleEnum.Oracle))
             {
                 var oracleRole = (Oracle)oracle;
-                if (oracleRole.Player.Data.IsDead || oracleRole.Player.Data.Disconnected || exiled == null || oracleRole.Confessor == null) continue;
-                if (oracleRole.Confessor.PlayerId == exiled.PlayerId)
+                if (oracleRole.Player.Data.IsDead || oracleRole.Player.Data.Disconnected || exiled == null || oracleRole.Blessed == null) continue;
+                if (oracleRole.Blessed.PlayerId == exiled.PlayerId)
                 {
-                    oracleRole.SavedConfessor = true;
-                    Utils.Rpc(CustomRPC.Bless, oracleRole.Player.PlayerId);
+                    oracleRole.SavedBlessed = true;
+                    Utils.Rpc(CustomRPC.Bless, oracleRole.Player.PlayerId, (byte)0);
                     var dictionary = new Dictionary<byte, int>();
                     return dictionary;
                 }

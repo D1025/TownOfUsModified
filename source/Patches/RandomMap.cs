@@ -125,8 +125,6 @@ namespace TownOfUs
         {
             Generate.ExamineCooldown.Set((float)Generate.ExamineCooldown.Value + change, false);
             Generate.SeerCooldown.Set((float)Generate.SeerCooldown.Value + change, false);
-            Generate.TrackCooldown.Set((float)Generate.TrackCooldown.Value + change, false);
-            Generate.TrapCooldown.Set((float)Generate.TrapCooldown.Value + change, false);
             Generate.SheriffKillCd.Set((float)Generate.SheriffKillCd.Value + change, false);
             Generate.AlertCooldown.Set((float)Generate.AlertCooldown.Value + change, false);
             Generate.TransportCooldown.Set((float)Generate.TransportCooldown.Value + change, false);
@@ -142,24 +140,25 @@ namespace TownOfUs
             Generate.GrenadeCooldown.Set((float)Generate.GrenadeCooldown.Value + change, false);
             Generate.MorphlingCooldown.Set((float)Generate.MorphlingCooldown.Value + change, false);
             Generate.SwoopCooldown.Set((float)Generate.SwoopCooldown.Value + change, false);
-            Generate.WraithCooldown.Set((float)Generate.WraithCooldown.Value + change, false);
             Generate.MineCooldown.Set((float)Generate.MineCooldown.Value + change, false);
             Generate.DragCooldown.Set((float)Generate.DragCooldown.Value + change, false);
             Generate.EscapeCooldown.Set((float)Generate.EscapeCooldown.Value + change, false);
             Generate.JuggKillCooldown.Set((float)Generate.JuggKillCooldown.Value + change, false);
-            Generate.ObserveCooldown.Set((float)Generate.ObserveCooldown.Value + change, false);
             Generate.BiteCooldown.Set((float)Generate.BiteCooldown.Value + change, false);
-            Generate.ConfessCooldown.Set((float)Generate.ConfessCooldown.Value + change, false);
             Generate.ChargeUpDuration.Set((float)Generate.ChargeUpDuration.Value + change, false);
             Generate.AbilityCooldown.Set((float)Generate.AbilityCooldown.Value + change, false);
             Generate.HunterKillCd.Set((float)Generate.HunterKillCd.Value + change, false);
             Generate.HunterStalkDuration.Set((float)Generate.HunterStalkDuration.Value + change, false);
             Generate.CampaignCooldown.Set((float)Generate.CampaignCooldown.Value + change, false);
             Generate.HypnotiseCooldown.Set((float)Generate.HypnotiseCooldown.Value + change, false);
-            Generate.JailCooldown.Set((float)Generate.JailCooldown.Value + change, false);
             Generate.ReapCooldown.Set((float)Generate.ReapCooldown.Value + change, false);
-            Generate.WatchCooldown.Set((float)Generate.WatchCooldown.Value + change, false);
             Generate.ScavengeDuration.Set((float)Generate.ScavengeDuration.Value + change, false);
+            Generate.FlushCooldown.Set((float)Generate.FlushCooldown.Value + change, false);
+            Generate.BlindCooldown.Set((float)Generate.BlindCooldown.Value + change, false);
+            Generate.BlindDuration.Set((float)Generate.BlindDuration.Value + change, false);
+            Generate.BarrierCd.Set((float)Generate.BarrierCd.Value + change, false);
+            Generate.SurvScatterTimer.Set((float)Generate.SurvScatterTimer.Value + change, false);
+            Generate.JestScatterTimer.Set((float)Generate.JestScatterTimer.Value + change, false);
             GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown += change;
             if (change % 5 != 0)
             {

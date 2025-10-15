@@ -13,6 +13,7 @@ namespace TownOfUs.CrewmateRoles.MediumMod
     {
         public static bool Prefix(KillButton __instance)
         {
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Medium)) return true;
             var role = Role.GetRole<Medium>(PlayerControl.LocalPlayer);
             if (!PlayerControl.LocalPlayer.CanMove) return false;

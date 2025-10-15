@@ -28,7 +28,6 @@ namespace TownOfUs.CrewmateRoles.HaunterMod
                 }
                 else if (PlayerControl.LocalPlayer.Data.IsImpostor() || (PlayerControl.LocalPlayer.Is(Faction.NeutralKilling) && CustomGameOptions.HaunterRevealsNeutrals))
                 {
-                    role.Revealed = true;
                     Coroutines.Start(Utils.FlashCoroutine(role.Color));
                     var gameObj = new GameObject();
                     var arrow = gameObj.AddComponent<ArrowBehaviour>();

@@ -47,17 +47,20 @@ namespace TownOfUs.Roles.Modifiers
 
             if (role is Blackmailer blackmailer)
             {
-                blackmailer.Blackmailed?.myRend().material.SetFloat("_Outline", 0f);
-                if (blackmailer.Blackmailed != null && blackmailer.Blackmailed.Data.IsImpostor())
+                if (AmongUsClient.Instance.AmHost)
                 {
-                    if (blackmailer.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Camouflage &&
-                        blackmailer.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Swooper)
-                        blackmailer.Blackmailed.nameText().color = Patches.Colors.Impostor;
-                    else blackmailer.Blackmailed.nameText().color = Color.clear;
+                    blackmailer.Blackmailed?.myRend().material.SetFloat("_Outline", 0f);
+                    if (blackmailer.Blackmailed != null && blackmailer.Blackmailed.Data.IsImpostor())
+                    {
+                        if (blackmailer.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Camouflage &&
+                            blackmailer.Blackmailed.GetCustomOutfitType() != CustomPlayerOutfitType.Swooper)
+                            blackmailer.Blackmailed.nameText().color = Patches.Colors.Impostor;
+                        else blackmailer.Blackmailed.nameText().color = Color.clear;
+                    }
+                    blackmailer.Blackmailed = player;
+                    Utils.Rpc(CustomRPC.Blackmail, player.PlayerId, player.PlayerId, (byte)1);
                 }
-                blackmailer.Blackmailed = player;
-
-                Utils.Rpc(CustomRPC.Blackmail, player.PlayerId, player.PlayerId);
+                else Utils.Rpc(CustomRPC.Blackmail, player.PlayerId, player.PlayerId, (byte)0);
             }
             else if (role is Glitch glitch)
             {
@@ -82,9 +85,9 @@ namespace TownOfUs.Roles.Modifiers
                     (byte)CustomRPC.FlashGrenade, SendOption.Reliable, -1);
                     writer.Write((byte)grenadier.Player.PlayerId);
                     writer.Write((byte)grenadier.flashedPlayers.Count);
-                    foreach (var player2 in grenadier.flashedPlayers)
+                    foreach (var flashed in grenadier.flashedPlayers)
                     {
-                        writer.Write(player2.PlayerId);
+                        writer.Write(flashed.PlayerId);
                     }
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                 }
@@ -175,7 +178,6 @@ namespace TownOfUs.Roles.Modifiers
                 {
                     Utils.Rpc(CustomRPC.Camouflage, PlayerControl.LocalPlayer.PlayerId, venerer.Kills);
                     venerer.TimeRemaining = CustomGameOptions.AbilityDuration;
-                    venerer.KillsAtStartAbility = venerer.Kills;
                     venerer.Ability();
                 }
             }
@@ -196,9 +198,27 @@ namespace TownOfUs.Roles.Modifiers
                     PlayerControl.LocalPlayer.SetKillTimer(PerformKill.LastImp() ? lowerKC : (PerformKill.IncreasedKC() ? normalKC : upperKC));
                 }
                 else PlayerControl.LocalPlayer.SetKillTimer(GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown + CustomGameOptions.DetonateDelay);
-                DestroyableSingleton<HudManager>.Instance.KillButton.SetTarget(null);
+                HudManager.Instance.KillButton.SetTarget(null);
                 bomber.Bomb = BombExtentions.CreateBomb(pos);
                 if (CustomGameOptions.AllImpsSeeBomb) Utils.Rpc(CustomRPC.Plant, pos.x, pos.y, pos.z);
+            }
+            else if (role is Eclipsal eclipsal)
+            {
+                if (!eclipsal.Enabled)
+                {
+                    eclipsal.TimeRemaining = CustomGameOptions.BlindDuration;
+                    eclipsal.GetBlinds();
+
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte)CustomRPC.Blind, SendOption.Reliable, -1);
+                    writer.Write((byte)eclipsal.Player.PlayerId);
+                    writer.Write((byte)eclipsal.BlindPlayers.Count);
+                    foreach (var blinded in eclipsal.BlindPlayers)
+                    {
+                        writer.Write(blinded.PlayerId);
+                    }
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                }
             }
         }
     }

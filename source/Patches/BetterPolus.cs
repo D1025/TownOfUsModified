@@ -25,6 +25,7 @@ namespace TownOfUs
 
         public static Console WifiConsole;
         public static Console NavConsole;
+        public static Console TempCold;
 
         public static SystemConsole Vitals;
         public static GameObject DvdScreenOffice;
@@ -34,8 +35,6 @@ namespace TownOfUs
         public static Vent ScienceBuildingVent;
         public static Vent StorageVent;
         public static Vent LightCageVent;
-
-        public static Console TempCold;
 
         public static GameObject Comms;
         public static GameObject DropShip;
@@ -151,7 +150,7 @@ namespace TownOfUs
 
             if (DropShip == null)
             {
-                DropShip = Object.FindObjectsOfType<GameObject>().ToList().Find(o => o.name == "Dropship");
+                DropShip = Object.FindObjectsOfType<GameObject>().ToList().FindLast(o => o.name == "Dropship");
             }
 
             if (Outside == null)
@@ -288,6 +287,51 @@ namespace TownOfUs
                     new Vector3(DvdScreenNewScale, localScale.y,
                         localScale.z);
                 dvdScreenTransform.localScale = localScale;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(HudManager))]
+    public class TaskTextUpdates
+    {
+        public static PlayerTask ColdTemp;
+
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+        public static void Prefix(HudManager __instance)
+        {
+            if (ShipStatusPatch.IsObjectsFetched && ShipStatusPatch.IsAdjustmentsDone)
+            {
+                foreach (var task in PlayerControl.LocalPlayer.myTasks)
+                {
+                    if (CustomGameOptions.ColdTempDeathValley)
+                    {
+                        if (task.TaskType == TaskTypes.RecordTemperature && task.StartAt != SystemTypes.Outside)
+                        {
+                            task.StartAt = SystemTypes.Outside;
+                            ColdTemp = task;
+                        }
+                    }
+                    if (CustomGameOptions.WifiChartCourseSwap)
+                    {
+                        if (task.TaskType == TaskTypes.RebootWifi && task.StartAt != SystemTypes.Dropship) task.StartAt = SystemTypes.Dropship;
+                        else if (task.TaskType == TaskTypes.ChartCourse && task.StartAt != SystemTypes.Comms) task.StartAt = SystemTypes.Comms;
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+        public static void Postfix(HudManager __instance)
+        {
+            if (ShipStatusPatch.IsObjectsFetched && ShipStatusPatch.IsAdjustmentsDone)
+            {
+                foreach (var task in PlayerControl.LocalPlayer.myTasks)
+                {
+                    if (CustomGameOptions.ColdTempDeathValley)
+                    {
+                        if (task == ColdTemp) task.StartAt = SystemTypes.Laboratory;
+                    }
+                }
             }
         }
     }

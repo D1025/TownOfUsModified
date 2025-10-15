@@ -41,20 +41,29 @@ namespace TownOfUs.Modifiers.DisperserMod
             role.DisperseButton.SetCoolDown(role.StartTimer(), 10f);
             var renderer = role.DisperseButton.graphic;
 
-
-            if (__instance.UseButton != null)
+            if (PlayerControl.LocalPlayer.Is(ModifierEnum.ButtonBarry) || PlayerControl.LocalPlayer.Is(ModifierEnum.Satellite))
             {
-                var position1 = __instance.UseButton.transform.position;
+                var position = __instance.KillButton.transform.position;
                 role.DisperseButton.transform.position = new Vector3(
-                    Camera.main.ScreenToWorldPoint(new Vector3(0, 0)).x + 0.75f, position1.y,
-                    position1.z);
+                    Camera.main.ScreenToWorldPoint(new Vector3(0, 0)).x + 0.75f, position.y,
+                    position.z);
             }
             else
             {
-                var position1 = __instance.PetButton.transform.position;
-                role.DisperseButton.transform.position = new Vector3(
-                    Camera.main.ScreenToWorldPoint(new Vector3(0, 0)).x + 0.75f, position1.y,
-                    position1.z);
+                if (__instance.UseButton != null)
+                {
+                    var position = __instance.UseButton.transform.position;
+                    role.DisperseButton.transform.position = new Vector3(
+                        Camera.main.ScreenToWorldPoint(new Vector3(0, 0)).x + 0.75f, position.y,
+                        position.z);
+                }
+                else
+                {
+                    var position = __instance.PetButton.transform.position;
+                    role.DisperseButton.transform.position = new Vector3(
+                        Camera.main.ScreenToWorldPoint(new Vector3(0, 0)).x + 0.75f, position.y,
+                        position.z);
+                }
             }
 
             if (!role.ButtonUsed)

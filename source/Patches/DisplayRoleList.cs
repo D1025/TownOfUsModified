@@ -16,9 +16,11 @@ namespace TownOfUs.Patches
         {
             "<color=#66FFFFFF>Crew</color> Investigative",
             "<color=#66FFFFFF>Crew</color> Killing",
+            "<color=#66FFFFFF>Crew</color> Power",
             "<color=#66FFFFFF>Crew</color> Protective",
             "<color=#66FFFFFF>Crew</color> Support",
             "Common <color=#66FFFFFF>Crew</color>",
+            "Special <color=#66FFFFFF>Crew</color>",
             "Random <color=#66FFFFFF>Crew</color>",
             "<color=#999999FF>Neutral</color> Benign",
             "<color=#999999FF>Neutral</color> Evil",

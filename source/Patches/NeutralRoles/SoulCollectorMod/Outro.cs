@@ -11,12 +11,14 @@ namespace TownOfUs.NeutralRoles.SoulCollectorMod
     {
         public static void Postfix(EndGameManager __instance)
         {
-            if (!CustomGameOptions.NeutralEvilWinEndsGame) return;
+            if (Role.GetRoles(RoleEnum.Jester).Any(x => ((Jester)x).VotedOut) && CustomGameOptions.JesterWin == ExecutionerMod.WinEndsGame.EndsGame) return;
+            if (Role.GetRoles(RoleEnum.Executioner).Any(x => ((Executioner)x).TargetVotedOut) && CustomGameOptions.ExecutionerWin == ExecutionerMod.WinEndsGame.EndsGame) return;
+            if (Role.GetRoles(RoleEnum.Doomsayer).Any(x => ((Doomsayer)x).WonByGuessing) && CustomGameOptions.DoomsayerWinEndsGame) return;
             var role = Role.AllRoles.FirstOrDefault(x =>
-                x.RoleType == RoleEnum.SoulCollector && ((SoulCollector) x).CollectedSouls);
+                x.RoleType == RoleEnum.SoulCollector && ((SoulCollector)x).SCWins);
             if (role == null) return;
             PoolablePlayer[] array = Object.FindObjectsOfType<PoolablePlayer>();
-            array[0].NameText().text = role.ColorString + array[0].NameText().text + "</color>";
+            foreach (var player in array) player.NameText().text = role.ColorString + player.NameText().text + "</color>";
             __instance.BackgroundBar.material.color = role.Color;
             var text = Object.Instantiate(__instance.WinText);
             text.text = "Soul Collector Wins!";

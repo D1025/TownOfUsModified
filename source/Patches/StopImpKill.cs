@@ -15,7 +15,7 @@ namespace TownOfUs
         [HarmonyPriority(Priority.First)]
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (!PlayerControl.LocalPlayer.Data.IsImpostor()) return true;
             var target = __instance.currentTarget;
             if (target == null) return true;
@@ -66,12 +66,7 @@ namespace TownOfUs
             }
             else if (interact[1] == true)
             {
-                PlayerControl.LocalPlayer.SetKillTimer(CustomGameOptions.ProtectKCReset + 0.01f);
-                return false;
-            }
-            else if (interact[2] == true)
-            {
-                PlayerControl.LocalPlayer.SetKillTimer(CustomGameOptions.VestKCReset + 0.01f);
+                PlayerControl.LocalPlayer.SetKillTimer(CustomGameOptions.TempSaveCdReset + 0.01f);
                 return false;
             }
             else if (interact[3] == true)

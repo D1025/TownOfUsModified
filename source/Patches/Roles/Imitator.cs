@@ -8,6 +8,7 @@ namespace TownOfUs.Roles
     public class Imitator : Role
     {
         public readonly List<GameObject> Buttons = new List<GameObject>();
+        public GameObject JailCell = new GameObject();
 
         public readonly List<(byte, bool)> ListOfActives = new List<(byte, bool)>();
         public PlayerControl ImitatePlayer = null;
@@ -16,15 +17,13 @@ namespace TownOfUs.Roles
         public Dictionary<byte, List<RoleEnum>> watchedPlayers = null;
         public PlayerControl confessingPlayer = null;
         public PlayerControl jailedPlayer = null;
-        public bool TrappedError = false;
-        public RoleEnum TrappedErrorRole = RoleEnum.None;
 
 
         public Imitator(PlayerControl player) : base(player)
         {
             Name = "Imitator";
-            ImpostorText = () => "Use The True-Hearted Dead To Benefit The Crew";
-            TaskText = () => "Use dead roles to benefit the crew";
+            ImpostorText = () => "Use The True-Hearted Dead To Benefit The Crewmates";
+            TaskText = () => "Use dead roles to benefit the Crewmates";
             Color = Patches.Colors.Imitator;
             RoleType = RoleEnum.Imitator;
             AddToRoleHistory(RoleType);

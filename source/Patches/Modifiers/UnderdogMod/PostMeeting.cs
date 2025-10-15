@@ -8,9 +8,9 @@ namespace TownOfUs.Modifiers.UnderdogMod
     {
         public static void Postfix()
         {
-            var modifier = Modifier.GetModifier(PlayerControl.LocalPlayer);
-            if (modifier?.ModifierType == ModifierEnum.Underdog)
-                ((Underdog)modifier).SetKillTimer();
+            if (!PlayerControl.LocalPlayer.Is(ModifierEnum.Underdog)) return;
+            var modifier = Modifier.GetModifier<Underdog>(PlayerControl.LocalPlayer);
+            modifier.SetKillTimer();
         }
     }
 }

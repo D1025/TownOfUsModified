@@ -1,6 +1,4 @@
-﻿using AmongUs.GameOptions;
-using HarmonyLib;
-using System;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -46,11 +46,6 @@ namespace TownOfUs.CrewmateRoles.TrapperMod
                         foreach (Trapper t in Role.GetRoles(RoleEnum.Trapper))
                         {
                             RoleEnum playerrole = Role.GetRole(Utils.PlayerById(entry.PlayerId)).RoleType;
-                            if (Utils.PlayerById(entry.PlayerId).Is(ModifierEnum.Error))
-                            {
-                                t.TrappedError = true;
-                                t.TrappedErrorRole = playerrole;
-                            }
                             if (!t.trappedPlayers.Contains(playerrole) && entry != t.Player) t.trappedPlayers.Add(playerrole);
                         }
                     }

@@ -8,14 +8,6 @@ using TownOfUs.Extensions;
 using TownOfUs.Patches;
 using TownOfUs.Roles;
 using TownOfUs.Roles.Modifiers;
-using Reactor.Utilities.Extensions;
-using TownOfUs.CrewmateRoles.ImitatorMod;
-using TownOfUs.CrewmateRoles.SwapperMod;
-using TownOfUs.CrewmateRoles.VigilanteMod;
-using TownOfUs.ImpostorRoles.BlackmailerMod;
-using TownOfUs.Modifiers.AssassinMod;
-using TownOfUs.NeutralRoles.DoomsayerMod;
-using UnityEngine.UI;
 
 namespace TownOfUs.CrewmateRoles.HunterMod
 {
@@ -76,7 +68,7 @@ namespace TownOfUs.CrewmateRoles.HunterMod
             bool checkLover = true
         )
         {
-            var hudManager = DestroyableSingleton<HudManager>.Instance;
+            var hudManager = HudManager.Instance;
             if (checkLover)
             {
                 SoundManager.Instance.PlaySound(player.KillSfx, false, 0.8f);
@@ -101,14 +93,14 @@ namespace TownOfUs.CrewmateRoles.HunterMod
                     }
 
                     player.myTasks.Clear();
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostIgnoreTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0)
                     );
                 }
                 else
                 {
-                    importantTextTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(
+                    importantTextTask.Text = TranslationController.Instance.GetString(
                         StringNames.GhostDoTasks,
                         new Il2CppReferenceArray<Il2CppSystem.Object>(0));
                 }

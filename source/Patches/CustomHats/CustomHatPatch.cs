@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using AmongUs.Data;
 using HarmonyLib;
+using Reactor.Utilities;
 using Reactor.Utilities.Extensions;
 using TMPro;
 using UnityEngine;
@@ -19,7 +21,11 @@ namespace TownOfUs.Patches.CustomHats
         public static int CurrentPage = 0;
 
         public static string LastHeader = string.Empty;
-        
+
+        private static IEnumerator? loadRoutine;
+
+        private static int hatIndex;
+
         [HarmonyPatch(typeof(HatsTab), nameof(HatsTab.OnEnable))]
 
         public static bool Prefix(HatsTab __instance)
@@ -54,6 +60,8 @@ namespace TownOfUs.Patches.CustomHats
 
         public static void Update(HatsTab __instance)
         {
+            if (HatCache.SortedHats.Count == 0) return;
+
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
                 CurrentPage--;
@@ -70,6 +78,10 @@ namespace TownOfUs.Patches.CustomHats
 
         public static void GenHats(HatsTab __instance, int page)
         {
+            if (loadRoutine != null) Coroutines.Stop(loadRoutine);
+
+            hatIndex = 0;
+
             foreach (ColorChip instanceColorChip in __instance.ColorChips) instanceColorChip.gameObject.Destroy();
             __instance.ColorChips.Clear();
 
@@ -80,11 +92,10 @@ namespace TownOfUs.Patches.CustomHats
             }
 
             var groupNameText = __instance.GetComponentInChildren<TextMeshPro>(false);
-            int hatIdx = 0;
             var group = HatCache.SortedHats.Where(x => x.Key == HatCache.StoreNames[page]);
             foreach ((string groupName, List<HatData> hats) in group)
             {
-                hatIdx = (hatIdx + 4) / 5 * 5;
+                hatIndex = (hatIndex + 4) / 5 * 5;
                 var text = Object.Instantiate(groupNameText, __instance.scroller.Inner);
                 text.gameObject.transform.localScale = Vector3.one;
                 text.GetComponent<TextTranslatorTMP>().Destroy();
@@ -95,35 +106,57 @@ namespace TownOfUs.Patches.CustomHats
                 text.fontSizeMin = 0f;
                 LastHeader = text.name = $"{groupName} header";
                 float xLerp = __instance.XRange.Lerp(0.5f);
-                float yLerp = __instance.YStart - hatIdx / __instance.NumPerRow * __instance.YOffset;
+                float yLerp = __instance.YStart - hatIndex / __instance.NumPerRow * __instance.YOffset;
                 text.transform.localPosition = new Vector3(xLerp, yLerp, -1f);
 
-                hatIdx += 5;
-                foreach (var hat in hats.OrderBy(HatManager.Instance.allHats.IndexOf))
-                {
-                    float num = __instance.XRange.Lerp(hatIdx % __instance.NumPerRow / (__instance.NumPerRow - 1f));
-                    float num2 = __instance.YStart - hatIdx / __instance.NumPerRow * __instance.YOffset;
-
-                    var colorChip = Object.Instantiate(__instance.ColorTabPrefab, __instance.scroller.Inner);
-                    colorChip.gameObject.name = hat.ProductId;
-                    colorChip.Button.OnClick.AddListener((Action)(() => __instance.ClickEquip()));
-                    colorChip.Button.OnMouseOver.AddListener((Action)(() => __instance.SelectHat(hat)));
-                    colorChip.Button.OnMouseOut.AddListener((Action)(() => __instance.SelectHat(HatManager.Instance.GetHatById(DataManager.Player.Customization.Hat))));
-                    colorChip.Inner.SetHat(hat, __instance.HasLocalPlayer() ? PlayerControl.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color);
-                    colorChip.transform.localPosition = new Vector3(num, num2, -1f);
-                    colorChip.Inner.transform.localPosition = hat.ChipOffset + new Vector2(0f, -0.3f);
-                    if (SubmergedCompatibility.Loaded)
-                    {
-                        colorChip.gameObject.transform.Find("HatParent").transform.localPosition = new Vector3(-0.1f, 0.05f, -2);
-                    }
-                    colorChip.Tag = hat;
-                    __instance.ColorChips.Add(colorChip);
-                    hatIdx += 1;
-                }
+                hatIndex += 5;
+                loadRoutine = Coroutines.Start(CoGenerateChips(__instance, hats));
             }
 
-            __instance.scroller.ContentYBounds.max = -(__instance.YStart - (hatIdx + 1) / __instance.NumPerRow * __instance.YOffset) - 3f;
+            __instance.scroller.ContentYBounds.max = -(__instance.YStart - (hatIndex + 1) / __instance.NumPerRow * __instance.YOffset) - 3f;
             __instance.currentHatIsEquipped = true;
+        }
+
+        private static IEnumerator CoGenerateChips(HatsTab __instance, List<HatData> hats)
+        {
+            __instance.scroller.ScrollToTop();
+            var batchSize = 5;
+            for (var i = 0; i < hats.Count; i += batchSize)
+            {
+                var batch = hats.Skip(i).Take(batchSize).ToList();
+
+                foreach (var hat in batch.OrderBy(HatManager.Instance.allHats.IndexOf))
+                {
+                    var hatXposition = __instance.XRange.Lerp(hatIndex % __instance.NumPerRow / (__instance.NumPerRow - 1f));
+                    var hatYposition = __instance.YStart - hatIndex / __instance.NumPerRow * __instance.YOffset;
+                    GenerateColorChip(__instance, new Vector2(hatXposition, hatYposition), hat);
+                    hatIndex += 1;
+                    yield return null;
+                }
+
+                __instance.scroller.ContentYBounds.max = -(__instance.YStart - (hatIndex + 1) / __instance.NumPerRow * __instance.YOffset) - 3f;
+                yield return new WaitForSeconds(0.01f);
+            }
+            __instance.currentHatIsEquipped = true;
+            loadRoutine = null;
+        }
+
+        private static void GenerateColorChip(HatsTab __instance, Vector2 position, HatData hat)
+        {
+            var colorChip = Object.Instantiate(__instance.ColorTabPrefab, __instance.scroller.Inner);
+            colorChip.gameObject.name = hat.ProductId;
+            colorChip.Button.OnClick.AddListener((Action)(() => __instance.ClickEquip()));
+            colorChip.Button.OnMouseOver.AddListener((Action)(() => __instance.SelectHat(hat)));
+            colorChip.Button.OnMouseOut.AddListener((Action)(() => __instance.SelectHat(HatManager.Instance.GetHatById(DataManager.Player.Customization.Hat))));
+            colorChip.Inner.SetHat(hat, __instance.HasLocalPlayer() ? PlayerControl.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color);
+            colorChip.Button.ClickMask = __instance.scroller.Hitbox;
+            colorChip.SelectionHighlight.gameObject.SetActive(false);
+            __instance.UpdateMaterials(colorChip.Inner.FrontLayer, hat);
+            colorChip.Inner.SetMaskType(PlayerMaterial.MaskType.SimpleUI);
+            colorChip.transform.localPosition = new Vector3(position.x, position.y, -1f);
+            colorChip.Inner.transform.localPosition = hat.ChipOffset + new Vector2(0f, -0.3f);
+            colorChip.Tag = hat;
+            __instance.ColorChips.Add(colorChip);
         }
     }
 }

@@ -13,14 +13,14 @@ namespace TownOfUs.CrewmateRoles.TrackerMod
         public static Sprite Sprite => TownOfUs.Arrow;
         public static bool Prefix(KillButton __instance)
         {
-            if (__instance != DestroyableSingleton<HudManager>.Instance.KillButton) return true;
+            if (__instance != HudManager.Instance.KillButton) return true;
             if (!PlayerControl.LocalPlayer.Is(RoleEnum.Tracker)) return true;
             var role = Role.GetRole<Tracker>(PlayerControl.LocalPlayer);
             if (!PlayerControl.LocalPlayer.CanMove || role.ClosestPlayer == null) return false;
             var flag2 = role.TrackerTimer() == 0f;
             if (!flag2) return false;
             if (!__instance.enabled) return false;
-            var maxDistance = GameOptionsData.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
+            var maxDistance = LegacyGameOptions.KillDistances[GameOptionsManager.Instance.currentNormalGameOptions.KillDistance];
             if (Vector2.Distance(role.ClosestPlayer.GetTruePosition(),
                 PlayerControl.LocalPlayer.GetTruePosition()) > maxDistance) return false;
             if (role.ClosestPlayer == null) return false;
@@ -61,7 +61,7 @@ namespace TownOfUs.CrewmateRoles.TrackerMod
             else if (interact[1] == true)
             {
                 role.LastTracked = DateTime.UtcNow;
-                role.LastTracked = role.LastTracked.AddSeconds(CustomGameOptions.ProtectKCReset - CustomGameOptions.TrackCd);
+                role.LastTracked = role.LastTracked.AddSeconds(CustomGameOptions.TempSaveCdReset - CustomGameOptions.TrackCd);
                 return false;
             }
             else if (interact[3] == true) return false;

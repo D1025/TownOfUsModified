@@ -22,8 +22,8 @@ namespace TownOfUs.Roles
         public Vigilante(PlayerControl player) : base(player)
         {
             Name = "Vigilante";
-            ImpostorText = () => "Kill Impostors If You Can Guess Their Roles";
-            TaskText = () => "Guess the roles of impostors mid-meeting to kill them!";
+            ImpostorText = () => "Kill <color=#FF0000FF>Impostors</color> If You Can Guess Their Roles";
+            TaskText = () => "Guess the roles of Impostors mid-meeting to kill them!";
             Color = Patches.Colors.Vigilante;
             RoleType = RoleEnum.Vigilante;
             AddToRoleHistory(RoleType);
@@ -31,44 +31,44 @@ namespace TownOfUs.Roles
             RemainingKills = CustomGameOptions.VigilanteKills;
 
             ColorMapping.Add("Impostor", Colors.Impostor);
-            if (CustomGameOptions.JanitorOn) ColorMapping.Add("Janitor", Colors.Impostor);
-            if (CustomGameOptions.MorphlingOn) ColorMapping.Add("Morphling", Colors.Impostor);
-            if (CustomGameOptions.MinerOn) ColorMapping.Add("Miner", Colors.Impostor);
-            if (CustomGameOptions.SwooperOn) ColorMapping.Add("Swooper", Colors.Impostor);
-            if (CustomGameOptions.UndertakerOn) ColorMapping.Add("Undertaker", Colors.Impostor);
-            if (CustomGameOptions.EscapistOn) ColorMapping.Add("Escapist", Colors.Impostor);
-            if (CustomGameOptions.GrenadierOn) ColorMapping.Add("Grenadier", Colors.Impostor);
-            if (CustomGameOptions.TraitorOn) ColorMapping.Add("Traitor", Colors.Impostor);
-            if (CustomGameOptions.BlackmailerOn) ColorMapping.Add("Blackmailer", Colors.Impostor);
-            if (CustomGameOptions.BomberOn) ColorMapping.Add("Bomber", Colors.Impostor);
-            if (CustomGameOptions.WarlockOn) ColorMapping.Add("Warlock", Colors.Impostor);
-            if (CustomGameOptions.VenererOn) ColorMapping.Add("Venerer", Colors.Impostor);
-            if (CustomGameOptions.HypnotistOn) ColorMapping.Add("Hypnotist", Colors.Impostor);
-            if (CustomGameOptions.ScavengerOn) ColorMapping.Add("Scavenger", Colors.Impostor);
-            if (CustomGameOptions.ArsonistOn) ColorMapping.Add("Arsonist", Colors.Impostor);
+            if (CustomGameOptions.JanitorOn > 0) ColorMapping.Add("Janitor", Colors.Impostor);
+            if (CustomGameOptions.MorphlingOn > 0) ColorMapping.Add("Morphling", Colors.Impostor);
+            if (CustomGameOptions.MinerOn > 0) ColorMapping.Add("Miner", Colors.Impostor);
+            if (CustomGameOptions.SwooperOn > 0) ColorMapping.Add("Swooper", Colors.Impostor);
+            if (CustomGameOptions.UndertakerOn > 0) ColorMapping.Add("Undertaker", Colors.Impostor);
+            if (CustomGameOptions.EscapistOn > 0) ColorMapping.Add("Escapist", Colors.Impostor);
+            if (CustomGameOptions.GrenadierOn > 0) ColorMapping.Add("Grenadier", Colors.Impostor);
+            if (CustomGameOptions.TraitorOn > 0) ColorMapping.Add("Traitor", Colors.Impostor);
+            if (CustomGameOptions.BlackmailerOn > 0) ColorMapping.Add("Blackmailer", Colors.Impostor);
+            if (CustomGameOptions.BomberOn > 0) ColorMapping.Add("Bomber", Colors.Impostor);
+            if (CustomGameOptions.WarlockOn > 0) ColorMapping.Add("Warlock", Colors.Impostor);
+            if (CustomGameOptions.VenererOn > 0) ColorMapping.Add("Venerer", Colors.Impostor);
+            if (CustomGameOptions.HypnotistOn > 0) ColorMapping.Add("Hypnotist", Colors.Impostor);
+            if (CustomGameOptions.ScavengerOn > 0) ColorMapping.Add("Scavenger", Colors.Impostor);
+            if (CustomGameOptions.EclipsalOn > 0) ColorMapping.Add("Eclipsal", Colors.Impostor);
 
             if (CustomGameOptions.VigilanteGuessNeutralBenign)
             {
-                if (CustomGameOptions.AmnesiacOn || (CustomGameOptions.ExecutionerOn && CustomGameOptions.OnTargetDead == OnTargetDead.Amnesiac) || (CustomGameOptions.GuardianAngelOn && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Amnesiac)) ColorMapping.Add("Amnesiac", Colors.Amnesiac);
-                if (CustomGameOptions.GuardianAngelOn) ColorMapping.Add("Guardian Angel", Colors.GuardianAngel);
-                if (CustomGameOptions.SurvivorOn || (CustomGameOptions.ExecutionerOn && CustomGameOptions.OnTargetDead == OnTargetDead.Survivor) || (CustomGameOptions.GuardianAngelOn && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Survivor)) ColorMapping.Add("Survivor", Colors.Survivor);
+                if (CustomGameOptions.AmnesiacOn > 0 || (CustomGameOptions.ExecutionerOn > 0 && CustomGameOptions.OnTargetDead == OnTargetDead.Amnesiac) || (CustomGameOptions.GuardianAngelOn > 0 && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Amnesiac)) ColorMapping.Add("Amnesiac", Colors.Amnesiac);
+                if (CustomGameOptions.GuardianAngelOn > 0) ColorMapping.Add("Guardian Angel", Colors.GuardianAngel);
+                if (CustomGameOptions.MercenaryOn > 0 || (CustomGameOptions.ExecutionerOn > 0 && CustomGameOptions.OnTargetDead == OnTargetDead.Mercenary) || (CustomGameOptions.GuardianAngelOn > 0 && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Mercenary)) ColorMapping.Add("Mercenary", Colors.Mercenary);
+                if (CustomGameOptions.SurvivorOn > 0 || (CustomGameOptions.ExecutionerOn > 0 && CustomGameOptions.OnTargetDead == OnTargetDead.Survivor) || (CustomGameOptions.GuardianAngelOn > 0 && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Survivor)) ColorMapping.Add("Survivor", Colors.Survivor);
             }
             if (CustomGameOptions.VigilanteGuessNeutralEvil)
             {
-                if (CustomGameOptions.ExecutionerOn) ColorMapping.Add("Executioner", Colors.Executioner);
-                if (CustomGameOptions.JesterOn || (CustomGameOptions.ExecutionerOn && CustomGameOptions.OnTargetDead == OnTargetDead.Jester) || (CustomGameOptions.GuardianAngelOn && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Jester)) ColorMapping.Add("Jester", Colors.Jester);
-                if (CustomGameOptions.SoulCollectorOn) ColorMapping.Add("Soul Collector", Colors.SoulCollector);
-                if (CustomGameOptions.VultureOn) ColorMapping.Add("Vulture", Colors.Vulture);
+                if (CustomGameOptions.DoomsayerOn > 0) ColorMapping.Add("Doomsayer", Colors.Doomsayer);
+                if (CustomGameOptions.ExecutionerOn > 0) ColorMapping.Add("Executioner", Colors.Executioner);
+                if (CustomGameOptions.JesterOn > 0 || (CustomGameOptions.ExecutionerOn > 0 && CustomGameOptions.OnTargetDead == OnTargetDead.Jester) || (CustomGameOptions.GuardianAngelOn > 0 && CustomGameOptions.GaOnTargetDeath == BecomeOptions.Jester)) ColorMapping.Add("Jester", Colors.Jester);
             }
             if (CustomGameOptions.VigilanteGuessNeutralKilling)
             {
-                if (CustomGameOptions.WraithOn) ColorMapping.Add("Wraith", Colors.Wraith);
-                if (CustomGameOptions.GlitchOn) ColorMapping.Add("The Glitch", Colors.Glitch);
-                if (CustomGameOptions.PlaguebearerOn) ColorMapping.Add("Plaguebearer", Colors.Plaguebearer);
-                if (CustomGameOptions.VampireOn) ColorMapping.Add("Vampire", Colors.Vampire);
-                if (CustomGameOptions.WerewolfOn) ColorMapping.Add("Werewolf", Colors.Werewolf);
-                if (CustomGameOptions.JuggernautOn) ColorMapping.Add("Juggernaut", Colors.Juggernaut);
-                if (CustomGameOptions.DoomsayerOn) ColorMapping.Add("Doomsayer", Colors.Doomsayer);
+                if (CustomGameOptions.ArsonistOn > 0) ColorMapping.Add("Arsonist", Colors.Arsonist);
+                if (CustomGameOptions.GlitchOn > 0) ColorMapping.Add("Glitch", Colors.Glitch);
+                if (CustomGameOptions.PlaguebearerOn > 0) ColorMapping.Add("Plaguebearer", Colors.Plaguebearer);
+                if (CustomGameOptions.VampireOn > 0) ColorMapping.Add("Vampire", Colors.Vampire);
+                if (CustomGameOptions.WerewolfOn > 0) ColorMapping.Add("Werewolf", Colors.Werewolf);
+                if (CustomGameOptions.JuggernautOn > 0) ColorMapping.Add("Juggernaut", Colors.Juggernaut);
+                if (CustomGameOptions.SoulCollectorOn > 0) ColorMapping.Add("Soul Collector", Colors.SoulCollector);
             }
             if (CustomGameOptions.VigilanteGuessLovers && CustomGameOptions.LoversOn > 0) ColorMapping.Add("Lover", Colors.Lovers);
 
